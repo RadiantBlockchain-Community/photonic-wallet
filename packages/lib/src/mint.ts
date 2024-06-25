@@ -703,6 +703,11 @@ export function mintToken(
     p2pkh,
     feeRate
   );
+
+  if (commitFund.fee === 0) {
+    throw new Error("Couldn't fund transaction");
+  }
+
   fees.push(commitFund.fee);
   const commitOutputs = [...outputs, ...commitFund.change];
   const commitTx = buildTx(
@@ -775,6 +780,11 @@ export function mintToken(
     p2pkh,
     feeRate
   );
+
+  if (revealFund.fee === 0) {
+    throw new Error("Couldn't fund transaction");
+  }
+
   fees.push(revealFund.fee);
 
   revealInputs.push(

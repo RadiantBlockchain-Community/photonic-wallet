@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Transaction } from "@radiantblockchain/radiantjs";
 import opfs from "@app/opfs";
 import Outpoint from "@lib/Outpoint";
@@ -14,7 +14,10 @@ import ActionIcon from "./ActionIcon";
 import mime from "mime";
 
 export default function TokenData({ glyph }: { glyph: SmartToken }) {
-  const reveal = glyph.revealOutpoint && Outpoint.fromString(glyph.revealOutpoint);
+  const reveal = useMemo(
+    () => glyph.revealOutpoint && Outpoint.fromString(glyph.revealOutpoint),
+    [glyph.id]
+  );
   const [{ tx, decoded }, setData] = useState<{
     tx?: string;
     decoded?: DecodedGlyph;
@@ -37,7 +40,7 @@ export default function TokenData({ glyph }: { glyph: SmartToken }) {
         setData({ tx, decoded });
       }
     })();
-  }, []);
+  }, [reveal]);
 
   return !reveal || !decoded || !tx ? (
     <Box mx={4}>{t`Data not found`}</Box>

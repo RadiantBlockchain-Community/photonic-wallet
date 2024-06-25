@@ -7,6 +7,7 @@ import {
   ContractBalance,
 } from "./types";
 import config from "@app/config.json";
+import { shuffle } from "@lib/util";
 
 export type KeyValuePairs = unknown;
 
@@ -24,10 +25,18 @@ export class Database extends Dexie {
       txo: "++id, &[txid+vout], contractType, [contractType+spent], [script+spent], [change+spent]",
       subscriptionStatus: "scriptHash",
       balance: "id",
-      glyph: "++id, &ref, [type+spent], [type+spent+fresh], lastTxoId, height, tokenType",
+      glyph:
+        "++id, &ref, [type+spent], [type+spent+fresh], lastTxoId, height, tokenType",
       kvp: "",
       header: "hash, height",
       txq: "txid",
+    });
+
+    this.version(2).upgrade((transaction) => {
+      // Populate servers with updated config, in random order
+      const mainnet = shuffle(config.defaultConfig.servers.mainnet);
+      const testnet = config.defaultConfig.servers.testnet;
+      transaction.table("kvp").put({ mainnet, testnet }, "servers");
     });
   }
 }

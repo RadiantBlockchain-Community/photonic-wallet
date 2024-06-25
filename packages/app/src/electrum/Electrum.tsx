@@ -22,7 +22,8 @@ const worker = sharedSupported
     });
 
 const wrapped = wrap<{
-  connect: (endpoint: string, address: string) => void;
+  setServers: (servers: string[]) => void;
+  connect: (address: string) => void;
   isReady: () => boolean;
   reconnect: () => boolean;
   disconnect: (reason: string) => void;
@@ -60,20 +61,21 @@ export default function Electrum() {
     }
   });
 
-  const server = useLiveQuery(async () => {
+  const servers = useLiveQuery(async () => {
     const servers = (await db.kvp.get("servers")) as {
       mainnet: string[];
       testnet: string[];
     };
-    return servers[wallet.value.net][0];
+    return servers[wallet.value.net];
   }, [wallet.value.net]);
 
   // Reconnect when server config changes or when wallet is ready
   useEffect(() => {
-    if (server && wallet.value.address) {
-      electrumWorker.value.connect(server, wallet.value.address);
+    if (servers && wallet.value.address) {
+      electrumWorker.value.setServers(servers);
+      electrumWorker.value.connect(wallet.value.address);
     }
-  }, [server, wallet.value.address]);
+  }, [servers, wallet.value.address]);
 
   return null;
 }

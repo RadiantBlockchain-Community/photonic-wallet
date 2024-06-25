@@ -28,7 +28,7 @@ export default function MobileHome() {
       <PageHeader showLogo />
       <Container maxW="container.md" px={4}>
         <Card mx="auto">
-          <Flex flexDirection="column" alignItems="center">
+          <Flex flexDirection="column" alignItems="center" mb={4}>
             <Text fontSize="xl" fontWeight="medium" mb={2}>
               <Trans>{network.value.ticker} BALANCE</Trans>
             </Text>
