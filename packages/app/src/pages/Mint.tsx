@@ -293,13 +293,25 @@ export default function Mint({ tokenType }: { tokenType: TokenType }) {
 
   const preview = (event: React.FormEvent) => {
     event.preventDefault();
-    submit(true);
+    handleErrors(submit(true));
     return false;
   };
   const mint = (event: React.FormEvent) => {
     event.preventDefault();
-    submit(false);
+    handleErrors(submit(false));
     return false;
+  };
+
+  const handleErrors = (p: Promise<unknown>) => {
+    p.catch((error) => {
+      console.log(error);
+      toast({
+        title: t`Error`,
+        description: cleanError((error as Error).message || "") || undefined,
+        status: "error",
+      });
+      setLoading(false);
+    });
   };
 
   const submit = async (dryRun: boolean) => {
@@ -314,7 +326,7 @@ export default function Mint({ tokenType }: { tokenType: TokenType }) {
     if (wallet.value.locked) {
       openModal.value = {
         modal: "unlock",
-        onClose: (success) => success && submit(dryRun),
+        onClose: (success) => success && handleErrors(submit(dryRun)),
       };
       return;
     }

@@ -35,7 +35,7 @@
         "wss://electrumx2.radiant4people.com:50022"
       ]
     },
-    "feeRate": 5000,
+    "feeRate": 2000,
     "ipfsMethod": "gateway",
     "ipfsGatewayUrl": "https://{cid}.ipfs.nftstorage.link"
   },

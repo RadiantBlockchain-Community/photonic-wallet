@@ -110,7 +110,7 @@ export const buildUpdateTXOs =
         tx: Transaction;
         hex: string;
       }
-    >(Array.from(newTxIds), 3, async (txid: string) => {
+    >(Array.from(newTxIds), 6, async (txid: string) => {
       const hex = (await electrum.client?.request(
         "blockchain.transaction.get",
         txid

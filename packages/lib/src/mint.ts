@@ -705,6 +705,7 @@ export function mintToken(
   );
 
   if (commitFund.fee === 0) {
+    console.log("Commit funding error", JSON.stringify([unspentRxd, outputs]));
     throw new Error("Couldn't fund transaction");
   }
 
@@ -782,6 +783,10 @@ export function mintToken(
   );
 
   if (revealFund.fee === 0) {
+    console.log(
+      "Reveal funding error",
+      JSON.stringify([unspentRxd, revealInputs, revealOutputs])
+    );
     throw new Error("Couldn't fund transaction");
   }
 

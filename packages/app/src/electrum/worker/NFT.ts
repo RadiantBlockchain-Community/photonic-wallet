@@ -56,6 +56,8 @@ export class NFTWorker implements Subscription {
   protected updateTXOs: ElectrumStatusUpdate;
   protected electrum: ElectrumManager;
   protected lastReceivedStatus: string;
+  protected receivedStatuses: string[] = [];
+  protected ready = true;
 
   constructor(electrum: ElectrumManager) {
     this.electrum = electrum;
@@ -63,84 +65,95 @@ export class NFTWorker implements Subscription {
     this.lastReceivedStatus = "";
   }
 
+  async onSubscriptionReceived(scriptHash: string, status: string) {
+    // Same subscription can be returned twice
+    if (status === this.lastReceivedStatus) {
+      console.debug("Duplicate subscription received", status);
+      return;
+    }
+    if (!this.ready) {
+      this.receivedStatuses.push(status);
+      return;
+    }
+
+    this.ready = false;
+    this.lastReceivedStatus = status;
+
+    const { added, confs, newTxs, spent } = await this.updateTXOs(
+      scriptHash,
+      status
+    );
+
+    const existingRefs: { [key: string]: SmartToken } = {};
+    const newRefs: { [key: string]: TxO } = {};
+    const scriptRefMap: { [key: string]: string } = {};
+    for (const txo of added) {
+      const { ref: refLE } = parseNftScript(txo.script);
+      if (!refLE) continue;
+      const ref = reverseRef(refLE);
+      scriptRefMap[txo.script] = ref;
+      const glyph = ref && (await db.glyph.get({ ref }));
+      if (glyph) {
+        existingRefs[ref] = glyph;
+      } else {
+        newRefs[ref] = txo;
+      }
+    }
+
+    const { related, accepted } = await this.addTokens(newRefs, newTxs || {});
+    this.addRelated(related);
+
+    // All glyphs should now be in the database. Insert txos.
+    db.transaction("rw", db.txo, db.glyph, async () => {
+      const ids = (await db.txo.bulkPut(added, undefined, {
+        allKeys: true,
+      })) as number[];
+      await Promise.all(
+        added.map(async (txo, index) => {
+          const ref = scriptRefMap[txo.script];
+          const glyph = existingRefs[ref] || accepted[ref];
+          if (glyph) {
+            glyph.lastTxoId = ids[index];
+            glyph.spent = 0;
+            await db.glyph.put(glyph);
+          }
+        })
+      );
+    });
+
+    // Update any NFTs that have been transferred
+    await db.transaction("rw", db.glyph, async () => {
+      for (const lastTxo of spent) {
+        await db.glyph.where({ lastTxoId: lastTxo.id }).modify({ spent: 1 });
+      }
+    });
+
+    // Update heights
+    await db.transaction("rw", db.glyph, async () => {
+      for (const [lastTxoId, conf] of confs) {
+        await db.glyph
+          .where({ lastTxoId })
+          .modify({ height: conf.height || Infinity });
+      }
+    });
+
+    setSubscriptionStatus(scriptHash, status, ContractType.NFT);
+    this.ready = true;
+    if (this.receivedStatuses.length > 0) {
+      const lastStatus = this.receivedStatuses.pop();
+      this.receivedStatuses = [];
+      if (lastStatus) {
+        this.onSubscriptionReceived(scriptHash, lastStatus);
+      }
+    }
+  }
+
   async register(address: string) {
     const scriptHash = nftScriptHash(address as string);
 
     this.electrum.client?.subscribe(
       "blockchain.scripthash",
-      (async (scriptHash: string, status: string) => {
-        // Same subscription can be returned twice
-        if (status === this.lastReceivedStatus) {
-          console.debug("Duplicate subscription received", status);
-          return;
-        }
-        this.lastReceivedStatus = status;
-
-        const { added, confs, newTxs, spent } = await this.updateTXOs(
-          scriptHash,
-          status
-        );
-
-        const existingRefs: { [key: string]: SmartToken } = {};
-        const newRefs: { [key: string]: TxO } = {};
-        const scriptRefMap: { [key: string]: string } = {};
-        for (const txo of added) {
-          const { ref: refLE } = parseNftScript(txo.script);
-          if (!refLE) continue;
-          const ref = reverseRef(refLE);
-          scriptRefMap[txo.script] = ref;
-          const glyph = ref && (await db.glyph.get({ ref }));
-          if (glyph) {
-            existingRefs[ref] = glyph;
-          } else {
-            newRefs[ref] = txo;
-          }
-        }
-
-        const { related, accepted } = await this.addTokens(
-          newRefs,
-          newTxs || {}
-        );
-        this.addRelated(related);
-
-        // All glyphs should now be in the database. Insert txos.
-        db.transaction("rw", db.txo, db.glyph, async () => {
-          const ids = (await db.txo.bulkPut(added, undefined, {
-            allKeys: true,
-          })) as number[];
-          await Promise.all(
-            added.map(async (txo, index) => {
-              const ref = scriptRefMap[txo.script];
-              const glyph = existingRefs[ref] || accepted[ref];
-              if (glyph) {
-                glyph.lastTxoId = ids[index];
-                glyph.spent = 0;
-                await db.glyph.put(glyph);
-              }
-            })
-          );
-        });
-
-        // Update any NFTs that have been transferred
-        await db.transaction("rw", db.glyph, async () => {
-          for (const lastTxo of spent) {
-            await db.glyph
-              .where({ lastTxoId: lastTxo.id })
-              .modify({ spent: 1 });
-          }
-        });
-
-        // Update heights
-        await db.transaction("rw", db.glyph, async () => {
-          for (const [lastTxoId, conf] of confs) {
-            await db.glyph
-              .where({ lastTxoId })
-              .modify({ height: conf.height || Infinity });
-          }
-        });
-
-        setSubscriptionStatus(scriptHash, status, ContractType.NFT);
-      }) as ElectrumCallback,
+      this.onSubscriptionReceived.bind(this) as ElectrumCallback,
       scriptHash
     );
   }
@@ -177,7 +190,7 @@ export class NFTWorker implements Subscription {
 
     const refReveals = await batchRequests<[string, TxO | undefined], string>(
       refEntries,
-      3,
+      6,
       async ([ref, txo]) => {
         // Check if an input matches the ref. This will be a mint tx.
         if (fresh.includes(ref) && txo) {

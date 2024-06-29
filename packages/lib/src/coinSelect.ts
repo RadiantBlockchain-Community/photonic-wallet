@@ -41,6 +41,9 @@ export function coinSelect(
   }));
 
   const selected = bsvCoinSelect(inputs, target, feeRate, changeScript);
+  if (!selected.inputs?.length) {
+    return selected;
+  }
   selected.inputs = (selected.inputs as { scriptPubKey: string }[]).map(
     ({ scriptPubKey, ...rest }) => ({
       ...rest,

@@ -56,6 +56,18 @@ export default function MeltFungible({ glyph, onSuccess, disclosure }: Props) {
 
   const submit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    melt().catch((error) => {
+      console.log(error);
+      toast({
+        title: t`Error`,
+        description: "Could not melt",
+        status: "error",
+      });
+      setLoading(false);
+    });
+  };
+
+  const melt = async () => {
     setSuccess(true);
     setLoading(true);
 
