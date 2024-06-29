@@ -45,7 +45,7 @@ import db from "@app/db";
 import { ContractType, ElectrumStatus } from "@app/types";
 import Outpoint from "@lib/Outpoint";
 import { mintToken } from "@lib/mint";
-import { encodeCid, upload } from "@lib/ipfs";
+//import { encodeCid, upload } from "@lib/ipfs";
 import { photonsToRXD } from "@lib/format";
 import TokenType from "@app/components/TokenType";
 import ContentContainer from "@app/components/ContentContainer";
@@ -72,8 +72,9 @@ import {
 import { electrumWorker } from "@app/electrum/Electrum";
 import { PromiseExtended } from "dexie";
 
+// IPFS uploading is currently disabled until an alternative to nft.storage can be found
 const MAX_BYTES = 100_000;
-const MAX_IPFS_BYTES = 5_000_000;
+//const MAX_IPFS_BYTES = 5_000_000;
 
 type ContentMode = "file" | "text" | "url";
 
@@ -182,9 +183,9 @@ const encodeContent = (
   }
 
   if (fileState.file) {
-    if (fileState.ipfs) {
+    /*if (fileState.ipfs) {
       return ["main", { t: urlContentType, u: `ipfs://${fileState.cid}` }];
-    }
+    }*/
 
     return [
       "main",
@@ -464,7 +465,7 @@ export default function Mint({ tokenType }: { tokenType: TokenType }) {
     };
 
     try {
-      if (fileState.ipfs && fileState.file?.data) {
+      /*if (fileState.ipfs && fileState.file?.data) {
         // FIXME does this throw an error when unsuccessful?
         await upload(
           fileState.file?.data,
@@ -472,7 +473,7 @@ export default function Mint({ tokenType }: { tokenType: TokenType }) {
           dryRun,
           apiKey as string
         );
-      }
+      }*/
 
       const relInputs: Utxo[] = [];
       if (userInput) relInputs.push(userInput);
@@ -565,7 +566,8 @@ export default function Mint({ tokenType }: { tokenType: TokenType }) {
     reader.onload = async () => {
       const newState: FileState = { ...noFile };
 
-      if (files[0].size > MAX_IPFS_BYTES) {
+      //if (files[0].size > MAX_IPFS_BYTES) {
+      if (files[0].size > MAX_BYTES) {
         toast({ title: t`File is too large`, status: "error" });
         setFileState(newState);
         return;
@@ -614,10 +616,10 @@ export default function Mint({ tokenType }: { tokenType: TokenType }) {
 
       newState.hash = sha256(typedArray);
 
-      if (size > MAX_BYTES) {
+      /*if (size > MAX_BYTES) {
         newState.ipfs = true;
         newState.cid = await encodeCid(reader.result as ArrayBuffer);
-      }
+      }*/
 
       setFileState(newState);
     };

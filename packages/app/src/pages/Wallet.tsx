@@ -3,6 +3,7 @@ import {
   Button,
   Grid,
   HStack,
+  Icon,
   Menu,
   MenuButton,
   MenuItemOption,
@@ -10,7 +11,7 @@ import {
   MenuOptionGroup,
   Spacer,
 } from "@chakra-ui/react";
-import { useLocation, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { t } from "@lingui/macro";
 import NoContent from "@app/components/NoContent";
 import useRestoreScroll from "@app/hooks/useRestoreScroll";
@@ -21,20 +22,25 @@ import PageHeader from "@app/components/PageHeader";
 import ViewPanelLayout from "@app/layouts/ViewPanelLayout";
 import useQueryString from "@app/hooks/useQueryString";
 import ViewDigitalObject from "@app/components/ViewDigitalObject";
-import { ChevronDownIcon } from "@chakra-ui/icons";
+import { ChevronDownIcon, SmallCloseIcon } from "@chakra-ui/icons";
 import MintMenu from "@app/components/MintMenu";
 import ActionIcon from "@app/components/ActionIcon";
 import { MdFilterAlt } from "react-icons/md";
+import { useLiveQuery } from "dexie-react-hooks";
+import db from "@app/db";
+import { TbBox } from "react-icons/tb";
 
 const pageSize = 60;
 
 export default function Wallet() {
   const { sref } = useParams();
+  const { containerRef } = useParams();
+  const context = containerRef ? `/container/${containerRef}` : "/objects";
 
   return (
     <ViewPanelLayout>
       <TokenGrid open={!!sref} />
-      {sref && <ViewDigitalObject sref={sref} context="/objects" />}
+      {sref && <ViewDigitalObject sref={sref} context={context} />}
     </ViewPanelLayout>
   );
 }
@@ -43,22 +49,41 @@ function TokenGrid({ open }: { open: boolean }) {
   const allTypes = ["object", "container", "user"];
   const { pathname } = useLocation();
   const { p: pageParam } = useQueryString();
+  const { containerRef } = useParams();
   const page = parseInt(pageParam || "0", 10);
   const [filterType, setFilterType] = useState<string[]>(allTypes);
   const nft = useNftQuery(
     (glyph) =>
       glyph.spent === 0 &&
-      (filterType.length ? filterType.includes(glyph.type) : true),
+      (filterType.length ? filterType.includes(glyph.type) : true) &&
+      (containerRef ? glyph.container === containerRef : true),
     pageSize,
     page,
-    [filterType]
+    [filterType, containerRef]
   );
+  const context = containerRef ? `/container/${containerRef}` : "/objects";
+
+  const container = useLiveQuery(() => {
+    if (containerRef) {
+      return db.glyph.get({ ref: containerRef });
+    }
+    return undefined;
+  }, [containerRef]);
 
   useRestoreScroll();
 
   return (
     <>
-      <PageHeader toolbar={<MintMenu />}>{t`Non-Fungible Tokens`}</PageHeader>
+      <PageHeader toolbar={<MintMenu />}>
+        {container ? (
+          <>
+            <Icon as={TbBox} fontSize="2xl" mr={2} />
+            {container.name}
+          </>
+        ) : (
+          t`Non-Fungible Tokens`
+        )}
+      </PageHeader>
 
       <HStack height="42px" gap={4} mb={2} mx={4} alignItems="start">
         <Menu closeOnSelect={false}>
@@ -83,6 +108,16 @@ function TokenGrid({ open }: { open: boolean }) {
             </MenuOptionGroup>
           </MenuList>
         </Menu>
+        {container && (
+          <Button
+            size="sm"
+            rightIcon={<SmallCloseIcon />}
+            as={Link}
+            to="/objects"
+          >
+            {container.name}
+          </Button>
+        )}
         <Spacer />
         <Pagination
           size="sm"
@@ -117,7 +152,7 @@ function TokenGrid({ open }: { open: boolean }) {
                     glyph={token.glyph}
                     value={token.txo.value}
                     key={token.txo.id}
-                    to={`/objects/token/${token.glyph.ref}${
+                    to={`${context}/token/${token.glyph.ref}${
                       page > 0 ? `?p=${page}` : ""
                     }`}
                     size={open ? "sm" : "md"}

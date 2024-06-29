@@ -75,7 +75,7 @@ export default function SideBar({ ...rest }: GridProps) {
         </MenuButton>
         <MenuButton
           to="/objects"
-          match="/objects"
+          match={["/objects", "/container"]}
           leftIcon={<Icon as={TbTriangleSquareCircle} boxSize={5} />}
         >
           {t`Non-Fungible Tokens`}

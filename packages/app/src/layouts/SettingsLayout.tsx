@@ -14,7 +14,7 @@ export default function SettingsLayout() {
   const headings: { [key: string]: string } = {
     "/settings/wallet": t`Wallet`,
     "/settings/servers": t`Servers`,
-    "/settings/ipfs": t`IPFS`,
+    //"/settings/ipfs": t`IPFS`,
     "/settings/about": t`About`,
   };
   const heading = headings[pathname];
@@ -31,9 +31,9 @@ export default function SettingsLayout() {
         <Button as={Link} to="/settings/servers">
           {t`Servers`}
         </Button>
-        <Button as={Link} to="/settings/ipfs">
+        {/*<Button as={Link} to="/settings/ipfs">
           {t`IPFS`}
-        </Button>
+        </Button>*/}
         <Button as={Link} to="/settings/about">
           {t`About`}
         </Button>

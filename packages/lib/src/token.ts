@@ -177,9 +177,10 @@ export function filterAttrs(obj: object) {
   return Object.fromEntries(
     Object.entries(obj).filter(
       ([, value]) =>
-        typeof value === "string" ||
-        typeof value === "number" ||
-        typeof value === "boolean"
+        (typeof value === "string" ||
+          typeof value === "number" ||
+          typeof value === "boolean") &&
+        `${value}`.length < 100
     )
   );
 }

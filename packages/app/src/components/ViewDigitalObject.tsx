@@ -46,7 +46,7 @@ import { RiContractRightLine, RiExpandLeftLine } from "react-icons/ri";
 import { useViewPanelContext } from "@app/layouts/ViewPanelLayout";
 import ActionIcon from "./ActionIcon";
 import { MdDeleteForever } from "react-icons/md";
-import { TbArrowUpRight } from "react-icons/tb";
+import { TbArrowUpRight, TbBox } from "react-icons/tb";
 import mime from "mime";
 // import FetchTokenTest from "./FetchMutableTest";
 // import EditTokenTest from "./EditTokenTest";
@@ -278,6 +278,16 @@ export default function ViewDigitalObject({
               >
                 {t`Melt`}
               </Button>
+              {nft.type === "container" && (
+                <Button
+                  as={Link}
+                  to={`/container/${nft.ref}`}
+                  leftIcon={<ActionIcon as={TbBox} />}
+                  sx={{ gridColumn: "span 2 / span 2" }}
+                >
+                  {t`View contents`}
+                </Button>
+              )}
             </SimpleGrid>
             {nft && (
               <TokenDetails glyph={nft} container={container} author={author}>

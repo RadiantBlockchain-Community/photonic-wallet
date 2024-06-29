@@ -38,6 +38,12 @@ export class Database extends Dexie {
       const testnet = config.defaultConfig.servers.testnet;
       transaction.table("kvp").put({ mainnet, testnet }, "servers");
     });
+
+    // Add container index
+    this.version(3).stores({
+      glyph:
+        "++id, &ref, [type+spent], [type+spent+fresh], lastTxoId, height, tokenType, container",
+    });
   }
 }
 

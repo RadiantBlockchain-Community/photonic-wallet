@@ -284,6 +284,14 @@ const router = createHashRouter([
             element: <MobileHome />,
           },
           {
+            path: "/container/:containerRef/:page?/:lastId?",
+            element: <Wallet />,
+          },
+          {
+            path: "/container/:containerRef/token/:sref/:page?/:lastId?",
+            element: <Wallet />,
+          },
+          {
             path: "/objects/:page?/:lastId?",
             element: <Wallet />,
           },

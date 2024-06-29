@@ -407,7 +407,7 @@ export class NFTWorker implements Subscription {
       immutable,
       location,
       name,
-      description: toString(payload.desc),
+      description: toString(payload.desc).substring(0, 1000),
       author,
       container,
       attrs: payload.attrs ? filterAttrs(payload.attrs) : {},

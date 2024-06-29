@@ -81,7 +81,7 @@ export default function TokenDetails({
           <TabPanel px={0}>
             {glyph.description && (
               <PropertyCard heading={t`Description`} mb={4}>
-                {glyph.description}
+                {glyph.description.substring(0, 1000)}
               </PropertyCard>
             )}
             <PropertyCard heading={t`Radiant ID`} mb={4}>
