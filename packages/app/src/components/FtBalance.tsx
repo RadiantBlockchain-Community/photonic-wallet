@@ -1,5 +1,6 @@
 import useBalance from "@app/hooks/useBalance";
 import { Spinner } from "@chakra-ui/react";
+import { formatPhotons } from "@lib/format";
 
 export default function FtBalance({
   id,
@@ -14,7 +15,7 @@ export default function FtBalance({
     <Spinner size="sm" />
   ) : (
     <>
-      {total} {ticker}
+      {formatPhotons(total)} {ticker}
     </>
   );
 }

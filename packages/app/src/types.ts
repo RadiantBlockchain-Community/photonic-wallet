@@ -3,7 +3,6 @@
 import type { EncryptedData } from "@lib/encryption";
 import { ElectrumUtxo, NetworkKey } from "@lib/types";
 import { CreateToastFnReturn } from "@chakra-ui/react";
-import { ElectrumTxMap } from "./electrum/worker/updateTxos";
 
 export type ScriptGroup = "rxd" | "ref" | "nft" | "ft";
 
@@ -58,6 +57,12 @@ export interface BlockHeader {
   reorg: boolean;
 }
 
+export interface BroadcastResult {
+  txid: string;
+  description: string;
+  date: number;
+}
+
 // Tokens that follow Radiant Smart Token standard
 export interface SmartToken {
   id?: number;
@@ -100,7 +105,6 @@ export type ElectrumStatusUpdate = (
 ) => Promise<{
   added: TxO[];
   confs: Map<number, ElectrumUtxo>;
-  newTxs?: ElectrumTxMap;
   spent: { id: number; value: number; script: string }[];
 }>;
 

@@ -1,4 +1,4 @@
-import { p2pkhScriptHash } from "@lib/script";
+import { p2pkhScript, p2pkhScriptHash } from "@lib/script";
 import {
   Subscription,
   ContractType,
@@ -20,7 +20,9 @@ export class RXDWorker implements Subscription {
 
   constructor(electrum: ElectrumManager) {
     this.electrum = electrum;
-    this.updateTXOs = buildUpdateTXOs(this.electrum, ContractType.RXD);
+    this.updateTXOs = buildUpdateTXOs(this.electrum, ContractType.RXD, () =>
+      p2pkhScript(this.address)
+    );
     this.lastReceivedStatus = "";
   }
 

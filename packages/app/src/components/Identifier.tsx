@@ -1,4 +1,4 @@
-import { CopyIcon } from "@chakra-ui/icons";
+import { CheckIcon, CopyIcon } from "@chakra-ui/icons";
 import {
   Code,
   CodeProps,
@@ -19,7 +19,7 @@ export default function Identifier({
   copyValue?: string;
   children: React.ReactNode;
 } & CodeProps) {
-  const { onCopy } = useClipboard(`${copyValue || children}`);
+  const { onCopy, hasCopied } = useClipboard(`${copyValue || children}`);
   const label = "Copy to clipboard";
   // Multiline left and right padding on span
   const [bg] = useToken("colors", ["blackAlpha.400"]);
@@ -48,7 +48,9 @@ export default function Identifier({
           <IconButton
             display="inline"
             onClick={onCopy}
-            icon={<CopyIcon />}
+            icon={
+              hasCopied ? <CheckIcon color="green.400" /> : <CopyIcon />
+            }
             variant="ghost"
             aria-label={label}
             size="xs"

@@ -7,6 +7,7 @@ import TokenContent from "@app/components/TokenContent";
 import { TbBox, TbUserCircle } from "react-icons/tb";
 import { IconType } from "react-icons/lib";
 import ValueTag from "./ValueTag";
+import { formatPhotons } from "@lib/format";
 
 const Ref = ({ value }: { value: string }) => {
   const ref = Outpoint.fromString(value);
@@ -76,7 +77,7 @@ export default function TokenRow({
         </Flex>
         <Ref value={glyph.ref} />
       </Box>
-      <ValueTag>{value}</ValueTag>
+      <ValueTag>{formatPhotons(value)}</ValueTag>
     </Flex>
   );
 }

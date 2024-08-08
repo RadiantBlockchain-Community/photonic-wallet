@@ -86,6 +86,7 @@ export type ElectrumUtxo = {
   tx_pos: number;
   height: number;
   value: number;
+  refs: { ref: string; type: "normal" | "singleton" }[];
 };
 
 export type ElectrumRefResponse = [

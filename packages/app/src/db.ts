@@ -5,6 +5,7 @@ import {
   BlockHeader,
   SubscriptionStatus,
   ContractBalance,
+  BroadcastResult,
 } from "./types";
 import config from "@app/config.json";
 import { shuffle } from "@lib/util";
@@ -18,6 +19,7 @@ export class Database extends Dexie {
   kvp!: Table<KeyValuePairs>;
   header!: Table<BlockHeader>;
   balance!: Table<ContractBalance>;
+  broadcast!: Table<BroadcastResult>;
 
   constructor() {
     super("photonic");
@@ -43,6 +45,11 @@ export class Database extends Dexie {
     this.version(3).stores({
       glyph:
         "++id, &ref, [type+spent], [type+spent+fresh], lastTxoId, height, tokenType, container",
+    });
+
+    // Add table for keeping track of transactions that have been broadcast
+    this.version(4).stores({
+      broadcast: "txid",
     });
   }
 }

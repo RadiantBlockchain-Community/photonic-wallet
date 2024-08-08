@@ -2,18 +2,29 @@ import { SmartToken, ContractType, ElectrumCallback, TxO } from "@app/types";
 import { NFTWorker } from "./NFT";
 import { buildUpdateTXOs } from "./updateTxos";
 import ElectrumManager from "@app/electrum/ElectrumManager";
-import { ftScriptHash, parseFtScript } from "@lib/script";
+import { ftScript, ftScriptHash, parseFtScript } from "@lib/script";
 import db from "@app/db";
-import { reverseRef } from "@lib/Outpoint";
+import Outpoint, { reverseRef } from "@lib/Outpoint";
 import setSubscriptionStatus from "./setSubscriptionStatus";
 
 export class FTWorker extends NFTWorker {
   protected ready = true;
   protected receivedStatuses: string[] = [];
+  protected address = "";
 
   constructor(electrum: ElectrumManager) {
     super(electrum);
-    this.updateTXOs = buildUpdateTXOs(this.electrum, ContractType.FT);
+    this.updateTXOs = buildUpdateTXOs(
+      this.electrum,
+      ContractType.FT,
+      (utxo) => {
+        const ref = Outpoint.fromShortInput(utxo.refs?.[0]?.ref)
+          .reverse()
+          .toString();
+        if (!ref) return undefined;
+        return ftScript(this.address, ref);
+      }
+    );
   }
 
   async onSubscriptionReceived(scriptHash: string, status: string) {
@@ -30,7 +41,7 @@ export class FTWorker extends NFTWorker {
     this.ready = false;
     this.lastReceivedStatus = status;
 
-    const { added, newTxs, spent } = await this.updateTXOs(scriptHash, status);
+    const { added, spent } = await this.updateTXOs(scriptHash, status);
 
     // TODO there is some duplication in NFT and FT classes
 
@@ -50,7 +61,7 @@ export class FTWorker extends NFTWorker {
       }
     }
 
-    const { related, accepted } = await this.addTokens(newRefs, newTxs || {});
+    const { related, accepted } = await this.addTokens(newRefs);
     this.addRelated(related);
 
     // All glyphs should now be in the database. Insert txos.
@@ -107,6 +118,7 @@ export class FTWorker extends NFTWorker {
 
   async register(address: string) {
     const scriptHash = ftScriptHash(address as string);
+    this.address = address;
 
     this.electrum.client?.subscribe(
       "blockchain.scripthash",

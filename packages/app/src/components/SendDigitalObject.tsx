@@ -114,6 +114,7 @@ export default function SendDigitalObject({
     ).toString();
     try {
       const txid = await electrumWorker.value.broadcast(rawTx);
+      db.broadcast.put({ txid, date: Date.now(), description: "nft_send" });
       onSuccess && onSuccess(txid);
     } catch (error) {
       setErrorMessage(t`Transaction rejected`);

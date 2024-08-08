@@ -17,6 +17,14 @@ export default class Outpoint {
     return new Outpoint(Buffer.from(txid, "hex"), Buffer.from(vout, "hex"));
   }
 
+  static fromShortInput(str: string) {
+    const txid = str.substring(0, 64);
+    const vout = parseInt(str.substring(65), 10);
+    const voutBuf = Buffer.alloc(4);
+    voutBuf.writeUInt32BE(vout);
+    return new Outpoint(Buffer.from(txid, "hex"), voutBuf);
+  }
+
   static fromUTXO(txid: string, vout: number) {
     const voutBuf = Buffer.alloc(4);
     voutBuf.writeUInt32BE(vout);

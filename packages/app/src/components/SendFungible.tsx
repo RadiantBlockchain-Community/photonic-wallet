@@ -135,6 +135,7 @@ export default function SendFungible({ glyph, onSuccess, disclosure }: Props) {
       ).toString();
       console.debug("Broadcasting", rawTx);
       const txid = await electrumWorker.value.broadcast(rawTx);
+      db.broadcast.put({ txid, date: Date.now(), description: "ft_send" });
       console.debug("Result", txid);
       toast({
         title: t`Sent ${value} ${ticker}`,

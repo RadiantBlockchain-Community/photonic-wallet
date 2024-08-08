@@ -4,6 +4,7 @@ import {
   parseDelegateBurnScript,
   parseDelegateBaseScript,
   parseNftScript,
+  nftScript,
 } from "@lib/script";
 import {
   Subscription,
@@ -14,11 +15,10 @@ import {
   SmartToken,
   SmartTokenType,
 } from "@app/types";
-import { ElectrumTxMap, buildUpdateTXOs } from "./updateTxos";
+import { buildUpdateTXOs } from "./updateTxos";
 import db from "@app/db";
 import Outpoint, { reverseRef } from "@lib/Outpoint";
 import {
-  decodeGlyph,
   extractRevealPayload,
   filterAttrs,
   isImmutableToken,
@@ -58,10 +58,21 @@ export class NFTWorker implements Subscription {
   protected lastReceivedStatus: string;
   protected receivedStatuses: string[] = [];
   protected ready = true;
+  protected address = "";
 
   constructor(electrum: ElectrumManager) {
     this.electrum = electrum;
-    this.updateTXOs = buildUpdateTXOs(this.electrum, ContractType.NFT);
+    this.updateTXOs = buildUpdateTXOs(
+      this.electrum,
+      ContractType.NFT,
+      (utxo) => {
+        const ref = Outpoint.fromShortInput(utxo.refs?.[0]?.ref)
+          .reverse()
+          .toString();
+        if (!ref) return undefined;
+        return nftScript(this.address, ref);
+      }
+    );
     this.lastReceivedStatus = "";
   }
 
@@ -79,10 +90,7 @@ export class NFTWorker implements Subscription {
     this.ready = false;
     this.lastReceivedStatus = status;
 
-    const { added, confs, newTxs, spent } = await this.updateTXOs(
-      scriptHash,
-      status
-    );
+    const { added, confs, spent } = await this.updateTXOs(scriptHash, status);
 
     const existingRefs: { [key: string]: SmartToken } = {};
     const newRefs: { [key: string]: TxO } = {};
@@ -100,7 +108,7 @@ export class NFTWorker implements Subscription {
       }
     }
 
-    const { related, accepted } = await this.addTokens(newRefs, newTxs || {});
+    const { related, accepted } = await this.addTokens(newRefs);
     this.addRelated(related);
 
     // All glyphs should now be in the database. Insert txos.
@@ -150,6 +158,7 @@ export class NFTWorker implements Subscription {
 
   async register(address: string) {
     const scriptHash = nftScriptHash(address as string);
+    this.address = address;
 
     this.electrum.client?.subscribe(
       "blockchain.scripthash",
@@ -165,48 +174,31 @@ export class NFTWorker implements Subscription {
    * @param txMap Map of new transactions returned from ElectrumX
    * @returns glyphs added to the database and any related refs that were found
    */
-  async addTokens(
-    refs: { [key: string]: TxO | undefined },
-    txMap: ElectrumTxMap = {}
-  ): Promise<{ accepted: { [key: string]: SmartToken }; related: string[] }> {
+  async addTokens(refs: {
+    [key: string]: TxO | undefined;
+  }): Promise<{ accepted: { [key: string]: SmartToken }; related: string[] }> {
     const refEntries = Object.entries(refs);
-
-    // Create an array of freshly minted refs
-    const fresh = refEntries
-      .map(([ref, txo]) => {
-        return txo?.txid &&
-          txMap[txo.txid]?.tx.inputs.some(
-            (input) =>
-              bytesToHex(input.prevTxId) === ref.substring(0, 64) &&
-              input.outputIndex === parseInt(ref.substring(64), 16)
-          )
-          ? ref
-          : undefined;
-      })
-      .filter(Boolean);
 
     // Get reveal transaction ids for all tokens
     // Reveal txids indexed by ref
-
+    const fresh: string[] = []; // Keep track of which refs are fresh mints
     const refReveals = await batchRequests<[string, TxO | undefined], string>(
       refEntries,
       6,
       async ([ref, txo]) => {
-        // Check if an input matches the ref. This will be a mint tx.
-        if (fresh.includes(ref) && txo) {
-          console.debug(`Ref ${ref} is fresh`);
-          // Freshly minted, we already have the reveal tx
-          return [ref, txo.txid];
-        }
-
         const result = (await this.electrum.client?.request(
           "blockchain.ref.get",
           ref
         )) as SingletonGetResponse;
         console.debug("ref.get", ref, result);
-        const a = result.length ? result[0].tx_hash : "";
+        const revealTxId = result.length ? result[0].tx_hash : "";
 
-        return [ref, a];
+        // Check if this is freshly minted
+        if (txo?.txid === revealTxId) {
+          fresh.push(ref);
+        }
+
+        return [ref, revealTxId];
       }
     );
 
@@ -225,12 +217,10 @@ export class NFTWorker implements Subscription {
             let hex = await opfs.getTx(revealTxId);
 
             if (!hex) {
-              hex =
-                txMap[revealTxId]?.hex ||
-                ((await this.electrum.client?.request(
-                  "blockchain.transaction.get",
-                  revealTxId
-                )) as string);
+              hex = (await this.electrum.client?.request(
+                "blockchain.transaction.get",
+                revealTxId
+              )) as string;
 
               // Store in cache
               await opfs.putTx(revealTxId, hex);
@@ -300,9 +290,10 @@ export class NFTWorker implements Subscription {
     const accepted: { [key: string]: SmartToken } = {};
     const relatedArrs = await Promise.all(
       refEntries.map(async ([ref, txo]) => {
-        const delegatedRefs = revealTxs[refReveals[ref]].delegates.flatMap(
-          (r) => delegateRefMap[r]
-        );
+        const delegatedRefs =
+          revealTxs[refReveals[ref]]?.delegates.flatMap(
+            (r) => delegateRefMap[r]
+          ) || [];
         const { related, valid, glyph } = await this.saveGlyph(
           ref,
           txo,

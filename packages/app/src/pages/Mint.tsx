@@ -528,8 +528,9 @@ export default function Mint({ tokenType }: { tokenType: TokenType }) {
 
       const deploy = buildDeployParams();
 
+      const shortTokenType = tokenType === "fungible" ? "ft" : "nft";
       const { commitTx, revealTx, fees, size } = mintToken(
-        tokenType === "fungible" ? "ft" : "nft",
+        shortTokenType,
         deploy,
         wallet.value.wif as string,
         coins,
@@ -543,9 +544,19 @@ export default function Mint({ tokenType }: { tokenType: TokenType }) {
 
       if (!dryRun) {
         // Broadcast commit
-        await broadcast(commitTx.toString());
+        const commitTxId = await broadcast(commitTx.toString());
+        db.broadcast.put({
+          txid: commitTxId,
+          date: Date.now(),
+          description: `${shortTokenType}_mint`,
+        });
         // Broadcast reveal
-        await broadcast(revealTx.toString());
+        const revealTxId = await broadcast(revealTx.toString());
+        db.broadcast.put({
+          txid: revealTxId,
+          date: Date.now(),
+          description: `${shortTokenType}_mint`,
+        });
       }
 
       revealTxIdRef.current = revealTx.id;
@@ -689,8 +700,8 @@ export default function Mint({ tokenType }: { tokenType: TokenType }) {
   const timeToMine = diff > 0 ? calcTimeToMine(diff) : "";
   const totalDmintSupply =
     parseInt(formData.numContracts, 10) *
-    parseInt(formData.maxHeight, 10) *
-    parseInt(formData.reward, 10) +
+      parseInt(formData.maxHeight, 10) *
+      parseInt(formData.reward, 10) +
     parseInt(formData.premine, 10);
 
   return (

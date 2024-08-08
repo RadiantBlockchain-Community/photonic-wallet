@@ -110,6 +110,7 @@ export default function MeltFungible({ glyph, onSuccess, disclosure }: Props) {
     ).toString();
     try {
       const txid = await electrumWorker.value.broadcast(rawTx);
+      db.broadcast.put({ txid, date: Date.now(), description: "ft_melt" });
       onSuccess && onSuccess(txid);
       toast({ status: "success", title: t`Tokens melted` });
     } catch (error) {

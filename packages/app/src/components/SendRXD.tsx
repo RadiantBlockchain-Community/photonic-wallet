@@ -125,6 +125,7 @@ export default function SendRXD({ onSuccess, disclosure }: Props) {
       ).toString();
       console.debug("Broadcasting", rawTx);
       const txid = await electrumWorker.value.broadcast(rawTx);
+      db.broadcast.put({ txid, date: Date.now(), description: "rxd_send" });
       console.debug("Result", txid);
       toast({
         title: t`Sent ${photonsToRXD(value)} ${network.value.ticker}`,

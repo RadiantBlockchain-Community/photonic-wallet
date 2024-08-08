@@ -94,6 +94,7 @@ export default function MeltDigitalObject({
     ).toString();
     try {
       const txid = await electrumWorker.value.broadcast(rawTx);
+      db.broadcast.put({ txid, date: Date.now(), description: "nft_melt" });
       onSuccess && onSuccess(txid);
       toast({ status: "success", title: t`Token melted` });
     } catch (error) {
