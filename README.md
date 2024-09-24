@@ -37,6 +37,8 @@ pnpm install
 pnpm dev
 ```
 
+If not using localhost, https may be required for crypto functions to work. This can be enabled by uncommenting `basicSsl` in `vite.config.ts`.
+
 ### Build web app and CLI
 
 ```bash

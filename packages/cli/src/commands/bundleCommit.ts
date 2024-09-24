@@ -177,13 +177,15 @@ export default async function bundleCommit(
             return [key, { t: embed.contentType, b: readFile(embed.path) }];
           }
           const remote = tokenFile as RemoteTokenFile;
-          const { src, hash } = remote;
+          const { src, hash, contentType } = remote;
           const srcHash = bytesToHex(sha256(remote.src));
           const hs = remote.stamp && readFile("cache", `hs.${srcHash}.webp`);
           return [
             key,
             {
-              src,
+              u: src,
+              ...(contentType &&
+                typeof contentType === "string" && { t: contentType }),
               ...(hash && typeof hash === "string" && { h: hexToBytes(hash) }),
               ...(hs && { hs }),
             },
