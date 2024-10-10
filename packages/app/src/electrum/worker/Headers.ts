@@ -94,6 +94,8 @@ export class HeadersSubscription implements Subscription {
     console.debug("Finished catching up");
   }
 
+  async syncPending() {}
+
   async processPending() {
     console.debug("Processing pending headers");
     while (this.pending.length > 0) {

@@ -30,6 +30,9 @@ const wrapped = wrap<{
   broadcast: (hex: string) => string;
   getRef: (ref: string) => ElectrumRefResponse;
   getTransaction: (txid: string) => string;
+  syncPending: () => string;
+  setActive: (active: boolean) => void;
+  isActive: () => boolean;
 }>(worker);
 export const electrumWorker = signal<typeof wrapped>(wrapped);
 

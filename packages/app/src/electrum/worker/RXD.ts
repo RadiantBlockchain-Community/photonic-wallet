@@ -9,16 +9,22 @@ import { buildUpdateTXOs } from "./updateTxos";
 import db from "@app/db";
 import ElectrumManager from "@app/electrum/ElectrumManager";
 import setSubscriptionStatus from "./setSubscriptionStatus";
+import { Worker } from "./electrumWorker";
+import { consolidationCheck } from "./consolidationCheck";
+import { updateRxdBalances } from "@app/utxos";
 
 export class RXDWorker implements Subscription {
+  protected worker: Worker;
   protected updateTXOs: ElectrumStatusUpdate;
   private electrum: ElectrumManager;
   protected lastReceivedStatus: string;
   protected ready = true;
   protected receivedStatuses: string[] = [];
   protected address = "";
+  protected scriptHash = "";
 
-  constructor(electrum: ElectrumManager) {
+  constructor(worker: Worker, electrum: ElectrumManager) {
+    this.worker = worker;
     this.electrum = electrum;
     this.updateTXOs = buildUpdateTXOs(this.electrum, ContractType.RXD, () =>
       p2pkhScript(this.address)
@@ -26,12 +32,27 @@ export class RXDWorker implements Subscription {
     this.lastReceivedStatus = "";
   }
 
+  async syncPending() {
+    if (this.ready && this.receivedStatuses.length > 0) {
+      const lastStatus = this.receivedStatuses.pop();
+      this.receivedStatuses = [];
+      if (lastStatus) {
+        await this.onSubscriptionReceived(this.scriptHash, lastStatus);
+      }
+    }
+  }
+
   async onSubscriptionReceived(scriptHash: string, status: string) {
     // Same subscription can be returned twice
     if (status === this.lastReceivedStatus) {
       return;
     }
-    if (!this.ready) {
+
+    if (
+      !this.ready ||
+      !this.worker.active ||
+      (await db.kvp.get("consolidationRequired"))
+    ) {
       this.receivedStatuses.push(status);
       return;
     }
@@ -43,21 +64,9 @@ export class RXDWorker implements Subscription {
 
     added.map((txo) => db.txo.put(txo).catch());
 
-    // Update balances
-    let confirmed = 0;
-    let unconfirmed = 0;
-    await db.txo
-      .where({ contractType: ContractType.RXD, spent: 0 })
-      .each(({ height, value }) => {
-        if (height === Infinity) {
-          unconfirmed += value;
-        } else {
-          confirmed += value;
-        }
-      });
+    updateRxdBalances(this.address);
 
     setSubscriptionStatus(scriptHash, status, ContractType.RXD);
-    db.balance.put({ id: this.address, confirmed, unconfirmed });
     this.ready = true;
     if (this.receivedStatuses.length > 0) {
       const lastStatus = this.receivedStatuses.pop();
@@ -66,16 +75,18 @@ export class RXDWorker implements Subscription {
         this.onSubscriptionReceived(scriptHash, lastStatus);
       }
     }
+
+    consolidationCheck();
   }
 
   async register(address: string) {
-    const scriptHash = p2pkhScriptHash(address as string);
+    this.scriptHash = p2pkhScriptHash(address as string);
     this.address = address;
 
     this.electrum.client?.subscribe(
       "blockchain.scripthash",
       this.onSubscriptionReceived.bind(this) as ElectrumCallback,
-      scriptHash
+      this.scriptHash
     );
   }
 }

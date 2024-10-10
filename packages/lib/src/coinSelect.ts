@@ -3,7 +3,10 @@
 import bsvCoinSelect from "bsv-coinselect";
 import { UnfinalizedInput, UnfinalizedOutput, Utxo } from "./types";
 
-export type SelectableInput = UnfinalizedInput & { required?: boolean };
+export type SelectableInput = UnfinalizedInput & {
+  required?: boolean;
+  utxo?: unknown;
+};
 
 // Convert a target object to a UTXO with txid and vout properties
 export const targetToUtxo = (
@@ -38,6 +41,8 @@ export function coinSelect(
     script: u.scriptSig,
     // scriptPubKey is not used by coinselect, but will be swapped back to the script property later
     scriptPubKey: u.script,
+    // Store the original UTXO so properties such as id can be preseved
+    utxo: u,
   }));
 
   const selected = bsvCoinSelect(inputs, target, feeRate, changeScript);

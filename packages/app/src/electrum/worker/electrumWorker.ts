@@ -11,9 +11,6 @@ type Timer = ReturnType<typeof setTimeout> | null;
 declare const self: SharedWorkerGlobalScope;
 
 const electrum = new ElectrumManager();
-const rxd = new RXDWorker(electrum);
-const nft = new NFTWorker(electrum);
-const ft = new FTWorker(electrum);
 // Disable until SPV is implemented
 //const headers = new HeadersWorker(electrum);
 let address = "";
@@ -24,6 +21,7 @@ let connectTimer: Timer = null;
 
 const worker = {
   ready: false,
+  active: true,
   setServers(newServers: string[]) {
     serverNum = 0;
     servers = newServers;
@@ -67,7 +65,24 @@ const worker = {
   isReady() {
     return this.ready;
   },
+  async syncPending() {
+    await rxd.syncPending();
+    await ft.syncPending();
+    await nft.syncPending();
+  },
+  setActive(active: boolean) {
+    this.active = active;
+  },
+  isActive() {
+    return this.active;
+  },
 };
+
+const rxd = new RXDWorker(worker, electrum);
+const nft = new NFTWorker(worker, electrum);
+const ft = new FTWorker(worker, electrum);
+
+export type Worker = typeof worker;
 
 function clearTimers() {
   if (connectTimer) {

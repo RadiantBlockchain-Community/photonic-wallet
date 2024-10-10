@@ -18,6 +18,7 @@ import Electrum from "./electrum/Electrum";
 import WalletNotifier from "./components/WalletNotifier";
 import { loadWalletFromSaved } from "./wallet";
 import useActivityDetector from "./hooks/useActivityDetector";
+import ConsolidationModal from "./components/ConsolidationModal";
 
 function Main() {
   useActivityDetector();
@@ -35,6 +36,7 @@ function Main() {
         <>
           <Unlock />
           <SendReceive />
+          <ConsolidationModal />
         </>
       )}
       <ReloadPrompt />

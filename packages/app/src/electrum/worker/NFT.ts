@@ -33,6 +33,8 @@ import opfs from "@app/opfs";
 import setSubscriptionStatus from "./setSubscriptionStatus";
 import { batchRequests } from "@lib/util";
 import { GLYPH_FT, GLYPH_NFT } from "@lib/protocols";
+import { Worker } from "./electrumWorker";
+import { consolidationCheck } from "./consolidationCheck";
 
 // 500KB size limit
 const fileSizeLimit = 500_000;
@@ -53,14 +55,17 @@ const filterRels = (reveal: Uint8Array[], commit: string[]) =>
     .map((rel) => Outpoint.fromString(rel).reverse().ref());
 
 export class NFTWorker implements Subscription {
+  protected worker: Worker;
   protected updateTXOs: ElectrumStatusUpdate;
   protected electrum: ElectrumManager;
   protected lastReceivedStatus: string;
   protected receivedStatuses: string[] = [];
   protected ready = true;
   protected address = "";
+  protected scriptHash = "";
 
-  constructor(electrum: ElectrumManager) {
+  constructor(worker: Worker, electrum: ElectrumManager) {
+    this.worker = worker;
     this.electrum = electrum;
     this.updateTXOs = buildUpdateTXOs(
       this.electrum,
@@ -76,13 +81,27 @@ export class NFTWorker implements Subscription {
     this.lastReceivedStatus = "";
   }
 
+  async syncPending() {
+    if (this.ready && this.receivedStatuses.length > 0) {
+      const lastStatus = this.receivedStatuses.pop();
+      this.receivedStatuses = [];
+      if (lastStatus) {
+        await this.onSubscriptionReceived(this.scriptHash, lastStatus);
+      }
+    }
+  }
+
   async onSubscriptionReceived(scriptHash: string, status: string) {
     // Same subscription can be returned twice
     if (status === this.lastReceivedStatus) {
       console.debug("Duplicate subscription received", status);
       return;
     }
-    if (!this.ready) {
+    if (
+      !this.ready ||
+      !this.worker.active ||
+      (await db.kvp.get("consolidationRequired"))
+    ) {
       this.receivedStatuses.push(status);
       return;
     }
@@ -154,16 +173,18 @@ export class NFTWorker implements Subscription {
         this.onSubscriptionReceived(scriptHash, lastStatus);
       }
     }
+
+    consolidationCheck();
   }
 
   async register(address: string) {
-    const scriptHash = nftScriptHash(address as string);
+    this.scriptHash = nftScriptHash(address as string);
     this.address = address;
 
     this.electrum.client?.subscribe(
       "blockchain.scripthash",
       this.onSubscriptionReceived.bind(this) as ElectrumCallback,
-      scriptHash
+      this.scriptHash
     );
   }
 

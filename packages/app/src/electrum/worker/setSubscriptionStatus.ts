@@ -8,8 +8,7 @@ export default async function setSubscriptionStatus(
   status: string,
   contractType: ContractType
 ) {
-  await db.subscriptionStatus.put({
-    scriptHash,
+  await db.subscriptionStatus.update(scriptHash, {
     status,
     contractType,
     sync: { done: true },

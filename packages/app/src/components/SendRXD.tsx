@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { t } from "@lingui/macro";
 import { PrivateKey } from "@radiantblockchain/radiantjs";
 import Big from "big.js";
-import coinSelect, { SelectableInput } from "@lib/coinSelect";
+import coinSelect, { SelectableInput, updateUnspent } from "@lib/coinSelect";
 import {
   Modal,
   ModalOverlay,
@@ -35,6 +35,7 @@ import { buildTx } from "@lib/tx";
 import { feeRate, network, wallet } from "@app/signals";
 import { electrumWorker } from "@app/electrum/Electrum";
 import Balance from "./Balance";
+import { updateRxdBalances, updateWalletUtxos } from "@app/utxos";
 
 interface Props {
   onSuccess?: (txid: string) => void;
@@ -131,6 +132,16 @@ export default function SendRXD({ onSuccess, disclosure }: Props) {
         title: t`Sent ${photonsToRXD(value)} ${network.value.ticker}`,
         status: "success",
       });
+
+      // Update UTXOs without waiting for subscription
+      updateWalletUtxos(
+        ContractType.RXD,
+        changeScript,
+        changeScript,
+        txid,
+        selected.inputs,
+        selected.outputs
+      ).then(() => updateRxdBalances(wallet.value.address));
 
       onSuccess && onSuccess(txid);
     } catch (error) {

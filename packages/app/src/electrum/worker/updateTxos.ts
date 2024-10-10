@@ -26,6 +26,7 @@ export const buildUpdateTXOs =
     added: TxO[];
     confs: Map<number, ElectrumUtxo>;
     spent: { id: number; value: number; script: string }[];
+    utxoCount?: number;
   }> => {
     const updated = await db.subscriptionStatus.update(scriptHash, {
       sync: { done: false },
@@ -135,5 +136,5 @@ export const buildUpdateTXOs =
       }
     });
 
-    return { added, confs, spent };
+    return { added, confs, spent, utxoCount: utxos.length };
   };

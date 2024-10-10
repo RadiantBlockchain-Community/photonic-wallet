@@ -18,26 +18,30 @@ import {
   Alert,
   AlertDescription,
   AlertIcon,
+  useToast,
 } from "@chakra-ui/react";
 import { photonsToRXD } from "@lib/format";
 import { useLiveQuery } from "dexie-react-hooks";
 import db from "@app/db";
-import { ContractType, TxO } from "@app/types";
+import { ContractType, SmartToken, TxO } from "@app/types";
 import { p2pkhScript, nftScript } from "@lib/script";
 import { buildTx } from "@lib/tx";
 import Identifier from "./Identifier";
 import Outpoint from "@lib/Outpoint";
 import { feeRate, network, wallet } from "@app/signals";
 import { electrumWorker } from "@app/electrum/Electrum";
+import { updateRxdBalances, updateWalletUtxos } from "@app/utxos";
 
 interface Props {
-  asset: TxO;
+  glyph: SmartToken;
+  txo: TxO;
   onSuccess?: (txid: string) => void;
   disclosure: UseDisclosureProps;
 }
 
 export default function SendDigitalObject({
-  asset,
+  glyph,
+  txo,
   onSuccess,
   disclosure,
 }: Props) {
@@ -46,7 +50,8 @@ export default function SendDigitalObject({
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
-  const ref = Outpoint.fromString(asset.script.substring(2, 74));
+  const toast = useToast();
+  const ref = Outpoint.fromString(txo.script.substring(2, 74));
 
   const rxd = useLiveQuery(
     () => db.txo.where({ contractType: ContractType.RXD, spent: 0 }).toArray(),
@@ -78,7 +83,7 @@ export default function SendDigitalObject({
     }
 
     // Set script to "" so P2PKH scriptSig is used for fee calculation
-    const required: SelectableInput = { ...asset, required: true, script: "" };
+    const required: SelectableInput = { ...txo, required: true, script: "" };
     const inputs: SelectableInput[] = [required, ...rxd.slice()];
 
     const changeScript = p2pkhScript(wallet.value.address);
@@ -90,7 +95,7 @@ export default function SendDigitalObject({
     const selected = coinSelect(
       wallet.value.address,
       inputs,
-      [{ script, value: asset.value }],
+      [{ script, value: txo.value }],
       changeScript,
       feeRate.value
     );
@@ -101,7 +106,7 @@ export default function SendDigitalObject({
       return;
     }
 
-    selected.inputs[0].script = asset.script;
+    selected.inputs[0].script = txo.script;
 
     const privKey = PrivateKey.fromString(wallet.value.wif as string);
 
@@ -115,9 +120,32 @@ export default function SendDigitalObject({
     try {
       const txid = await electrumWorker.value.broadcast(rawTx);
       db.broadcast.put({ txid, date: Date.now(), description: "nft_send" });
+
+      toast({
+        title: t`Sent NFT`,
+        status: "success",
+      });
+
+      updateWalletUtxos(
+        ContractType.NFT,
+        txo.script, // NFT script, if sent to self
+        changeScript, // RXD change
+        txid,
+        selected.inputs,
+        selected.outputs
+      ).then((newTxoIds) => {
+        // If sent to self, update lastTxoId of glyph
+        if (newTxoIds.length && glyph.id) {
+          db.glyph.update(glyph.id, { lastTxoId: newTxoIds.pop() });
+        }
+        // Update RXD change
+        updateRxdBalances(wallet.value.address);
+      });
+
       onSuccess && onSuccess(txid);
     } catch (error) {
       setErrorMessage(t`Transaction rejected`);
+      console.debug(error);
       setSuccess(false);
       setLoading(false);
     }
@@ -158,7 +186,7 @@ export default function SendDigitalObject({
             </FormControl>
             <FormControl>
               <FormLabel>{t`Amount`}</FormLabel>
-              <Identifier>{`${photonsToRXD(asset.value)} ${
+              <Identifier>{`${photonsToRXD(txo.value)} ${
                 network.value.ticker
               }`}</Identifier>
             </FormControl>

@@ -331,7 +331,8 @@ export default function ViewDigitalObject({
         </Container>
       </Grid>
       <SendDigitalObject
-        asset={txo}
+        glyph={nft}
+        txo={txo}
         disclosure={sendDisclosure}
         onSuccess={(txid) => {
           sendDisclosure.onClose();

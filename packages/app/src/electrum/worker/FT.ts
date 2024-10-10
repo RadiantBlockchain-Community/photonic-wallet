@@ -6,14 +6,17 @@ import { ftScript, ftScriptHash, parseFtScript } from "@lib/script";
 import db from "@app/db";
 import Outpoint, { reverseRef } from "@lib/Outpoint";
 import setSubscriptionStatus from "./setSubscriptionStatus";
+import { Worker } from "./electrumWorker";
+import { consolidationCheck } from "./consolidationCheck";
+import { updateFtBalances } from "@app/utxos";
 
 export class FTWorker extends NFTWorker {
   protected ready = true;
   protected receivedStatuses: string[] = [];
   protected address = "";
 
-  constructor(electrum: ElectrumManager) {
-    super(electrum);
+  constructor(worker: Worker, electrum: ElectrumManager) {
+    super(worker, electrum);
     this.updateTXOs = buildUpdateTXOs(
       this.electrum,
       ContractType.FT,
@@ -33,7 +36,12 @@ export class FTWorker extends NFTWorker {
       console.debug("Duplicate subscription received", status);
       return;
     }
-    if (!this.ready) {
+
+    if (
+      !this.ready ||
+      !this.worker.active ||
+      (await db.kvp.get("consolidationRequired"))
+    ) {
       this.receivedStatuses.push(status);
       return;
     }
@@ -87,24 +95,8 @@ export class FTWorker extends NFTWorker {
       ...spent.map(({ script }) => script),
     ]);
 
-    // Update balances
-    for (const script of touched) {
-      let confirmed = 0;
-      let unconfirmed = 0;
-      await db.txo.where({ script, spent: 0 }).each(({ height, value }) => {
-        if (height === Infinity) {
-          unconfirmed += value;
-        } else {
-          confirmed += value;
-        }
-      });
-      const { ref } = parseFtScript(script);
-      db.balance.put({
-        id: reverseRef(ref as string),
-        confirmed,
-        unconfirmed,
-      });
-    }
+    updateFtBalances(touched);
+
     setSubscriptionStatus(scriptHash, status, ContractType.FT);
     this.ready = true;
     if (this.receivedStatuses.length > 0) {
@@ -114,16 +106,18 @@ export class FTWorker extends NFTWorker {
         this.onSubscriptionReceived(scriptHash, lastStatus);
       }
     }
+
+    consolidationCheck();
   }
 
   async register(address: string) {
-    const scriptHash = ftScriptHash(address as string);
+    this.scriptHash = ftScriptHash(address as string);
     this.address = address;
 
     this.electrum.client?.subscribe(
       "blockchain.scripthash",
       this.onSubscriptionReceived.bind(this) as ElectrumCallback,
-      scriptHash
+      this.scriptHash
     );
   }
 }

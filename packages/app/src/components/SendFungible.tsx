@@ -36,6 +36,7 @@ import TokenContent from "./TokenContent";
 import { RiQuestionFill } from "react-icons/ri";
 import { electrumWorker } from "@app/electrum/Electrum";
 import FtBalance from "./FtBalance";
+import { updateFtBalances, updateWalletUtxos } from "@app/utxos";
 
 interface Props {
   glyph: SmartToken;
@@ -108,6 +109,7 @@ export default function SendFungible({ glyph, onSuccess, disclosure }: Props) {
 
       const outputs = [{ script: toScript, value }];
       if (accum.sum > value) {
+        // Create FT change output
         outputs.push({ script: fromScript, value: accum.sum - value });
       }
 
@@ -141,6 +143,15 @@ export default function SendFungible({ glyph, onSuccess, disclosure }: Props) {
         title: t`Sent ${value} ${ticker}`,
         status: "success",
       });
+
+      updateWalletUtxos(
+        ContractType.FT,
+        fromScript, // FT change
+        changeScript, // RXD change
+        txid,
+        selected.inputs,
+        selected.outputs
+      ).then(() => updateFtBalances(new Set([fromScript])));
 
       onSuccess && onSuccess(txid);
     } catch (error) {
