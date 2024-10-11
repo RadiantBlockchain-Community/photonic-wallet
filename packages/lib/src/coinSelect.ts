@@ -84,6 +84,7 @@ export function fundTx(
     // height:  // FIXME
     required: u.required || false,
     script: u.scriptSigSize ? "00".repeat(u.scriptSigSize) : "", // Create dummy script sig. If empty, coinselect will default to p2pkh
+    utxo: u,
   }));
 
   const selected: {

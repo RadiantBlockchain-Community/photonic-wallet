@@ -6,13 +6,19 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: es\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
 
 #: src/hooks/useContractNotifier.ts:11
 #: src/hooks/useContractNotifier.ts:30
 msgid "{0} {1} received"
 msgstr ""
 
-#: src/components/SendDigitalObject.tsx:151
+#: src/components/SendDigitalObject.tsx:189
 msgid "{0} address"
 msgstr ""
 
@@ -24,15 +30,15 @@ msgstr ""
 msgid "{children}"
 msgstr ""
 
-#: src/pages/Mint.tsx:847
+#: src/pages/Mint.tsx:874
 msgid "<0>Your uploaded file will have the following URL</0><1>ipfs://{0}</1>"
 msgstr ""
 
-#: src/pages/Mint.tsx:874
+#: src/pages/Mint.tsx:901
 msgid "A compressed copy of the token image stored on-chain"
 msgstr ""
 
-#: src/pages/Mint.tsx:838
+#: src/pages/Mint.tsx:865
 msgid "A HashStamp image may be stored on-chain."
 msgstr ""
 
@@ -45,17 +51,17 @@ msgstr ""
 msgid "About"
 msgstr ""
 
-#: src/pages/Mint.tsx:994
+#: src/pages/Mint.tsx:1021
 msgid "Add attribute"
 msgstr ""
 
-#: src/pages/WalletSettings.tsx:76
+#: src/pages/WalletSettings.tsx:81
 msgid "Address"
 msgstr ""
 
-#: src/components/SendDigitalObject.tsx:159
-#: src/components/SendFungible.tsx:197
-#: src/components/SendRXD.tsx:180
+#: src/components/SendDigitalObject.tsx:197
+#: src/components/SendFungible.tsx:210
+#: src/components/SendRXD.tsx:193
 msgid "Amount"
 msgstr ""
 
@@ -67,16 +73,16 @@ msgstr ""
 msgid "API key"
 msgstr ""
 
-#: src/pages/Mint.tsx:731
+#: src/pages/Mint.tsx:758
 msgid "Assigning an author is recommended for authentication of tokens."
 msgstr ""
 
-#: src/pages/Mint.tsx:976
+#: src/pages/Mint.tsx:1003
 msgid "Attributes"
 msgstr ""
 
 #: src/components/TokenDetails.tsx:114
-#: src/pages/Mint.tsx:721
+#: src/pages/Mint.tsx:748
 msgid "Author"
 msgstr ""
 
@@ -84,8 +90,8 @@ msgstr ""
 msgid "Back to wallet"
 msgstr ""
 
-#: src/components/SendFungible.tsx:177
-#: src/components/SendRXD.tsx:160
+#: src/components/SendFungible.tsx:190
+#: src/components/SendRXD.tsx:173
 msgid "Balance"
 msgstr ""
 
@@ -93,15 +99,15 @@ msgstr ""
 msgid "Block"
 msgstr ""
 
-#: src/pages/Mint.tsx:1242
+#: src/pages/Mint.tsx:1269
 msgid "Calculate Fee"
 msgstr ""
 
-#: src/components/MeltDigitalObject.tsx:135
-#: src/components/MeltFungible.tsx:139
-#: src/components/SendDigitalObject.tsx:169
-#: src/components/SendFungible.tsx:209
-#: src/components/SendRXD.tsx:200
+#: src/components/MeltDigitalObject.tsx:136
+#: src/components/MeltFungible.tsx:152
+#: src/components/SendDigitalObject.tsx:207
+#: src/components/SendFungible.tsx:222
+#: src/components/SendRXD.tsx:213
 msgid "Cancel"
 msgstr ""
 
@@ -140,7 +146,7 @@ msgid "Confirm password"
 msgstr ""
 
 #: src/components/StatusBar.tsx:67
-#: src/electrum/Electrum.tsx:50
+#: src/electrum/Electrum.tsx:55
 msgid "Connected"
 msgstr ""
 
@@ -148,14 +154,22 @@ msgstr ""
 msgid "Connecting"
 msgstr ""
 
+#: src/components/ConsolidationModal.tsx:280
+msgid "Consolidating UTXOs"
+msgstr ""
+
+#: src/components/ConsolidationModal.tsx:271
+msgid "Consolidation required"
+msgstr ""
+
 #: src/components/MintMenu.tsx:50
 #: src/components/TokenDetails.tsx:137
-#: src/pages/Mint.tsx:736
-#: src/pages/Wallet.tsx:81
+#: src/pages/Mint.tsx:763
+#: src/pages/Wallet.tsx:106
 msgid "Container"
 msgstr ""
 
-#: src/pages/Mint.tsx:746
+#: src/pages/Mint.tsx:773
 msgid "Containers can be used to create token collections"
 msgstr ""
 
@@ -182,16 +196,16 @@ msgstr ""
 msgid "Copy URL"
 msgstr ""
 
-#: src/components/SendFungible.tsx:146
-#: src/components/SendRXD.tsx:136
+#: src/components/SendFungible.tsx:159
+#: src/components/SendRXD.tsx:149
 msgid "Could not send transaction"
 msgstr ""
 
-#: src/pages/Mint.tsx:403
+#: src/pages/Mint.tsx:416
 msgid "Couldn't find container"
 msgstr ""
 
-#: src/pages/Mint.tsx:383
+#: src/pages/Mint.tsx:396
 msgid "Couldn't find user"
 msgstr ""
 
@@ -207,7 +221,7 @@ msgstr ""
 msgid "Creating wallet"
 msgstr ""
 
-#: src/components/TokenData.tsx:43
+#: src/components/TokenData.tsx:46
 msgid "Data not found"
 msgstr ""
 
@@ -215,7 +229,7 @@ msgstr ""
 msgid "Date"
 msgstr ""
 
-#: src/pages/Mint.tsx:1053
+#: src/pages/Mint.tsx:1080
 msgid "Decentralized mint"
 msgstr ""
 
@@ -231,13 +245,13 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#: src/pages/Mint.tsx:1050
+#: src/pages/Mint.tsx:1077
 msgid "Deployment method"
 msgstr ""
 
 #: src/components/TokenDetails.tsx:83
-#: src/pages/Mint.tsx:960
-#: src/pages/Mint.tsx:962
+#: src/pages/Mint.tsx:987
+#: src/pages/Mint.tsx:989
 msgid "Description"
 msgstr ""
 
@@ -245,17 +259,17 @@ msgstr ""
 msgid "Details"
 msgstr ""
 
-#: src/pages/Mint.tsx:1060
+#: src/pages/Mint.tsx:1087
 msgid "Difficulty"
 msgstr ""
 
-#: src/pages/Mint.tsx:1052
+#: src/pages/Mint.tsx:1079
 msgid "Direct to wallet"
 msgstr ""
 
 #: src/components/StatusBar.tsx:69
 #: src/components/StatusBar.tsx:70
-#: src/electrum/Electrum.tsx:55
+#: src/electrum/Electrum.tsx:60
 msgid "Disconnected"
 msgstr ""
 
@@ -264,15 +278,15 @@ msgstr ""
 msgid "Download"
 msgstr ""
 
-#: src/components/TokenData.tsx:83
+#: src/components/TokenData.tsx:86
 msgid "Download main file"
 msgstr ""
 
-#: src/components/TokenData.tsx:73
+#: src/components/TokenData.tsx:76
 msgid "Download transaction"
 msgstr ""
 
-#: src/pages/Mint.tsx:123
+#: src/pages/Mint.tsx:124
 msgid "Drop file"
 msgstr ""
 
@@ -285,7 +299,7 @@ msgstr ""
 msgid "Ensure you have saved your recovery phrase before logging out! Your recovery phrase is the only way you can recreate your wallet."
 msgstr ""
 
-#: src/pages/WalletSettings.tsx:96
+#: src/pages/WalletSettings.tsx:101
 msgid "Enter password"
 msgstr ""
 
@@ -293,15 +307,17 @@ msgstr ""
 msgid "Enter your 12 word recovery phrase"
 msgstr ""
 
-#: src/pages/Mint.tsx:554
+#: src/components/MeltFungible.tsx:62
+#: src/pages/Mint.tsx:309
+#: src/pages/Mint.tsx:578
 msgid "Error"
 msgstr ""
 
-#: src/pages/Mint.tsx:1172
+#: src/pages/Mint.tsx:1199
 msgid "Fee"
 msgstr ""
 
-#: src/pages/WalletSettings.tsx:116
+#: src/pages/WalletSettings.tsx:132
 msgid "Fee Rate"
 msgstr ""
 
@@ -309,12 +325,12 @@ msgstr ""
 msgid "Fetch"
 msgstr ""
 
-#: src/pages/Mint.tsx:757
-#: src/pages/Mint.tsx:769
+#: src/pages/Mint.tsx:784
+#: src/pages/Mint.tsx:796
 msgid "File"
 msgstr ""
 
-#: src/pages/Mint.tsx:569
+#: src/pages/Mint.tsx:594
 msgid "File is too large"
 msgstr ""
 
@@ -323,12 +339,12 @@ msgstr ""
 msgid "Files may be unsafe and result in loss of funds"
 msgstr ""
 
-#: src/pages/Wallet.tsx:68
-#: src/pages/Wallet.tsx:72
+#: src/pages/Wallet.tsx:93
+#: src/pages/Wallet.tsx:97
 msgid "Filter"
 msgstr ""
 
-#: src/pages/Mint.tsx:1179
+#: src/pages/Mint.tsx:1206
 msgid "FT supply funding"
 msgstr ""
 
@@ -346,11 +362,11 @@ msgid "Gateway"
 msgstr ""
 
 #: src/components/TokenDetails.tsx:171
-#: src/pages/Mint.tsx:861
+#: src/pages/Mint.tsx:888
 msgid "HashStamp"
 msgstr ""
 
-#: src/components/ViewDigitalObject.tsx:315
+#: src/components/ViewDigitalObject.tsx:325
 msgid "Height"
 msgstr ""
 
@@ -362,7 +378,11 @@ msgstr ""
 msgid "Home"
 msgstr ""
 
-#: src/pages/Mint.tsx:1018
+#: src/pages/WalletSettings.tsx:112
+msgid "If your wallet fails to consolidate UTXOs, a resync may be required"
+msgstr ""
+
+#: src/pages/Mint.tsx:1045
 msgid "Immutable"
 msgstr ""
 
@@ -375,27 +395,27 @@ msgid "Inspect"
 msgstr ""
 
 #: src/components/MeltDigitalObject.tsx:78
-#: src/components/MeltFungible.tsx:84
-#: src/components/SendDigitalObject.tsx:98
-#: src/components/SendFungible.tsx:124
-#: src/components/SendRXD.tsx:111
+#: src/components/MeltFungible.tsx:96
+#: src/components/SendDigitalObject.tsx:104
+#: src/components/SendFungible.tsx:126
+#: src/components/SendRXD.tsx:112
 msgid "Insufficient funds"
 msgstr ""
 
-#: src/components/SendFungible.tsx:106
+#: src/components/SendFungible.tsx:107
 msgid "Insufficient token balance"
 msgstr ""
 
-#: src/components/SendDigitalObject.tsx:71
-#: src/components/SendFungible.tsx:84
-#: src/components/SendFungible.tsx:100
-#: src/components/SendRXD.tsx:77
-#: src/components/SendRXD.tsx:96
+#: src/components/SendDigitalObject.tsx:76
+#: src/components/SendFungible.tsx:85
+#: src/components/SendFungible.tsx:101
+#: src/components/SendRXD.tsx:78
+#: src/components/SendRXD.tsx:97
 msgid "Invalid address"
 msgstr ""
 
-#: src/components/SendFungible.tsx:80
-#: src/components/SendRXD.tsx:72
+#: src/components/SendFungible.tsx:81
+#: src/components/SendRXD.tsx:73
 msgid "Invalid amount"
 msgstr ""
 
@@ -403,9 +423,7 @@ msgstr ""
 msgid "Invalid recovery phrase"
 msgstr ""
 
-#: src/layouts/SettingsLayout.tsx:17
-#: src/layouts/SettingsLayout.tsx:35
-#: src/pages/Mint.tsx:846
+#: src/pages/Mint.tsx:873
 msgid "IPFS"
 msgstr ""
 
@@ -421,13 +439,13 @@ msgstr ""
 msgid "IPFS Gateway URL"
 msgstr ""
 
-#: src/pages/WalletSettings.tsx:106
+#: src/pages/WalletSettings.tsx:122
 msgid "Language"
 msgstr ""
 
 #: src/pages/About.tsx:12
-#: src/pages/Mint.tsx:968
-#: src/pages/Mint.tsx:970
+#: src/pages/Mint.tsx:995
+#: src/pages/Mint.tsx:997
 msgid "License"
 msgstr ""
 
@@ -435,7 +453,7 @@ msgstr ""
 msgid "Link"
 msgstr ""
 
-#: src/components/ViewDigitalObject.tsx:292
+#: src/components/ViewDigitalObject.tsx:302
 msgid "Location"
 msgstr ""
 
@@ -453,22 +471,26 @@ msgstr ""
 msgid "Logging out will remove your wallet and all saved data from your browser."
 msgstr ""
 
-#: src/pages/Mint.tsx:139
+#: src/pages/WalletSettings.tsx:110
+msgid "Manual Sync"
+msgstr ""
+
+#: src/pages/Mint.tsx:140
 msgid "Maximum 100kb"
 msgstr ""
 
-#: src/components/MeltDigitalObject.tsx:133
-#: src/components/MeltFungible.tsx:137
+#: src/components/MeltDigitalObject.tsx:134
+#: src/components/MeltFungible.tsx:150
 #: src/components/ViewDigitalObject.tsx:279
 #: src/components/ViewFungible.tsx:256
 msgid "Melt"
 msgstr ""
 
-#: src/components/MeltDigitalObject.tsx:111
+#: src/components/MeltDigitalObject.tsx:112
 msgid "Melt token"
 msgstr ""
 
-#: src/components/MeltFungible.tsx:115
+#: src/components/MeltFungible.tsx:128
 msgid "Melt tokens"
 msgstr ""
 
@@ -478,11 +500,11 @@ msgstr ""
 
 #: src/components/MintMenu.tsx:28
 #: src/components/TokenDetails.tsx:96
-#: src/pages/Mint.tsx:1227
+#: src/pages/Mint.tsx:1254
 msgid "Mint"
 msgstr ""
 
-#: src/pages/Mint.tsx:684
+#: src/pages/Mint.tsx:711
 msgid "Mint <0/>"
 msgstr ""
 
@@ -494,7 +516,7 @@ msgstr ""
 msgid "Mint successful"
 msgstr ""
 
-#: src/pages/Mint.tsx:547
+#: src/pages/Mint.tsx:571
 msgid "Minted. Fee {0} {1}"
 msgstr ""
 
@@ -506,21 +528,21 @@ msgstr ""
 msgid "Move up"
 msgstr ""
 
-#: src/pages/Mint.tsx:1088
+#: src/pages/Mint.tsx:1115
 msgid "Multiple contracts allows parallel mining, reducing congestion for low difficulty contracts"
 msgstr ""
 
-#: src/pages/Mint.tsx:1043
+#: src/pages/Mint.tsx:1070
 msgid "Mutable tokens are not yet fully supported by Photonic Wallet, however a mutable contract containing 1 photon will be created."
 msgstr ""
 
-#: src/pages/Mint.tsx:1034
+#: src/pages/Mint.tsx:1061
 msgid "Mutable tokens are recommended for user and container tokens"
 msgstr ""
 
-#: src/pages/Mint.tsx:951
-#: src/pages/Mint.tsx:953
+#: src/pages/Mint.tsx:978
 #: src/pages/Mint.tsx:980
+#: src/pages/Mint.tsx:1007
 msgid "Name"
 msgstr ""
 
@@ -550,19 +572,19 @@ msgid "NFT.Storage API Key"
 msgstr ""
 
 #: src/pages/Fungible.tsx:64
-#: src/pages/Wallet.tsx:99
+#: src/pages/Wallet.tsx:134
 msgid "No assets"
 msgstr ""
 
-#: src/pages/Mint.tsx:870
+#: src/pages/Mint.tsx:897
 msgid "No HashStamp"
 msgstr ""
 
-#: src/pages/Mint.tsx:703
+#: src/pages/Mint.tsx:730
 msgid "No NFT.Storage API key has been provided. To upload large files, please go to <0>IPFS Settings</0> and enter your key."
 msgstr ""
 
-#: src/pages/Mint.tsx:308
+#: src/pages/Mint.tsx:321
 msgid "No NFT.Storage API key provided"
 msgstr ""
 
@@ -570,43 +592,43 @@ msgstr ""
 msgid "No servers defined"
 msgstr ""
 
-#: src/pages/Mint.tsx:1028
+#: src/pages/Mint.tsx:1055
 msgid "No, allow token owner to modify"
 msgstr ""
 
 #: src/components/MintMenu.tsx:36
-#: src/components/SendDigitalObject.tsx:155
+#: src/components/SendDigitalObject.tsx:193
 msgid "Non-Fungible Token"
 msgstr ""
 
 #: src/components/SideBar.tsx:81
-#: src/pages/Wallet.tsx:61
+#: src/pages/Wallet.tsx:84
 msgid "Non-Fungible Tokens"
 msgstr ""
 
-#: src/pages/Mint.tsx:723
+#: src/pages/Mint.tsx:750
 msgid "None"
 msgstr ""
 
-#: src/pages/Mint.tsx:1077
+#: src/pages/Mint.tsx:1104
 msgid "Number of contracts"
 msgstr ""
 
-#: src/pages/Mint.tsx:1092
+#: src/pages/Mint.tsx:1119
 msgid "Number of mints"
 msgstr ""
 
-#: src/pages/Mint.tsx:1116
+#: src/pages/Mint.tsx:1143
 msgid "Number of tokens created on each mint"
 msgstr ""
 
-#: src/pages/Wallet.tsx:80
+#: src/pages/Wallet.tsx:105
 msgid "Object"
 msgstr ""
 
 #: src/components/TokenDetails.tsx:43
 #: src/components/TokenDetails.tsx:102
-#: src/components/ViewDigitalObject.tsx:298
+#: src/components/ViewDigitalObject.tsx:308
 msgid "Open in block explorer"
 msgstr ""
 
@@ -614,7 +636,7 @@ msgstr ""
 msgid "Open menu"
 msgstr ""
 
-#: src/components/ViewDigitalObject.tsx:284
+#: src/components/ViewDigitalObject.tsx:294
 msgid "Output value"
 msgstr ""
 
@@ -631,7 +653,7 @@ msgstr ""
 msgid "Passwords do not match"
 msgstr ""
 
-#: src/pages/Mint.tsx:1137
+#: src/pages/Mint.tsx:1164
 msgid "Photon Supply"
 msgstr ""
 
@@ -639,19 +661,19 @@ msgstr ""
 msgid "Please close the window"
 msgstr ""
 
-#: src/pages/Mint.tsx:1212
+#: src/pages/Mint.tsx:1239
 msgid "Please reconnect to mint your token"
 msgstr ""
 
-#: src/pages/Mint.tsx:1120
+#: src/pages/Mint.tsx:1147
 msgid "Premine"
 msgstr ""
 
-#: src/pages/Mint.tsx:1190
+#: src/pages/Mint.tsx:1217
 msgid "Premine supply funding"
 msgstr ""
 
-#: src/pages/Mint.tsx:1000
+#: src/pages/Mint.tsx:1027
 msgid "Properties that describe your asset"
 msgstr ""
 
@@ -678,21 +700,25 @@ msgid "Recovering"
 msgstr ""
 
 #: src/pages/RecoverWallet.tsx:110
-#: src/pages/WalletSettings.tsx:84
+#: src/pages/WalletSettings.tsx:89
 msgid "Recovery phrase"
 msgstr ""
 
-#: src/pages/Mint.tsx:1106
+#: src/pages/WalletSettings.tsx:115
+msgid "Resync Wallet"
+msgstr ""
+
+#: src/pages/Mint.tsx:1133
 msgid "Reward"
 msgstr ""
 
 #: src/pages/IpfsSettings.tsx:102
-#: src/pages/WalletSettings.tsx:128
+#: src/pages/WalletSettings.tsx:144
 msgid "Save"
 msgstr ""
 
 #: src/pages/IpfsSettings.tsx:39
-#: src/pages/WalletSettings.tsx:49
+#: src/pages/WalletSettings.tsx:50
 msgid "Saved"
 msgstr ""
 
@@ -702,17 +728,17 @@ msgid "Select a valid network"
 msgstr ""
 
 #: src/components/AccountBar.tsx:28
-#: src/components/SendDigitalObject.tsx:167
-#: src/components/SendFungible.tsx:207
-#: src/components/SendRXD.tsx:198
+#: src/components/SendDigitalObject.tsx:205
+#: src/components/SendFungible.tsx:220
+#: src/components/SendRXD.tsx:211
 #: src/components/ViewDigitalObject.tsx:272
 #: src/components/ViewFungible.tsx:249
 #: src/pages/MobileHome.tsx:45
 msgid "Send"
 msgstr ""
 
-#: src/components/SendFungible.tsx:166
-#: src/components/SendRXD.tsx:156
+#: src/components/SendFungible.tsx:179
+#: src/components/SendRXD.tsx:169
 msgid "Send {0}"
 msgstr ""
 
@@ -720,16 +746,20 @@ msgstr ""
 msgid "Send {0} coins and tokens to this address"
 msgstr ""
 
-#: src/components/SendDigitalObject.tsx:137
+#: src/components/SendDigitalObject.tsx:175
 msgid "Send Non-Fungible Token"
 msgstr ""
 
-#: src/components/SendRXD.tsx:130
+#: src/components/SendRXD.tsx:132
 msgid "Sent {0} {1}"
 msgstr ""
 
-#: src/components/SendFungible.tsx:140
+#: src/components/SendFungible.tsx:143
 msgid "Sent {value} {ticker}"
+msgstr ""
+
+#: src/components/SendDigitalObject.tsx:126
+msgid "Sent NFT"
 msgstr ""
 
 #: src/layouts/SettingsLayout.tsx:16
@@ -742,11 +772,15 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: src/pages/WalletSettings.tsx:91
+#: src/pages/WalletSettings.tsx:96
 msgid "Show recovery phrase"
 msgstr ""
 
-#: src/pages/Mint.tsx:868
+#: src/components/ConsolidationModal.tsx:280
+msgid "Start consolidation process"
+msgstr ""
+
+#: src/pages/Mint.tsx:895
 msgid "Store HashStamp on-chain"
 msgstr ""
 
@@ -754,7 +788,7 @@ msgstr ""
 msgid "Submit"
 msgstr ""
 
-#: src/pages/Mint.tsx:1163
+#: src/pages/Mint.tsx:1190
 msgid "Summary"
 msgstr ""
 
@@ -762,7 +796,7 @@ msgstr ""
 msgid "Suppressed {0} more notifications"
 msgstr ""
 
-#: src/pages/Mint.tsx:759
+#: src/pages/Mint.tsx:786
 msgid "Text"
 msgstr ""
 
@@ -770,43 +804,43 @@ msgstr ""
 msgid "This feature is coming soon"
 msgstr ""
 
-#: src/components/MeltDigitalObject.tsx:122
+#: src/components/MeltDigitalObject.tsx:123
 msgid "This will destroy your token! Are you sure?"
 msgstr ""
 
-#: src/components/MeltFungible.tsx:126
+#: src/components/MeltFungible.tsx:139
 msgid "This will destroy your tokens! Are you sure?"
 msgstr ""
 
-#: src/pages/Mint.tsx:940
+#: src/pages/Mint.tsx:967
 msgid "Ticker"
 msgstr ""
 
-#: src/components/MeltDigitalObject.tsx:98
+#: src/components/MeltDigitalObject.tsx:99
 msgid "Token melted"
 msgstr ""
 
-#: src/pages/Mint.tsx:346
+#: src/pages/Mint.tsx:359
 msgid "Token supply is too high"
 msgstr ""
 
-#: src/pages/Mint.tsx:1147
+#: src/pages/Mint.tsx:1174
 msgid "Token supply requires an equal amount of RXD photons. This must be provided on mint for \"direct to wallet\" deployments."
 msgstr ""
 
-#: src/pages/Mint.tsx:1130
+#: src/pages/Mint.tsx:1157
 msgid "Token supply sent directly to your wallet. Requires an equal amount of RXD photons."
 msgstr ""
 
-#: src/components/MeltFungible.tsx:102
+#: src/components/MeltFungible.tsx:115
 msgid "Tokens melted"
 msgstr ""
 
-#: src/pages/Mint.tsx:1155
+#: src/pages/Mint.tsx:1182
 msgid "Total minted supply will be {totalDmintSupply} {0}"
 msgstr ""
 
-#: src/pages/Mint.tsx:1102
+#: src/pages/Mint.tsx:1129
 msgid "Total number of mints"
 msgstr ""
 
@@ -815,13 +849,13 @@ msgstr ""
 msgid "Transaction ID:"
 msgstr ""
 
-#: src/components/MeltDigitalObject.tsx:100
-#: src/components/MeltFungible.tsx:104
-#: src/components/SendDigitalObject.tsx:119
+#: src/components/MeltDigitalObject.tsx:101
+#: src/components/MeltFungible.tsx:117
+#: src/components/SendDigitalObject.tsx:156
 msgid "Transaction rejected"
 msgstr ""
 
-#: src/pages/Mint.tsx:1170
+#: src/pages/Mint.tsx:1197
 msgid "Transaction size"
 msgstr ""
 
@@ -833,15 +867,15 @@ msgstr ""
 msgid "TX ID"
 msgstr ""
 
-#: src/components/ViewDigitalObject.tsx:288
+#: src/components/ViewDigitalObject.tsx:298
 msgid "Type"
 msgstr ""
 
-#: src/pages/Mint.tsx:930
+#: src/pages/Mint.tsx:957
 msgid "Type of content the URL links to. Leave empty for a website link."
 msgstr ""
 
-#: src/components/ViewDigitalObject.tsx:316
+#: src/components/ViewDigitalObject.tsx:326
 msgid "Unconfirmed"
 msgstr ""
 
@@ -870,23 +904,23 @@ msgstr ""
 msgid "Unnamed token"
 msgstr ""
 
-#: src/pages/Mint.tsx:575
+#: src/pages/Mint.tsx:600
 msgid "Unrecognized file type"
 msgstr ""
 
-#: src/pages/Mint.tsx:337
+#: src/pages/Mint.tsx:350
 msgid "Unrecognized URL file type"
 msgstr ""
 
-#: src/pages/Mint.tsx:771
+#: src/pages/Mint.tsx:798
 msgid "Upload an image, text file or other content"
 msgstr ""
 
-#: src/pages/Mint.tsx:136
+#: src/pages/Mint.tsx:137
 msgid "Upload file"
 msgstr ""
 
-#: src/pages/Mint.tsx:758
+#: src/pages/Mint.tsx:785
 msgid "URL"
 msgstr ""
 
@@ -896,17 +930,25 @@ msgid "URLs may be unsafe and result in loss of funds"
 msgstr ""
 
 #: src/components/MintMenu.tsx:57
-#: src/pages/Wallet.tsx:82
+#: src/pages/Wallet.tsx:107
 msgid "User"
 msgstr ""
 
+#: src/components/ConsolidationModal.tsx:242
+msgid "UTXO consolidation complete"
+msgstr ""
+
 #: src/pages/Coins.tsx:52
-#: src/pages/Mint.tsx:986
+#: src/pages/Mint.tsx:1013
 msgid "Value"
 msgstr ""
 
 #: src/pages/About.tsx:10
 msgid "Version:"
+msgstr ""
+
+#: src/components/ViewDigitalObject.tsx:288
+msgid "View contents"
 msgstr ""
 
 #: src/components/MintSuccessModal.tsx:54
@@ -924,7 +966,7 @@ msgid "Wallet created"
 msgstr ""
 
 #: src/components/StatusBar.tsx:26
-#: src/hooks/useActivityDetector.ts:20
+#: src/hooks/useActivityDetector.ts:35
 msgid "Wallet locked"
 msgstr ""
 
@@ -932,19 +974,19 @@ msgstr ""
 msgid "Wallet unlocked"
 msgstr ""
 
-#: src/pages/Mint.tsx:754
+#: src/pages/Mint.tsx:781
 msgid "What data do you want to store?"
 msgstr ""
 
-#: src/pages/Mint.tsx:1025
+#: src/pages/Mint.tsx:1052
 msgid "Yes"
 msgstr ""
 
-#: src/pages/Mint.tsx:836
+#: src/pages/Mint.tsx:863
 msgid "Your file will be stored in IPFS."
 msgstr ""
 
-#: src/pages/Mint.tsx:830
+#: src/pages/Mint.tsx:857
 msgid "Your file will be stored on-chain."
 msgstr ""
 
@@ -952,8 +994,12 @@ msgstr ""
 msgid "Your recovery phrase is the only way to restore your wallet after logging out. Keep it in a safe place and never share it."
 msgstr ""
 
-#: src/pages/Mint.tsx:1207
+#: src/pages/Mint.tsx:1234
 msgid "Your token is ready to mint. Please review all data and the transaction fee before proceeding."
+msgstr ""
+
+#: src/components/ConsolidationModal.tsx:274
+msgid "Your wallet contains many unspent outputs that will cause long sync times. Output consolidation is required."
 msgstr ""
 
 #: src/pages/CreateWallet.tsx:187

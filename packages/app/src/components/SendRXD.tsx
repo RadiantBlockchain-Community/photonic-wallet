@@ -134,14 +134,15 @@ export default function SendRXD({ onSuccess, disclosure }: Props) {
       });
 
       // Update UTXOs without waiting for subscription
-      updateWalletUtxos(
+      await updateWalletUtxos(
         ContractType.RXD,
         changeScript,
         changeScript,
         txid,
         selected.inputs,
         selected.outputs
-      ).then(() => updateRxdBalances(wallet.value.address));
+      );
+      updateRxdBalances(wallet.value.address);
 
       onSuccess && onSuccess(txid);
     } catch (error) {

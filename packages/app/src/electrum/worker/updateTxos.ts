@@ -21,10 +21,12 @@ export const buildUpdateTXOs =
   ) =>
   async (
     scriptHash: string,
-    newStatus: string
+    newStatus: string,
+    manual: boolean
   ): Promise<{
     added: TxO[];
     confs: Map<number, ElectrumUtxo>;
+    conflict: Map<number, string>; // Anything changed from spent back to unspent
     spent: { id: number; value: number; script: string }[];
     utxoCount?: number;
   }> => {
@@ -42,16 +44,18 @@ export const buildUpdateTXOs =
     }
 
     // Check if status has changed
-    const currentStatus = await db.subscriptionStatus
-      .where({ scriptHash })
-      .first();
+    if (!manual) {
+      const currentStatus = await db.subscriptionStatus
+        .where({ scriptHash })
+        .first();
 
-    // TODO rebuild status from data instead of using stored value
-    if (currentStatus?.status === newStatus) {
-      console.debug("Status unchanged", newStatus, scriptHash, contractType);
-      return { added: [], confs: new Map(), spent: [] };
+      // TODO rebuild status from data instead of using stored value
+      if (currentStatus?.status === newStatus) {
+        console.debug("Status unchanged", newStatus, scriptHash, contractType);
+        return { added: [], confs: new Map(), conflict: new Map(), spent: [] };
+      }
+      console.debug("New status", newStatus, scriptHash, contractType);
     }
-    console.debug("New status", newStatus, scriptHash, contractType);
 
     // Fetch unspent outputs
     const utxos = (await electrum.client?.request(
@@ -70,6 +74,7 @@ export const buildUpdateTXOs =
     const newUtxos: ElectrumUtxo[] = [];
     const outpoints: string[] = []; // All UTXO outpoints
     const confs: Map<number, ElectrumUtxo> = new Map(); // Newly confirmed transactions mapped by txo id
+    const conflict: Map<number, string> = new Map(); // Anything changed from spent back to unspent
     await Promise.all(
       utxos.map(async (utxo) => {
         outpoints.push(`${utxo.tx_hash}${utxo.tx_pos}`);
@@ -79,8 +84,13 @@ export const buildUpdateTXOs =
         if (!exist) {
           newTxIds.add(utxo.tx_hash);
           newUtxos.push(utxo);
-        } else if (exist.id && exist.height != utxo.height) {
+        } else if (
+          exist.id &&
+          exist.height != utxo.height // Reset spent if necessary
+        ) {
           confs.set(exist.id, utxo);
+        } else if (exist.id && exist.spent === 1) {
+          conflict.set(exist.id, exist.script);
         }
       })
     );
@@ -126,7 +136,7 @@ export const buildUpdateTXOs =
       )
     ).filter(Boolean) as TxO[];
 
-    // Update confirmations
+    // Update confirmations and conflicting utxos
     await db.transaction("rw", db.txo, async () => {
       for (const [id, utxo] of confs) {
         await db.txo.update(id, {
@@ -134,7 +144,12 @@ export const buildUpdateTXOs =
           // date: newTxs[utxo.tx_hash].raw.time || undefined, // how to get date without fetching?
         });
       }
+      for (const [id] of conflict) {
+        await db.txo.update(id, {
+          spent: 0,
+        });
+      }
     });
 
-    return { added, confs, spent, utxoCount: utxos.length };
+    return { added, confs, conflict, spent, utxoCount: utxos.length };
   };

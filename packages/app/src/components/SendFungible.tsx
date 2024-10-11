@@ -144,14 +144,15 @@ export default function SendFungible({ glyph, onSuccess, disclosure }: Props) {
         status: "success",
       });
 
-      updateWalletUtxos(
+      await updateWalletUtxos(
         ContractType.FT,
         fromScript, // FT change
         changeScript, // RXD change
         txid,
         selected.inputs,
         selected.outputs
-      ).then(() => updateFtBalances(new Set([fromScript])));
+      );
+      updateFtBalances(new Set([fromScript]));
 
       onSuccess && onSuccess(txid);
     } catch (error) {

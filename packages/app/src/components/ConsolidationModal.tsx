@@ -1,7 +1,7 @@
 import { useState } from "react";
 import db from "@app/db";
 import { PrivateKey } from "@radiantblockchain/radiantjs";
-import { ContractType } from "@app/types";
+import { ContractType, TxO } from "@app/types";
 import {
   Modal,
   ModalOverlay,
@@ -21,9 +21,14 @@ import ContractName from "./ContractName";
 import { p2pkhScript, p2pkhScriptSigSize, txSize } from "@lib/script";
 import { feeRate, openModal, wallet } from "@app/signals";
 import { buildTx } from "@lib/tx";
-import { UnfinalizedInput, Utxo } from "@lib/types";
+import { UnfinalizedInput } from "@lib/types";
 import { electrumWorker } from "@app/electrum/Electrum";
 import { fundTx } from "@lib/coinSelect";
+import {
+  updateFtBalances,
+  updateRxdBalances,
+  updateWalletUtxos,
+} from "@app/utxos";
 
 const unlock = (fn: () => void) => {
   if (wallet.value.locked) {
@@ -37,27 +42,35 @@ const unlock = (fn: () => void) => {
 };
 
 async function consolidate() {
+  electrumWorker.value.setActive(false);
+
   // Consolidate RXD UTXOs first
-  const rxd: UnfinalizedInput[] = await db.txo
+  const rxd = await db.txo
     .where({ contractType: ContractType.RXD, spent: 0 })
     .toArray();
 
   // Use the consolidated UTXO for funding FT transactions
-  const { consolidated } = await consolidateUtxos(rxd, [], false);
+  const { consolidated } = await consolidateUtxos(
+    ContractType.RXD,
+    rxd,
+    undefined,
+    false,
+    async () => await updateRxdBalances(wallet.value.address)
+  );
 
   if (!consolidated) {
     console.debug("No funding");
-    throw new Error("No funding");
+    throw new Error("Failed to fund");
   }
 
-  let funding: Utxo[] = [consolidated];
+  let funding: TxO | undefined = consolidated;
 
   const allFts = await db.txo
     .where({ contractType: ContractType.FT, spent: 0 })
     .toArray();
 
   // Group by token
-  const fts: { [key: string]: Utxo[] } = {};
+  const fts: { [key: string]: TxO[] } = {};
   allFts.map((ft) => {
     if (!fts[ft.script]) {
       fts[ft.script] = [];
@@ -66,18 +79,27 @@ async function consolidate() {
   });
 
   for (const utxos of Object.values(fts)) {
-    const result = await consolidateUtxos(utxos, funding, true);
+    const result = await consolidateUtxos(
+      ContractType.FT,
+      utxos,
+      funding,
+      true,
+      async (script) => await updateFtBalances(new Set([script]))
+    );
     funding = result.funding;
   }
 
+  electrumWorker.value.setActive(true);
   db.kvp.put(false, "consolidationRequired");
 }
 
 async function consolidateUtxos(
-  utxos: Utxo[],
-  funding: UnfinalizedInput[],
-  requiresFunding: boolean
-) {
+  contractType: ContractType,
+  utxos: TxO[],
+  funding: TxO | undefined,
+  requiresFunding: boolean,
+  updateBalance: (script: string) => Promise<void>
+): Promise<{ funding?: TxO; consolidated?: TxO }> {
   if (!utxos.length) {
     return { funding, consolidated: undefined };
   }
@@ -86,9 +108,9 @@ async function consolidateUtxos(
     return { funding, consolidated: utxos[0] };
   }
 
-  const maxInputs = 50;
+  const maxInputs = 200;
   const totalUtxos = utxos.length;
-  let consolidated: Utxo | undefined = undefined;
+  let consolidated: TxO | undefined = undefined;
 
   // Output script will be the same
   const script = utxos[0].script;
@@ -96,7 +118,7 @@ async function consolidateUtxos(
   const p2pkh = p2pkhScript(wallet.value.address);
 
   for (let i = 0; i < totalUtxos; i += maxInputs) {
-    const inputs: Utxo[] = utxos.slice(i, i + maxInputs);
+    const inputs: UnfinalizedInput[] = utxos.slice(i, i + maxInputs);
 
     if (consolidated) {
       inputs.push(consolidated);
@@ -115,7 +137,7 @@ async function consolidateUtxos(
       // Need funding input for FTs
       fund = fundTx(
         wallet.value.address,
-        funding,
+        funding ? [funding] : [],
         inputs,
         outputs,
         p2pkh,
@@ -143,19 +165,6 @@ async function consolidateUtxos(
       false
     );
 
-    if (requiresFunding) {
-      funding = fund?.remaining || [];
-      if (fund?.change.length) {
-        funding.push(
-          ...fund.change.map((change, index) => ({
-            txid: tx.id,
-            vout: index + 1,
-            ...change,
-          }))
-        );
-      }
-    }
-
     const rawTx = tx.toString();
     const txid = await electrumWorker.value.broadcast(rawTx);
     db.broadcast.put({
@@ -163,7 +172,24 @@ async function consolidateUtxos(
       date: Date.now(),
       description: "consolidate",
     });
-    consolidated = { ...outputs[0], vout: 0, txid };
+
+    // Update txo table, in case consolidation process fails part way through
+    const newTxos = await updateWalletUtxos(
+      contractType,
+      outputs[0].script, // Contract change
+      p2pkh, // RXD funding change
+      txid,
+      inputs,
+      outputs.map((output, vout) => ({ ...output, txid, vout }))
+    );
+
+    consolidated = newTxos[0] as TxO;
+
+    if (requiresFunding && newTxos.length > 1) {
+      funding = newTxos[1];
+    }
+
+    await updateBalance(consolidated.script);
   }
   return { funding, consolidated };
 }
@@ -218,17 +244,16 @@ export default function ConsolidationModal() {
         });
       } catch (error) {
         setWaiting(false);
-        if (error instanceof Error) {
-          toast({
-            title: error.message,
-            status: "error",
-          });
-        } else {
-          toast({
-            title: "Could not consolidate UTXOs",
-            status: "error",
-          });
-        }
+        console.log(error);
+        const title =
+          error instanceof Error && error.message === "Failed to fund"
+            ? "Failed to fund transaction. Please send more RXD and manually sync from settings page."
+            : "Could not consolidate UTXOs. Please resync manually from wallet settings and try again.";
+
+        toast({
+          title,
+          status: "error",
+        });
       }
     });
   };
@@ -246,8 +271,7 @@ export default function ConsolidationModal() {
         <ModalHeader>{t`Consolidation required`}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          Your wallet contains many unspent outputs that will cause long sync
-          times. Output consolidation is required.
+          {t`Your wallet contains many unspent outputs that will cause long sync times. Output consolidation is required.`}
           <Box mt={2}>{disclosure.isOpen && <OutputCounts />}</Box>
         </ModalBody>
 

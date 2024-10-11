@@ -30,7 +30,8 @@ const wrapped = wrap<{
   broadcast: (hex: string) => string;
   getRef: (ref: string) => ElectrumRefResponse;
   getTransaction: (txid: string) => string;
-  syncPending: () => string;
+  syncPending: (manual?: boolean) => void;
+  manualSync: () => void;
   setActive: (active: boolean) => void;
   isActive: () => boolean;
 }>(worker);

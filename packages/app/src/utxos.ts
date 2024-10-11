@@ -5,7 +5,7 @@ import { ContractType, TxO } from "./types";
 import { parseFtScript } from "@lib/script";
 import { reverseRef } from "@lib/Outpoint";
 
-// Update txo table after a transaction
+// Update txo table after a transaction. This will keep the db in sync before an ElectrumX subscription is received.
 // ownScript and changeScript will be the same for RXD UTXOs
 export async function updateWalletUtxos(
   contractType: ContractType,
@@ -15,12 +15,14 @@ export async function updateWalletUtxos(
   inputs: SelectableInput[],
   outputs: UnfinalizedInput[]
 ) {
-  const newTxoIds: number[] = [];
+  const newTxos: TxO[] = [];
   await db.transaction("rw", db.txo, async () => {
     // Spend inputs
     await Promise.all(
-      inputs.map(async ({ utxo }) => {
-        const { id } = utxo as TxO;
+      inputs.map(async (input) => {
+        const { utxo } = input;
+        // FIXME this is a bit messy
+        const { id } = (utxo as TxO) || input;
         if (id) {
           await db.txo.update(id, {
             spent: 1,
@@ -29,32 +31,28 @@ export async function updateWalletUtxos(
       })
     );
     // Add outputs
-    await Promise.all(
-      outputs.map(async (output, vout) => {
-        // Check for FT change, FT sent to self or RXD funding change
-        const sentToSelf = output.script === ownScript;
-        if (sentToSelf || output.script === changeScript) {
-          const outputContractType = sentToSelf
-            ? contractType
-            : ContractType.RXD;
-          const txo: TxO = {
-            contractType: outputContractType,
-            script: output.script,
-            spent: 0,
-            txid,
-            vout,
-            value: output.value,
-            change: 1,
-            date: new Date().getTime(),
-          };
-          if (sentToSelf) {
-            newTxoIds.push((await db.txo.put(txo)) as number);
-          }
-        }
-      })
-    );
+    for (const [vout, output] of outputs.entries()) {
+      // Check for FT change, FT sent to self or RXD funding change
+      const sentToSelf = output.script === ownScript;
+      if (sentToSelf || output.script === changeScript) {
+        const outputContractType = sentToSelf ? contractType : ContractType.RXD;
+        const txo: TxO = {
+          contractType: outputContractType,
+          script: output.script,
+          spent: 0,
+          height: Infinity,
+          txid,
+          vout,
+          value: output.value,
+          change: 1,
+          date: new Date().getTime(),
+        };
+        const id = (await db.txo.put(txo)) as number;
+        newTxos.push({ ...txo, id });
+      }
+    }
   });
-  return newTxoIds;
+  return newTxos;
 }
 
 // Update RXD balances

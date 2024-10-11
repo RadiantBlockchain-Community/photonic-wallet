@@ -24,6 +24,7 @@ import { loadCatalog } from "@app/i18n";
 import config from "@app/config.json";
 import { useLiveQuery } from "dexie-react-hooks";
 import { PromiseExtended } from "dexie";
+import { electrumWorker } from "@app/electrum/Electrum";
 
 export default function WalletSettings() {
   const disclosure = useDisclosure();
@@ -66,6 +67,10 @@ export default function WalletSettings() {
     null
   );
 
+  const consolidationRequired = useLiveQuery(() =>
+    db.kvp.get("consolidationRequired")
+  );
+
   if (response === null) return null;
 
   const [savedLanguage, savedFeeRate] = response;
@@ -99,6 +104,17 @@ export default function WalletSettings() {
           isOpen={disclosure.isOpen}
           onClose={disclosure.onClose}
         />
+      </FormSection>
+
+      <FormSection>
+        <Heading size="md">{t`Manual Sync`}</Heading>
+        {consolidationRequired === true &&
+          t`If your wallet fails to consolidate UTXOs, a resync may be required`}
+        <Center mt={8} mb={16}>
+          <Button onClick={() => electrumWorker.value.manualSync()}>
+            {t`Resync Wallet`}
+          </Button>
+        </Center>
       </FormSection>
 
       <FormSection>

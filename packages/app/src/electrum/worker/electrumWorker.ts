@@ -70,6 +70,11 @@ const worker = {
     await ft.syncPending();
     await nft.syncPending();
   },
+  async manualSync() {
+    await rxd.manualSync();
+    await ft.manualSync();
+    await nft.manualSync();
+  },
   setActive(active: boolean) {
     this.active = active;
   },

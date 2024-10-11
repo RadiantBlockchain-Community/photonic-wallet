@@ -42,16 +42,27 @@ export class RXDWorker implements Subscription {
     }
   }
 
-  async onSubscriptionReceived(scriptHash: string, status: string) {
+  async manualSync() {
+    if (this.ready) {
+      this.receivedStatuses = [];
+      await this.onSubscriptionReceived(this.scriptHash, "", true);
+    }
+  }
+
+  async onSubscriptionReceived(
+    scriptHash: string,
+    status: string,
+    manual = false
+  ) {
     // Same subscription can be returned twice
-    if (status === this.lastReceivedStatus) {
+    if (!manual && status === this.lastReceivedStatus) {
       return;
     }
 
     if (
       !this.ready ||
-      !this.worker.active ||
-      (await db.kvp.get("consolidationRequired"))
+      (!manual &&
+        (!this.worker.active || (await db.kvp.get("consolidationRequired"))))
     ) {
       this.receivedStatuses.push(status);
       return;
@@ -60,7 +71,7 @@ export class RXDWorker implements Subscription {
     this.ready = false;
     this.lastReceivedStatus = status;
 
-    const { added } = await this.updateTXOs(scriptHash, status);
+    const { added } = await this.updateTXOs(scriptHash, status, manual);
 
     added.map((txo) => db.txo.put(txo).catch());
 
