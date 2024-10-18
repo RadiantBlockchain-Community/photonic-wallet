@@ -19,8 +19,8 @@ msgid "{0} {1} received"
 msgstr ""
 
 #: src/components/SendDigitalObject.tsx:189
-msgid "{0} address"
-msgstr ""
+#~ msgid "{0} address"
+#~ msgstr ""
 
 #: src/pages/MobileHome.tsx:33
 msgid "{0} BALANCE"
@@ -59,9 +59,9 @@ msgstr ""
 msgid "Address"
 msgstr ""
 
-#: src/components/SendDigitalObject.tsx:197
-#: src/components/SendFungible.tsx:210
-#: src/components/SendRXD.tsx:193
+#: src/components/SendDigitalObject.tsx:222
+#: src/components/SendFungible.tsx:235
+#: src/components/SendRXD.tsx:217
 msgid "Amount"
 msgstr ""
 
@@ -90,8 +90,8 @@ msgstr ""
 msgid "Back to wallet"
 msgstr ""
 
-#: src/components/SendFungible.tsx:190
-#: src/components/SendRXD.tsx:173
+#: src/components/SendFungible.tsx:208
+#: src/components/SendRXD.tsx:190
 msgid "Balance"
 msgstr ""
 
@@ -105,9 +105,9 @@ msgstr ""
 
 #: src/components/MeltDigitalObject.tsx:136
 #: src/components/MeltFungible.tsx:152
-#: src/components/SendDigitalObject.tsx:207
-#: src/components/SendFungible.tsx:222
-#: src/components/SendRXD.tsx:213
+#: src/components/SendDigitalObject.tsx:237
+#: src/components/SendFungible.tsx:252
+#: src/components/SendRXD.tsx:242
 msgid "Cancel"
 msgstr ""
 
@@ -127,6 +127,7 @@ msgstr ""
 msgid "Click to unlock"
 msgstr ""
 
+#: src/components/AddressInput.tsx:26
 #: src/components/TxSuccessModal.tsx:57
 msgid "Close"
 msgstr ""
@@ -196,8 +197,8 @@ msgstr ""
 msgid "Copy URL"
 msgstr ""
 
-#: src/components/SendFungible.tsx:159
-#: src/components/SendRXD.tsx:149
+#: src/components/SendFungible.tsx:163
+#: src/components/SendRXD.tsx:153
 msgid "Could not send transaction"
 msgstr ""
 
@@ -353,7 +354,7 @@ msgid "Fungible Token"
 msgstr ""
 
 #: src/components/SideBar.tsx:88
-#: src/pages/Fungible.tsx:61
+#: src/pages/Fungible.tsx:63
 msgid "Fungible Tokens"
 msgstr ""
 
@@ -396,26 +397,26 @@ msgstr ""
 
 #: src/components/MeltDigitalObject.tsx:78
 #: src/components/MeltFungible.tsx:96
-#: src/components/SendDigitalObject.tsx:104
-#: src/components/SendFungible.tsx:126
-#: src/components/SendRXD.tsx:112
+#: src/components/SendDigitalObject.tsx:108
+#: src/components/SendFungible.tsx:130
+#: src/components/SendRXD.tsx:116
 msgid "Insufficient funds"
 msgstr ""
 
-#: src/components/SendFungible.tsx:107
+#: src/components/SendFungible.tsx:111
 msgid "Insufficient token balance"
 msgstr ""
 
-#: src/components/SendDigitalObject.tsx:76
-#: src/components/SendFungible.tsx:85
-#: src/components/SendFungible.tsx:101
-#: src/components/SendRXD.tsx:78
-#: src/components/SendRXD.tsx:97
+#: src/components/SendDigitalObject.tsx:80
+#: src/components/SendFungible.tsx:89
+#: src/components/SendFungible.tsx:105
+#: src/components/SendRXD.tsx:82
+#: src/components/SendRXD.tsx:101
 msgid "Invalid address"
 msgstr ""
 
-#: src/components/SendFungible.tsx:81
-#: src/components/SendRXD.tsx:73
+#: src/components/SendFungible.tsx:85
+#: src/components/SendRXD.tsx:77
 msgid "Invalid amount"
 msgstr ""
 
@@ -571,7 +572,7 @@ msgstr ""
 msgid "NFT.Storage API Key"
 msgstr ""
 
-#: src/pages/Fungible.tsx:64
+#: src/pages/Fungible.tsx:66
 #: src/pages/Wallet.tsx:134
 msgid "No assets"
 msgstr ""
@@ -597,7 +598,7 @@ msgid "No, allow token owner to modify"
 msgstr ""
 
 #: src/components/MintMenu.tsx:36
-#: src/components/SendDigitalObject.tsx:193
+#: src/components/SendDigitalObject.tsx:218
 msgid "Non-Fungible Token"
 msgstr ""
 
@@ -681,7 +682,7 @@ msgstr ""
 msgid "Radiant ID"
 msgstr ""
 
-#: src/components/AccountBar.tsx:21
+#: src/components/AccountBar.tsx:25
 #: src/components/ReceiveRXD.tsx:35
 #: src/pages/MobileHome.tsx:52
 msgid "Receive"
@@ -727,18 +728,18 @@ msgstr ""
 msgid "Select a valid network"
 msgstr ""
 
-#: src/components/AccountBar.tsx:28
-#: src/components/SendDigitalObject.tsx:205
-#: src/components/SendFungible.tsx:220
-#: src/components/SendRXD.tsx:211
+#: src/components/AccountBar.tsx:32
+#: src/components/SendDigitalObject.tsx:235
+#: src/components/SendFungible.tsx:250
+#: src/components/SendRXD.tsx:240
 #: src/components/ViewDigitalObject.tsx:272
 #: src/components/ViewFungible.tsx:249
 #: src/pages/MobileHome.tsx:45
 msgid "Send"
 msgstr ""
 
-#: src/components/SendFungible.tsx:179
-#: src/components/SendRXD.tsx:169
+#: src/components/SendFungible.tsx:192
+#: src/components/SendRXD.tsx:181
 msgid "Send {0}"
 msgstr ""
 
@@ -746,19 +747,19 @@ msgstr ""
 msgid "Send {0} coins and tokens to this address"
 msgstr ""
 
-#: src/components/SendDigitalObject.tsx:175
+#: src/components/SendDigitalObject.tsx:188
 msgid "Send Non-Fungible Token"
 msgstr ""
 
-#: src/components/SendRXD.tsx:132
+#: src/components/SendRXD.tsx:136
 msgid "Sent {0} {1}"
 msgstr ""
 
-#: src/components/SendFungible.tsx:143
+#: src/components/SendFungible.tsx:147
 msgid "Sent {value} {ticker}"
 msgstr ""
 
-#: src/components/SendDigitalObject.tsx:126
+#: src/components/SendDigitalObject.tsx:130
 msgid "Sent NFT"
 msgstr ""
 
@@ -851,7 +852,7 @@ msgstr ""
 
 #: src/components/MeltDigitalObject.tsx:101
 #: src/components/MeltFungible.tsx:117
-#: src/components/SendDigitalObject.tsx:156
+#: src/components/SendDigitalObject.tsx:160
 msgid "Transaction rejected"
 msgstr ""
 

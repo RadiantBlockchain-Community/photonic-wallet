@@ -30,15 +30,15 @@
   },
   "dependencies": {
     "@bitauth/libauth": "^3.0.0",
-    "@noble/hashes": "^1.4.0",
+    "@noble/hashes": "^1.5.0",
     "@radiantblockchain/radiantjs": "github:radiantblockchain/radiantjs",
-    "@scure/base": "^1.1.7",
-    "@scure/bip32": "^1.4.0",
-    "@scure/bip39": "^1.3.0",
-    "big.js": "^6.2.1",
+    "@scure/base": "^1.1.9",
+    "@scure/bip32": "^1.5.0",
+    "@scure/bip39": "^1.4.0",
+    "big.js": "^6.2.2",
     "bsv-coinselect": "^4.2.5",
     "buffer": "^6.0.3",
-    "cbor-x": "^1.5.9",
-    "nft.storage": "^7.1.1"
+    "cbor-x": "^1.6.0",
+    "nft.storage": "^7.2.0"
   }
 }

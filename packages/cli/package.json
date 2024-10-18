@@ -25,18 +25,18 @@
   "license": "ISC",
   "dependencies": {
     "@inquirer/prompts": "^3.3.2",
-    "@noble/hashes": "^1.4.0",
+    "@noble/hashes": "^1.5.0",
     "@radiantblockchain/radiantjs": "github:radiantblockchain/radiantjs",
     "chalk": "^5.3.0",
     "commander": "^11.1.0",
     "deepmerge": "^4.3.1",
     "gradient-string": "^2.0.2",
     "isomorphic-ws": "^5.0.0",
-    "joi": "^17.13.1",
+    "joi": "^17.13.3",
     "mime": "^3.0.0",
-    "ora": "^8.0.1",
-    "rimraf": "^5.0.7",
-    "sharp": "^0.33.4",
+    "ora": "^8.1.0",
+    "rimraf": "^5.0.10",
+    "sharp": "^0.33.5",
     "ws-electrumx-client": "^1.0.5"
   },
   "devDependencies": {
@@ -45,9 +45,9 @@
     "@photonic/typescript-config": "workspace:^",
     "@types/gradient-string": "^1.1.6",
     "@types/mime": "^3.0.4",
-    "@types/node": "^20.14.2",
-    "tsup": "^8.1.0",
-    "typescript": "^5.4.5"
+    "@types/node": "^20.16.12",
+    "tsup": "^8.3.0",
+    "typescript": "^5.6.3"
   },
   "files": [
     "index.js",

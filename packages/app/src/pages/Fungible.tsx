@@ -48,7 +48,9 @@ function TokenGrid() {
   const hasBalance = (glyph: SmartToken) =>
     glyph &&
     balances &&
-    (balances[glyph.ref]?.confirmed || 0 + balances[glyph.ref]?.unconfirmed || 0);
+    (balances[glyph.ref]?.confirmed ||
+      0 + balances[glyph.ref]?.unconfirmed ||
+      0);
 
   if (!tokens) {
     return null;
@@ -59,7 +61,7 @@ function TokenGrid() {
   return (
     <>
       <PageHeader toolbar={<MintMenu />}>{t`Fungible Tokens`}</PageHeader>
-      <Box px={4} overflowY="auto">
+      <Box px={2} overflowY="auto" sx={{ scrollbarGutter: "stable both-edges" }}>
         {withBalance.length === 0 ? (
           <NoContent>{t`No assets`}</NoContent>
         ) : (

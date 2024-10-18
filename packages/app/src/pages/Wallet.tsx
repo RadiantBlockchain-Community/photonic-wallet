@@ -139,8 +139,9 @@ function TokenGrid({ open }: { open: boolean }) {
           }, 1fr))`}
           gridAutoRows="max-content"
           overflowY="auto"
+          sx={{ scrollbarGutter: "stable both-edges" }}
           pb={4}
-          px={4}
+          px={2}
           gap={4}
         >
           {nft

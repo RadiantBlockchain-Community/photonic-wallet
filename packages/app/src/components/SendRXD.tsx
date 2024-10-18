@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { t } from "@lingui/macro";
 import { PrivateKey } from "@radiantblockchain/radiantjs";
 import Big from "big.js";
-import coinSelect, { SelectableInput, updateUnspent } from "@lib/coinSelect";
+import coinSelect, { SelectableInput } from "@lib/coinSelect";
 import {
   Modal,
   ModalOverlay,
@@ -25,6 +25,8 @@ import {
   Heading,
   VStack,
   useToast,
+  IconButton,
+  Flex,
 } from "@chakra-ui/react";
 import { photonsToRXD } from "@lib/format";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -36,6 +38,8 @@ import { feeRate, network, wallet } from "@app/signals";
 import { electrumWorker } from "@app/electrum/Electrum";
 import Balance from "./Balance";
 import { updateRxdBalances, updateWalletUtxos } from "@app/utxos";
+import AddressInput from "./AddressInput";
+import { BsQrCodeScan } from "react-icons/bs";
 
 interface Props {
   onSuccess?: (txid: string) => void;
@@ -152,6 +156,14 @@ export default function SendRXD({ onSuccess, disclosure }: Props) {
       setLoading(false);
     }
   };
+  const [scan, setScan] = useState(false);
+  const onScan = (value: string) => {
+    setScan(false);
+    setSuccess(true);
+    if (toAddress.current) {
+      toAddress.current.value = value;
+    }
+  };
 
   if (!isOpen || !onClose) return null;
 
@@ -168,50 +180,68 @@ export default function SendRXD({ onSuccess, disclosure }: Props) {
         <ModalContent>
           <ModalHeader>{t`Send ${network.value.ticker}`}</ModalHeader>
           <ModalCloseButton />
-          <ModalBody pb={6} gap={4}>
-            <VStack>
-              <Heading size="sm">{t`Balance`}</Heading>
-              <Box>
-                <Balance />
-              </Box>
-            </VStack>
-            {success || (
-              <Alert status="error" mb={4}>
-                <AlertIcon />
-                <AlertDescription>{errorMessage}</AlertDescription>
-              </Alert>
-            )}
-            <FormControl>
-              <FormLabel>To</FormLabel>
-              <Input
-                ref={toAddress}
-                type="text"
-                placeholder={`${network.value.name} address`}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel>{t`Amount`}</FormLabel>
-              <InputGroup>
-                <Input
-                  ref={amount}
-                  type="number"
-                  step="0.00000001"
-                  placeholder="0"
-                />
-                <InputRightAddon
-                  children={network.value.ticker}
-                  userSelect="none"
-                />
-              </InputGroup>
-            </FormControl>
-          </ModalBody>
+          <AddressInput
+            open={scan}
+            onScan={onScan}
+            onClose={() => setScan(false)}
+          >
+            <ModalBody pb={6} gap={4} hidden={scan}>
+              <VStack>
+                <Heading size="sm">{t`Balance`}</Heading>
+                <Box>
+                  <Balance />
+                </Box>
+              </VStack>
+              {success || (
+                <Alert status="error" mb={4}>
+                  <AlertIcon />
+                  <AlertDescription>{errorMessage}</AlertDescription>
+                </Alert>
+              )}
+              <FormControl>
+                <FormLabel>To</FormLabel>
+                <Flex gap={2}>
+                  <Input
+                    ref={toAddress}
+                    type="text"
+                    placeholder={`${network.value.name} address`}
+                  />
+                  <IconButton
+                    icon={<BsQrCodeScan />}
+                    aria-label="Scan QR code"
+                    onClick={() => setScan(true)}
+                  />
+                </Flex>
+              </FormControl>
+              <FormControl>
+                <FormLabel>{t`Amount`}</FormLabel>
+                <InputGroup>
+                  <Input
+                    ref={amount}
+                    type="number"
+                    step="0.00000001"
+                    placeholder="0"
+                  />
+                  <InputRightAddon
+                    children={network.value.ticker}
+                    userSelect="none"
+                  />
+                </InputGroup>
+              </FormControl>
+            </ModalBody>
 
-          <ModalFooter>
-            <Button type="submit" variant="primary" isLoading={loading} mr={4}>
-              {t`Send`}
-            </Button>
-            <Button onClick={onClose}>{t`Cancel`}</Button>
-          </ModalFooter>
+            <ModalFooter hidden={scan}>
+              <Button
+                type="submit"
+                variant="primary"
+                isLoading={loading}
+                mr={4}
+              >
+                {t`Send`}
+              </Button>
+              <Button onClick={onClose}>{t`Cancel`}</Button>
+            </ModalFooter>
+          </AddressInput>
         </ModalContent>
       </form>
     </Modal>

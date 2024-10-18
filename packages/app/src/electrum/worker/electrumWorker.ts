@@ -127,7 +127,10 @@ electrum.addEvent("close", (event: unknown) => {
 });
 
 // Android Chrome doesn't support shared workers, fall back to dedicated worker
-if (typeof SharedWorker !== "undefined") {
+if (
+  typeof SharedWorkerGlobalScope !== "undefined" &&
+  globalThis instanceof SharedWorkerGlobalScope
+) {
   self.addEventListener("connect", (e) => expose(worker, e.ports[0]));
 } else {
   expose(worker);
