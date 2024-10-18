@@ -19,6 +19,7 @@ import {
 } from "@chakra-ui/react";
 import License from "./License";
 import { useState } from "react";
+import Logo from "./Logo";
 
 export default function LicenseModal({
   isOpen,
@@ -39,14 +40,9 @@ export default function LicenseModal({
     >
       <ModalOverlay />
       <ModalContent>
+        <Logo svgId="modal" responsive={false} mt={8} text="PHOTONIC WALLET" />
         <ModalHeader>Notice</ModalHeader>
         <ModalBody>
-          <Alert variant="left-accent" status="warning" mb={4}>
-            <AlertIcon />
-            Photonic Wallet is experimental software. Bugs may be present that
-            could result in the loss of funds and assets. Do not send anything
-            to this wallet that you are not prepared to lose.
-          </Alert>
           <Text mb={2}>
             This program is distributed under the terms of the MIT License.
             Please read the following License Agreement. You must accept the

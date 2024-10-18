@@ -9,10 +9,14 @@ import Balance from "./Balance";
 export default function AccountBar(props: FlexProps) {
   return (
     <Flex flexDir="column" alignItems="center" mx={4} {...props}>
-      <ValueTag mb={6}>
+      <ValueTag mb={{ base: 2, lg: 6 }}>
         <Balance />
       </ValueTag>
-      <Grid gridTemplateColumns="repeat(2, minmax(0, 1fr))" gap={4}>
+      <Grid
+        gridTemplateColumns="repeat(2, minmax(0, 1fr))"
+        gap={{ base: 2, "2xl": 4 }}
+        w={{ base: "100%", lg: "initial" }}
+      >
         <Button
           size={{ base: "sm", "2xl": "md" }}
           leftIcon={<ActionIcon as={TbArrowDownLeft} />}

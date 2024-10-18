@@ -51,6 +51,24 @@ export class Database extends Dexie {
     this.version(4).stores({
       broadcast: "txid",
     });
+
+    this.version(5).upgrade(async (transaction) => {
+      const { mainnet } = await transaction.table("kvp").get("servers");
+
+      // Add new servers and shuffle if they aren't in the db already
+      const hasNewServers = mainnet.some(
+        (server: string) => !server.includes("radiant4people")
+      );
+
+      if (!hasNewServers) {
+        const newServers = config.defaultConfig.servers.mainnet.slice(2);
+        mainnet.push(...newServers);
+        shuffle(mainnet);
+      }
+
+      const testnet = config.defaultConfig.servers.testnet;
+      transaction.table("kvp").put({ mainnet, testnet }, "servers");
+    });
   }
 }
 
@@ -60,6 +78,7 @@ const db = new Database();
 db.on("ready", async () => {
   const defaults = config.defaultConfig;
   const configKeys = Object.keys(defaults);
+  shuffle(config.defaultConfig.servers.mainnet);
   const missing = (await db.kvp.bulkGet(configKeys))
     .map((v, i) =>
       v

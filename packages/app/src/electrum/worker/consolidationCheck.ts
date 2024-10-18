@@ -1,7 +1,7 @@
 import db from "@app/db";
 import { ContractType } from "@app/types";
 
-const MAX_UTXOS = 10;
+const MAX_UTXOS = 20;
 
 // Check if UTXO consolidation is required
 export async function consolidationCheck() {

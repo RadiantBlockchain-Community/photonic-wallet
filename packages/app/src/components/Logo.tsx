@@ -99,8 +99,9 @@ const LogoSvg = ({ svgId, ...rest }: { svgId: string }) => {
 export default function Logo({
   svgId,
   responsive = true,
+  text = "",
   ...rest
-}: { svgId: string; responsive?: boolean } & FlexProps) {
+}: { svgId: string; responsive?: boolean; text?: string } & FlexProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const r = ({ lg, ...props }: any) => (responsive ? { ...props, lg } : props);
 
@@ -155,7 +156,7 @@ export default function Logo({
         userSelect="none"
         zIndex="10"
       >
-        PHOTONIC
+        {text || "PHOTONIC"}
       </Text>
     </Flex>
   );

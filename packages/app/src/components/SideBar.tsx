@@ -29,7 +29,7 @@ export default function SideBar({ ...rest }: GridProps) {
       height="100svh"
       bgColor="bg.300"
       gridTemplateRows={{
-        base: "72px auto 1fr",
+        base: "72px auto auto 1fr",
         lg: "auto auto auto 1fr",
       }}
       zIndex={20}
@@ -58,12 +58,12 @@ export default function SideBar({ ...rest }: GridProps) {
         />
       </Flex>
       <Logo my={6} display={{ base: "none", lg: "flex" }} svgId="d" />
-      <AccountBar display={{ base: "none", lg: "flex" }} />
+      <AccountBar display={{ base: "flex", lg: "flex" }} />
       <SimpleGrid
         overflow="auto"
         borderTopWidth={1}
         borderTopColor="whiteAlpha.100"
-        mt={{ base: 0, lg: 6 }}
+        mt={6}
         pt={6}
       >
         <MenuButton
