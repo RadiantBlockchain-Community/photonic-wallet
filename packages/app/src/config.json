@@ -36,10 +36,9 @@
       "mainnet": [
         "wss://electrumx.radiant4people.com:50022",
         "wss://electrumx2.radiant4people.com:50022",
-        "wss://radiantus.bladenet.online:53022",
-        "wss://radiant2.bladenet.online:53022",
-        "wss://radiant4.bladenet.online:53022",
-        "wss://radiant5.bladenet.online:53022"
+        "wss://radiantus.bladenet.online:50022",
+        "wss://radiant2.bladenet.online:50022",
+        "wss://radiant4.bladenet.online:50022"
       ]
     },
     "feeRate": 2000,
