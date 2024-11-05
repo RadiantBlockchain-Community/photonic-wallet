@@ -1,3 +1,16 @@
+diff --git a/accumulative.js b/accumulative.js
+index ff9dd9ca84c472c6d2732b27053587aa9982b5ac..6868a5fcb3d9082a3c5eb0ccc09033edf1097d09 100644
+--- a/accumulative.js
++++ b/accumulative.js
+@@ -20,7 +20,7 @@ module.exports = function accumulative (utxos, outputs, feeRate, changeScript) {
+   }
+ 
+   for (var i = 0; i < addedRequiredUtxosStatus.nonRequiredInputs.length; ++i) {
+-    var utxo = utxos[i]
++    var utxo = addedRequiredUtxosStatus.nonRequiredInputs[i]
+     var utxoBytes = utils.inputBytes(utxo)
+     var utxoFee = feeRate * utxoBytes
+     var utxoValue = utils.uintOrNaN(utxo.value)
 diff --git a/utils.js b/utils.js
 index 73dfb5ff7fb6ca62383f01b319f263a8f5073ba6..a2de3a40d47ae3c10d38ca12bcd4a819076328f8 100644
 --- a/utils.js

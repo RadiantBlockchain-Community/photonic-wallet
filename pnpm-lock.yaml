@@ -9,10 +9,10 @@ patchedDependencies:
     hash: varlpfijnui3jgpszthhiy72l4
     path: patches/@radiantblockchain__radiantjs@1.9.4.patch
   bsv-coinselect@4.2.5:
-    hash: ptxf4vh4yz76zpgebjpycangwy
+    hash: zeqzk4ubaliouugtfkcwspw47i
     path: patches/bsv-coinselect@4.2.5.patch
   ws-electrumx-client@1.0.5:
-    hash: ls5z5iyjs5tr4pb7sgc7cgiev4
+    hash: 4joazanbbqr7a5m3kxkaaeahzi
     path: patches/ws-electrumx-client@1.0.5.patch
 
 importers:
@@ -202,7 +202,7 @@ importers:
         version: 1.4.4(rollup@2.79.2)(vite@5.4.9)
       ws-electrumx-client:
         specifier: ^1.0.5
-        version: 1.0.5(patch_hash=ls5z5iyjs5tr4pb7sgc7cgiev4)
+        version: 1.0.5(patch_hash=4joazanbbqr7a5m3kxkaaeahzi)
     devDependencies:
       '@lingui/cli':
         specifier: ^4.13.0
@@ -299,7 +299,7 @@ importers:
         version: 0.33.5
       ws-electrumx-client:
         specifier: ^1.0.5
-        version: 1.0.5(patch_hash=ls5z5iyjs5tr4pb7sgc7cgiev4)
+        version: 1.0.5(patch_hash=4joazanbbqr7a5m3kxkaaeahzi)
     devDependencies:
       '@photonic/eslint-config':
         specifier: workspace:^
@@ -365,7 +365,7 @@ importers:
         version: 6.2.2
       bsv-coinselect:
         specifier: ^4.2.5
-        version: 4.2.5(patch_hash=ptxf4vh4yz76zpgebjpycangwy)
+        version: 4.2.5(patch_hash=zeqzk4ubaliouugtfkcwspw47i)
       buffer:
         specifier: ^6.0.3
         version: 6.0.3
@@ -4595,7 +4595,7 @@ packages:
       base-x: 3.0.10
     dev: false
 
-  /bsv-coinselect@4.2.5(patch_hash=ptxf4vh4yz76zpgebjpycangwy):
+  /bsv-coinselect@4.2.5(patch_hash=zeqzk4ubaliouugtfkcwspw47i):
     resolution: {integrity: sha512-WGfliK+a3yvIGLwL1/krMptrOBQqrJy1cyMwtalc4qB38+eRmoMhenwKL/bQ2Z2XwE367srB5ePHAVSxsscFiA==}
     dev: false
     patched: true
@@ -9322,7 +9322,7 @@ packages:
   /wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
 
-  /ws-electrumx-client@1.0.5(patch_hash=ls5z5iyjs5tr4pb7sgc7cgiev4):
+  /ws-electrumx-client@1.0.5(patch_hash=4joazanbbqr7a5m3kxkaaeahzi):
     resolution: {integrity: sha512-pBjfFqb9j2FBz7NPbnd8r2lOYanEw8ACzfKxOtHCgEGqre5QiTax5XHLVgbsiOvST0vmsHAiMtkJPvsZm77PIQ==}
     engines: {node: '>=10'}
     dependencies:

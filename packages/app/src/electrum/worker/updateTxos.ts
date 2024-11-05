@@ -58,15 +58,12 @@ export const buildUpdateTXOs =
     }
 
     // Fetch unspent outputs
+    console.debug("Calling listunspent");
     const utxos = (await electrum.client?.request(
       "blockchain.scripthash.listunspent",
       scriptHash
     )) as ElectrumUtxo[];
     console.debug("Unspent", contractType, utxos);
-
-    await db.subscriptionStatus.update(scriptHash, {
-      sync: { done: false, numSynced: 0, numTotal: utxos.length },
-    });
 
     // Check tx exists in database
     // Dedup any transactions that have multiple UTXOs for this wallet
@@ -75,12 +72,17 @@ export const buildUpdateTXOs =
     const outpoints: string[] = []; // All UTXO outpoints
     const confs: Map<number, ElectrumUtxo> = new Map(); // Newly confirmed transactions mapped by txo id
     const conflict: Map<number, string> = new Map(); // Anything changed from spent back to unspent
+
+    // Check if txo table is empty so queries can be skipped
+    const emptyTxoTable = (await db.txo.where({ contractType }).count()) === 0;
     await Promise.all(
       utxos.map(async (utxo) => {
         outpoints.push(`${utxo.tx_hash}${utxo.tx_pos}`);
-        const exist = await db.txo
-          .where({ txid: utxo.tx_hash, vout: utxo.tx_pos })
-          .first();
+        const exist = emptyTxoTable
+          ? false
+          : await db.txo
+              .where({ txid: utxo.tx_hash, vout: utxo.tx_pos })
+              .first();
         if (!exist) {
           newTxIds.add(utxo.tx_hash);
           newUtxos.push(utxo);
@@ -96,16 +98,24 @@ export const buildUpdateTXOs =
     );
 
     // Update spent UTXOs
-    const spent = (await db.txo.where({ contractType, spent: 0 }).toArray())
-      .filter(({ txid, vout }) => !outpoints.includes(`${txid}${vout}`))
-      .map(({ id, value, script }) => ({ id: id as number, value, script }));
-    await db.transaction("rw", db.txo, async () => {
-      for (const { id } of spent) {
-        await db.txo.update(id, {
-          spent: 1,
-        });
-      }
-    });
+    const spent = emptyTxoTable
+      ? []
+      : (await db.txo.where({ contractType, spent: 0 }).toArray())
+          .filter(({ txid, vout }) => !outpoints.includes(`${txid}${vout}`))
+          .map(({ id, value, script }) => ({
+            id: id as number,
+            value,
+            script,
+          }));
+    if (spent.length) {
+      await db.transaction("rw", db.txo, async () => {
+        for (const { id } of spent) {
+          await db.txo.update(id, {
+            spent: 1,
+          });
+        }
+      });
+    }
 
     const added = (
       await Promise.all(
@@ -136,20 +146,22 @@ export const buildUpdateTXOs =
       )
     ).filter(Boolean) as TxO[];
 
-    // Update confirmations and conflicting utxos
-    await db.transaction("rw", db.txo, async () => {
-      for (const [id, utxo] of confs) {
-        await db.txo.update(id, {
-          height: utxo.height || Infinity,
-          // date: newTxs[utxo.tx_hash].raw.time || undefined, // how to get date without fetching?
-        });
-      }
-      for (const [id] of conflict) {
-        await db.txo.update(id, {
-          spent: 0,
-        });
-      }
-    });
+    if (!emptyTxoTable) {
+      // Update confirmations and conflicting utxos
+      await db.transaction("rw", db.txo, async () => {
+        for (const [id, utxo] of confs) {
+          await db.txo.update(id, {
+            height: utxo.height || Infinity,
+            // date: newTxs[utxo.tx_hash].raw.time || undefined, // how to get date without fetching?
+          });
+        }
+        for (const [id] of conflict) {
+          await db.txo.update(id, {
+            spent: 0,
+          });
+        }
+      });
+    }
 
     return { added, confs, conflict, spent, utxoCount: utxos.length };
   };

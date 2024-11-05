@@ -1,5 +1,5 @@
 diff --git a/build/main/lib/electrum-ws.js b/build/main/lib/electrum-ws.js
-index 30647c24079f5e280e4ed85c4f7205d5014387fc..9fddb8c273773d65fdee74da0346774548a4f506 100644
+index 30647c24079f5e280e4ed85c4f7205d5014387fc..72fbd7c2dce726295acc4143a97173e50be514b8 100644
 --- a/build/main/lib/electrum-ws.js
 +++ b/build/main/lib/electrum-ws.js
 @@ -38,7 +38,7 @@ var ElectrumWSEvent;
@@ -7,12 +7,12 @@ index 30647c24079f5e280e4ed85c4f7205d5014387fc..9fddb8c273773d65fdee74da03467745
  const RECONNECT_TIMEOUT = 1000;
  const CONNECTED_TIMEOUT = 500;
 -const REQUEST_TIMEOUT = 1000 * 10; // 10 seconds
-+const REQUEST_TIMEOUT = 1000 * 30; // 30 seconds 
++const REQUEST_TIMEOUT = 1000 * 120; // 2 minutes
  const CLOSE_CODE = 1000; // 1000 indicates a normal closure, meaning that the purpose for which the connection was established has been fulfilled
  /**
   * ElectrumWS is a WebSocket client for Electrum servers.
 diff --git a/build/module/lib/electrum-ws.js b/build/module/lib/electrum-ws.js
-index 888e2a60d324e997de325355ed101af62c4d3b74..55b1ec806e7e709afe225b2e15438070ae0a3078 100644
+index 888e2a60d324e997de325355ed101af62c4d3b74..b1d7a0dc5d62f84fdae4d76718d09af70e1af875 100644
 --- a/build/module/lib/electrum-ws.js
 +++ b/build/module/lib/electrum-ws.js
 @@ -30,7 +30,7 @@ export var ElectrumWSEvent;
@@ -20,7 +20,7 @@ index 888e2a60d324e997de325355ed101af62c4d3b74..55b1ec806e7e709afe225b2e15438070
  const RECONNECT_TIMEOUT = 1000;
  const CONNECTED_TIMEOUT = 500;
 -const REQUEST_TIMEOUT = 1000 * 10; // 10 seconds
-+const REQUEST_TIMEOUT = 1000 * 30; // 30 seconds 
++const REQUEST_TIMEOUT = 1000 * 120; // 2 minutes
  const CLOSE_CODE = 1000; // 1000 indicates a normal closure, meaning that the purpose for which the connection was established has been fulfilled
  /**
   * ElectrumWS is a WebSocket client for Electrum servers.

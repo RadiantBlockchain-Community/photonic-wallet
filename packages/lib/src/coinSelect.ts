@@ -125,6 +125,17 @@ export function fundTx(
   // Find change outputs
   const change = selected.outputs.slice(target.length);
 
+  // Coinselect has had bugs so double check it's funded. This library needs to be replaced.
+  if (funding.length === 0) {
+    return {
+      funded: false,
+      funding: [],
+      remaining: utxos,
+      change: [],
+      fee: 0,
+    };
+  }
+
   return { funded: true, funding, remaining, change, fee: selected.fee };
 }
 

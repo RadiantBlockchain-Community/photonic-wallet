@@ -77,7 +77,7 @@ export class RXDWorker implements Subscription {
 
     updateRxdBalances(this.address);
 
-    setSubscriptionStatus(scriptHash, status, ContractType.RXD);
+    setSubscriptionStatus(scriptHash, status, false, ContractType.RXD);
     this.ready = true;
     if (this.receivedStatuses.length > 0) {
       const lastStatus = this.receivedStatuses.pop();

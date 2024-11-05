@@ -41,6 +41,7 @@ export interface SubscriptionStatus {
     done: boolean;
     numSynced?: number;
     numTotal?: number;
+    error?: boolean;
   };
 }
 

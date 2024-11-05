@@ -6,12 +6,13 @@ let init = false;
 export default async function setSubscriptionStatus(
   scriptHash: string,
   status: string,
+  error: boolean,
   contractType: ContractType
 ) {
   await db.subscriptionStatus.update(scriptHash, {
     status,
     contractType,
-    sync: { done: true },
+    sync: { done: true, error },
   });
 
   // When restoring a wallet, wait for all subscriptions to be initialised before allowing notifications
@@ -20,7 +21,9 @@ export default async function setSubscriptionStatus(
     if (exists) {
       init = true;
     } else {
-      const count = await db.subscriptionStatus.count();
+      const count = await db.subscriptionStatus
+        .filter((status) => status.sync.done)
+        .count();
       if (count === 3) {
         const maxId = (await db.txo.orderBy("id").reverse().first())?.id || 0;
         db.kvp.put(maxId, "lastNotification");

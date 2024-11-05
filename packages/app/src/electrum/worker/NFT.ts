@@ -31,7 +31,7 @@ import { bytesToHex } from "@noble/hashes/utils";
 import ElectrumManager from "@app/electrum/ElectrumManager";
 import opfs from "@app/opfs";
 import setSubscriptionStatus from "./setSubscriptionStatus";
-import { batchRequests } from "@lib/util";
+import { arrayChunks, batchRequests } from "@lib/util";
 import { GLYPH_FT, GLYPH_NFT } from "@lib/protocols";
 import { Worker } from "./electrumWorker";
 import { consolidationCheck } from "./consolidationCheck";
@@ -144,25 +144,34 @@ export class NFTWorker implements Subscription {
     }
 
     const { related, accepted } = await this.addTokens(newRefs);
-    this.addRelated(related);
+    await this.addRelated(related);
 
-    // All glyphs should now be in the database. Insert txos.
-    db.transaction("rw", db.txo, db.glyph, async () => {
-      const ids = (await db.txo.bulkPut(added, undefined, {
-        allKeys: true,
-      })) as number[];
-      await Promise.all(
-        added.map(async (txo, index) => {
+    // Insert txos and glyphs
+    // IndexedDB doesn't seem to like lots of inserts at once so batch them
+    const chunks = arrayChunks(added, 10000);
+    for (const chunk of chunks) {
+      await db.transaction("rw", db.txo, db.glyph, async () => {
+        const ids = (await db.txo.bulkPut(chunk, undefined, {
+          allKeys: true,
+        })) as number[];
+        const newGlyphs = new Map<string, SmartToken>();
+        chunk.map((txo, index) => {
           const ref = scriptRefMap[txo.script];
-          const glyph = existingRefs[ref] || accepted[ref];
+          if (!newGlyphs.has(ref)) {
+            newGlyphs.set(ref, existingRefs[ref] || accepted[ref]);
+          }
+          const glyph = newGlyphs.get(ref);
           if (glyph) {
             glyph.lastTxoId = ids[index];
             glyph.spent = 0;
-            await db.glyph.put(glyph);
           }
-        })
-      );
-    });
+        });
+        const validGlyphs = Array.from(newGlyphs.values()).filter(Boolean);
+        for (const validGlyph of validGlyphs) {
+          await db.glyph.put(validGlyph);
+        }
+      });
+    }
 
     // Update any NFTs that have been transferred
     await db.transaction("rw", db.glyph, async () => {
@@ -180,7 +189,7 @@ export class NFTWorker implements Subscription {
       }
     });
 
-    setSubscriptionStatus(scriptHash, status, ContractType.NFT);
+    setSubscriptionStatus(scriptHash, status, false, ContractType.NFT);
     this.ready = true;
     if (this.receivedStatuses.length > 0) {
       const lastStatus = this.receivedStatuses.pop();
@@ -215,6 +224,7 @@ export class NFTWorker implements Subscription {
     [key: string]: TxO | undefined;
   }): Promise<{ accepted: { [key: string]: SmartToken }; related: string[] }> {
     const refEntries = Object.entries(refs);
+    console.debug("Adding tokens", Object.keys(refs).length);
 
     // Get reveal transaction ids for all tokens
     // Reveal txids indexed by ref
