@@ -19,9 +19,6 @@ import Mint from "./pages/Mint";
 import Wallet from "./pages/Wallet";
 import WalletLayout from "./layouts/WalletLayout";
 import Placeholder from "./pages/Placeholder";
-import "@fontsource-variable/inter";
-import "@fontsource-variable/source-code-pro";
-import "./index.css";
 import Coins from "./pages/Coins";
 import MobileHome from "./pages/MobileHome";
 import IpfsSettings from "./pages/IpfsSettings";
@@ -31,6 +28,15 @@ import gradient from "/gradient.svg";
 import Exit from "./pages/Exit";
 import Fungible from "./pages/Fungible";
 import SetupLayout from "./layouts/SetupLayout";
+import Swap from "./pages/Swap";
+import SwapLayout from "./layouts/SwapLayout";
+import "@fontsource-variable/inter";
+import "@fontsource-variable/source-code-pro";
+import "./index.css";
+import SwapPending from "./pages/SwapPending";
+import SwapCompleted from "./pages/SwapCompleted";
+import SwapLoad from "./pages/SwapLoad";
+import SwapMissing from "./pages/SwapMissing";
 
 dayjs.extend(localizedFormat);
 
@@ -108,6 +114,11 @@ const theme = extendTheme({
       },
     },
     Alert: {
+      baseStyle: {
+        container: {
+          borderRadius: "md",
+        },
+      },
       variants: {
         subtle: {
           // Default subtle toast colours are too transparent and difficult to read
@@ -314,6 +325,31 @@ const router = createHashRouter([
           {
             path: "/history",
             element: <Placeholder />,
+          },
+          {
+            element: <SwapLayout />,
+            children: [
+              {
+                path: "/swap",
+                element: <Swap />,
+              },
+              {
+                path: "/swap/pending",
+                element: <SwapPending />,
+              },
+              {
+                path: "/swap/completed",
+                element: <SwapCompleted />,
+              },
+              {
+                path: "/swap/missing",
+                element: <SwapMissing />,
+              },
+              {
+                path: "/swap/load",
+                element: <SwapLoad />,
+              },
+            ],
           },
           {
             path: "/mint/user",

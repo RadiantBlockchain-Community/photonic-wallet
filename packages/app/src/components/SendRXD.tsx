@@ -40,6 +40,7 @@ import Balance from "./Balance";
 import { updateRxdBalances, updateWalletUtxos } from "@app/utxos";
 import AddressInput from "./AddressInput";
 import { BsQrCodeScan } from "react-icons/bs";
+import { transferRadiant } from "@lib/transfer";
 
 interface Props {
   onSuccess?: (txid: string) => void;
@@ -94,40 +95,16 @@ export default function SendRXD({ onSuccess, disclosure }: Props) {
 
     const coins: SelectableInput[] = rxd.slice();
     try {
-      const changeScript = p2pkhScript(wallet.value.address);
-      const script = p2pkhScript(toAddress.current?.value as string);
-
-      if (!script) {
-        setErrorMessage(t`Invalid address`);
-        setSuccess(false);
-        setLoading(false);
-        return;
-      }
-
-      const selected = coinSelect(
-        wallet.value.address,
+      const { tx, selected } = transferRadiant(
         coins,
-        [{ script, value }],
-        changeScript,
-        feeRate.value
+        wallet.value.address,
+        toAddress.current?.value as string,
+        value,
+        feeRate.value,
+        wallet.value.wif as string
       );
 
-      if (!selected.inputs?.length) {
-        setErrorMessage(t`Insufficient funds`);
-        setSuccess(false);
-        setLoading(false);
-        return;
-      }
-
-      const privKey = PrivateKey.fromString(wallet.value.wif as string);
-
-      const rawTx = buildTx(
-        wallet.value.address,
-        privKey.toString(),
-        selected.inputs,
-        selected.outputs,
-        false
-      ).toString();
+      const rawTx = tx.toString();
       console.debug("Broadcasting", rawTx);
       const txid = await electrumWorker.value.broadcast(rawTx);
       db.broadcast.put({ txid, date: Date.now(), description: "rxd_send" });
@@ -138,6 +115,7 @@ export default function SendRXD({ onSuccess, disclosure }: Props) {
       });
 
       // Update UTXOs without waiting for subscription
+      const changeScript = p2pkhScript(wallet.value.address);
       await updateWalletUtxos(
         ContractType.RXD,
         changeScript,

@@ -25,19 +25,19 @@ export default function SettingsLayout() {
         {t`Settings`} <ChevronRightIcon mx={2} /> {heading}
       </PageHeader>
       <HStack mb={6} pl={4}>
-        <Button as={Link} to="/settings/wallet">
+        <Button size="sm" as={Link} to="/settings/wallet">
           {t`Wallet`}
         </Button>
-        <Button as={Link} to="/settings/servers">
+        <Button size="sm" as={Link} to="/settings/servers">
           {t`Servers`}
         </Button>
-        {/*<Button as={Link} to="/settings/ipfs">
+        {/*<Button size="sm" as={Link} to="/settings/ipfs">
           {t`IPFS`}
         </Button>*/}
-        <Button as={Link} to="/settings/about">
+        <Button size="sm" as={Link} to="/settings/about">
           {t`About`}
         </Button>
-        <Button as={Link} to="/settings/logout">
+        <Button size="sm" as={Link} to="/settings/logout">
           {t`Log out`}
         </Button>
       </HStack>

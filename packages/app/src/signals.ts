@@ -10,6 +10,7 @@ export const openMenu = signal(false);
 export const wallet = signal<WalletState>({
   net: "testnet",
   address: "",
+  swapAddress: "",
   ready: false,
   exists: false,
   locked: true,

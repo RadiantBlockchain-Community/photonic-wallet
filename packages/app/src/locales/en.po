@@ -51,6 +51,10 @@ msgstr ""
 msgid "About"
 msgstr ""
 
+#: src/pages/SwapMissing.tsx:169
+msgid "Actions"
+msgstr ""
+
 #: src/pages/Mint.tsx:1021
 msgid "Add attribute"
 msgstr ""
@@ -59,9 +63,9 @@ msgstr ""
 msgid "Address"
 msgstr ""
 
-#: src/components/SendDigitalObject.tsx:222
-#: src/components/SendFungible.tsx:235
-#: src/components/SendRXD.tsx:217
+#: src/components/SendDigitalObject.tsx:203
+#: src/components/SendFungible.tsx:212
+#: src/components/SendRXD.tsx:195
 msgid "Amount"
 msgstr ""
 
@@ -90,8 +94,8 @@ msgstr ""
 msgid "Back to wallet"
 msgstr ""
 
-#: src/components/SendFungible.tsx:208
-#: src/components/SendRXD.tsx:190
+#: src/components/SendFungible.tsx:185
+#: src/components/SendRXD.tsx:168
 msgid "Balance"
 msgstr ""
 
@@ -105,9 +109,9 @@ msgstr ""
 
 #: src/components/MeltDigitalObject.tsx:136
 #: src/components/MeltFungible.tsx:152
-#: src/components/SendDigitalObject.tsx:237
-#: src/components/SendFungible.tsx:252
-#: src/components/SendRXD.tsx:242
+#: src/components/SendDigitalObject.tsx:218
+#: src/components/SendFungible.tsx:229
+#: src/components/SendRXD.tsx:220
 msgid "Cancel"
 msgstr ""
 
@@ -137,17 +141,22 @@ msgstr ""
 msgid "Coins"
 msgstr ""
 
+#: src/layouts/SwapLayout.tsx:26
+#: src/layouts/SwapLayout.tsx:86
+msgid "Completed"
+msgstr ""
+
 #: src/pages/CreateWallet.tsx:191
 msgid "Confirm"
 msgstr ""
 
 #: src/pages/CreateWallet.tsx:149
-#: src/pages/RecoverWallet.tsx:121
+#: src/pages/RecoverWallet.tsx:120
 msgid "Confirm password"
 msgstr ""
 
 #: src/components/StatusBar.tsx:67
-#: src/electrum/Electrum.tsx:55
+#: src/electrum/Electrum.tsx:60
 msgid "Connected"
 msgstr ""
 
@@ -192,13 +201,13 @@ msgstr ""
 msgid "Copy to clipboard"
 msgstr ""
 
-#: src/components/ViewDigitalObject.tsx:257
+#: src/components/ViewDigitalObject.tsx:268
 #: src/components/ViewFungible.tsx:241
 msgid "Copy URL"
 msgstr ""
 
-#: src/components/SendFungible.tsx:163
-#: src/components/SendRXD.tsx:153
+#: src/components/SendFungible.tsx:139
+#: src/components/SendRXD.tsx:131
 msgid "Could not send transaction"
 msgstr ""
 
@@ -210,7 +219,7 @@ msgstr ""
 msgid "Couldn't find user"
 msgstr ""
 
-#: src/pages/RecoverWallet.tsx:147
+#: src/pages/RecoverWallet.tsx:146
 msgid "Create a new wallet"
 msgstr ""
 
@@ -226,6 +235,7 @@ msgstr ""
 msgid "Data not found"
 msgstr ""
 
+#: src/components/SwapTable.tsx:69
 #: src/pages/Coins.tsx:50
 msgid "Date"
 msgstr ""
@@ -270,12 +280,12 @@ msgstr ""
 
 #: src/components/StatusBar.tsx:69
 #: src/components/StatusBar.tsx:70
-#: src/electrum/Electrum.tsx:60
+#: src/electrum/Electrum.tsx:65
 msgid "Disconnected"
 msgstr ""
 
 #: src/components/DownloadLink.tsx:33
-#: src/components/ViewDigitalObject.tsx:246
+#: src/components/ViewDigitalObject.tsx:257
 msgid "Download"
 msgstr ""
 
@@ -300,11 +310,11 @@ msgstr ""
 msgid "Ensure you have saved your recovery phrase before logging out! Your recovery phrase is the only way you can recreate your wallet."
 msgstr ""
 
-#: src/pages/WalletSettings.tsx:101
+#: src/pages/WalletSettings.tsx:104
 msgid "Enter password"
 msgstr ""
 
-#: src/pages/RecoverWallet.tsx:107
+#: src/pages/RecoverWallet.tsx:106
 msgid "Enter your 12 word recovery phrase"
 msgstr ""
 
@@ -318,7 +328,7 @@ msgstr ""
 msgid "Fee"
 msgstr ""
 
-#: src/pages/WalletSettings.tsx:132
+#: src/pages/WalletSettings.tsx:135
 msgid "Fee Rate"
 msgstr ""
 
@@ -367,19 +377,19 @@ msgstr ""
 msgid "HashStamp"
 msgstr ""
 
-#: src/components/ViewDigitalObject.tsx:325
+#: src/components/ViewDigitalObject.tsx:338
 msgid "Height"
 msgstr ""
 
 #: src/components/SideBar.tsx:101
-msgid "History"
-msgstr ""
+#~ msgid "History"
+#~ msgstr ""
 
 #: src/components/SideBar.tsx:74
 msgid "Home"
 msgstr ""
 
-#: src/pages/WalletSettings.tsx:112
+#: src/pages/WalletSettings.tsx:115
 msgid "If your wallet fails to consolidate UTXOs, a resync may be required"
 msgstr ""
 
@@ -387,7 +397,7 @@ msgstr ""
 msgid "Immutable"
 msgstr ""
 
-#: src/components/PasswordModal.tsx:84
+#: src/components/PasswordModal.tsx:94
 msgid "Incorrect password"
 msgstr ""
 
@@ -397,30 +407,25 @@ msgstr ""
 
 #: src/components/MeltDigitalObject.tsx:78
 #: src/components/MeltFungible.tsx:96
-#: src/components/SendDigitalObject.tsx:108
-#: src/components/SendFungible.tsx:130
-#: src/components/SendRXD.tsx:116
 msgid "Insufficient funds"
 msgstr ""
 
 #: src/components/SendFungible.tsx:111
-msgid "Insufficient token balance"
-msgstr ""
+#~ msgid "Insufficient token balance"
+#~ msgstr ""
 
-#: src/components/SendDigitalObject.tsx:80
-#: src/components/SendFungible.tsx:89
-#: src/components/SendFungible.tsx:105
-#: src/components/SendRXD.tsx:82
-#: src/components/SendRXD.tsx:101
+#: src/components/SendDigitalObject.tsx:79
+#: src/components/SendFungible.tsx:90
+#: src/components/SendRXD.tsx:83
 msgid "Invalid address"
 msgstr ""
 
-#: src/components/SendFungible.tsx:85
-#: src/components/SendRXD.tsx:77
+#: src/components/SendFungible.tsx:86
+#: src/components/SendRXD.tsx:78
 msgid "Invalid amount"
 msgstr ""
 
-#: src/pages/RecoverWallet.tsx:74
+#: src/pages/RecoverWallet.tsx:73
 msgid "Invalid recovery phrase"
 msgstr ""
 
@@ -440,7 +445,7 @@ msgstr ""
 msgid "IPFS Gateway URL"
 msgstr ""
 
-#: src/pages/WalletSettings.tsx:122
+#: src/pages/WalletSettings.tsx:125
 msgid "Language"
 msgstr ""
 
@@ -454,7 +459,16 @@ msgstr ""
 msgid "Link"
 msgstr ""
 
-#: src/components/ViewDigitalObject.tsx:302
+#: src/layouts/SwapLayout.tsx:28
+#: src/layouts/SwapLayout.tsx:70
+msgid "Load"
+msgstr ""
+
+#: src/layouts/SwapLayout.tsx:43
+msgid "Load Swap"
+msgstr ""
+
+#: src/components/ViewDigitalObject.tsx:315
 msgid "Location"
 msgstr ""
 
@@ -472,7 +486,7 @@ msgstr ""
 msgid "Logging out will remove your wallet and all saved data from your browser."
 msgstr ""
 
-#: src/pages/WalletSettings.tsx:110
+#: src/pages/WalletSettings.tsx:113
 msgid "Manual Sync"
 msgstr ""
 
@@ -482,7 +496,7 @@ msgstr ""
 
 #: src/components/MeltDigitalObject.tsx:134
 #: src/components/MeltFungible.tsx:150
-#: src/components/ViewDigitalObject.tsx:279
+#: src/components/ViewDigitalObject.tsx:292
 #: src/components/ViewFungible.tsx:256
 msgid "Melt"
 msgstr ""
@@ -521,6 +535,11 @@ msgstr ""
 msgid "Minted. Fee {0} {1}"
 msgstr ""
 
+#: src/layouts/SwapLayout.tsx:27
+#: src/layouts/SwapLayout.tsx:94
+msgid "Missing"
+msgstr ""
+
 #: src/pages/Servers.tsx:159
 msgid "Move down"
 msgstr ""
@@ -548,15 +567,16 @@ msgid "Name"
 msgstr ""
 
 #: src/pages/CreateWallet.tsx:157
-#: src/pages/RecoverWallet.tsx:125
+#: src/pages/RecoverWallet.tsx:124
 msgid "Network"
 msgstr ""
 
+#: src/layouts/SwapLayout.tsx:62
 #: src/pages/Servers.tsx:34
 msgid "New"
 msgstr ""
 
-#: src/pages/RecoverWallet.tsx:117
+#: src/pages/RecoverWallet.tsx:116
 msgid "New password"
 msgstr ""
 
@@ -572,7 +592,7 @@ msgstr ""
 msgid "NFT.Storage API Key"
 msgstr ""
 
-#: src/pages/Fungible.tsx:66
+#: src/pages/Fungible.tsx:70
 #: src/pages/Wallet.tsx:134
 msgid "No assets"
 msgstr ""
@@ -598,7 +618,7 @@ msgid "No, allow token owner to modify"
 msgstr ""
 
 #: src/components/MintMenu.tsx:36
-#: src/components/SendDigitalObject.tsx:218
+#: src/components/SendDigitalObject.tsx:199
 msgid "Non-Fungible Token"
 msgstr ""
 
@@ -629,7 +649,7 @@ msgstr ""
 
 #: src/components/TokenDetails.tsx:43
 #: src/components/TokenDetails.tsx:102
-#: src/components/ViewDigitalObject.tsx:308
+#: src/components/ViewDigitalObject.tsx:321
 msgid "Open in block explorer"
 msgstr ""
 
@@ -637,12 +657,12 @@ msgstr ""
 msgid "Open menu"
 msgstr ""
 
-#: src/components/ViewDigitalObject.tsx:294
+#: src/components/ViewDigitalObject.tsx:307
 msgid "Output value"
 msgstr ""
 
-#: src/components/PasswordModal.tsx:88
-#: src/components/PasswordModal.tsx:89
+#: src/components/PasswordModal.tsx:98
+#: src/components/PasswordModal.tsx:99
 #: src/pages/CreateWallet.tsx:141
 #: src/pages/CreateWallet.tsx:145
 #: src/pages/CreateWallet.tsx:153
@@ -650,8 +670,13 @@ msgid "Password"
 msgstr ""
 
 #: src/pages/CreateWallet.tsx:68
-#: src/pages/RecoverWallet.tsx:44
+#: src/pages/RecoverWallet.tsx:43
 msgid "Passwords do not match"
+msgstr ""
+
+#: src/layouts/SwapLayout.tsx:25
+#: src/layouts/SwapLayout.tsx:78
+msgid "Pending"
 msgstr ""
 
 #: src/pages/Mint.tsx:1164
@@ -679,6 +704,7 @@ msgid "Properties that describe your asset"
 msgstr ""
 
 #: src/components/TokenDetails.tsx:87
+#: src/pages/SwapMissing.tsx:167
 msgid "Radiant ID"
 msgstr ""
 
@@ -692,20 +718,20 @@ msgstr ""
 msgid "Recover my wallet"
 msgstr ""
 
-#: src/pages/RecoverWallet.tsx:97
+#: src/pages/RecoverWallet.tsx:96
 msgid "Recover your wallet"
 msgstr ""
 
-#: src/pages/RecoverWallet.tsx:138
+#: src/pages/RecoverWallet.tsx:137
 msgid "Recovering"
 msgstr ""
 
-#: src/pages/RecoverWallet.tsx:110
-#: src/pages/WalletSettings.tsx:89
+#: src/pages/RecoverWallet.tsx:109
+#: src/pages/WalletSettings.tsx:92
 msgid "Recovery phrase"
 msgstr ""
 
-#: src/pages/WalletSettings.tsx:115
+#: src/pages/WalletSettings.tsx:118
 msgid "Resync Wallet"
 msgstr ""
 
@@ -714,7 +740,7 @@ msgid "Reward"
 msgstr ""
 
 #: src/pages/IpfsSettings.tsx:102
-#: src/pages/WalletSettings.tsx:144
+#: src/pages/WalletSettings.tsx:147
 msgid "Save"
 msgstr ""
 
@@ -724,22 +750,22 @@ msgid "Saved"
 msgstr ""
 
 #: src/pages/CreateWallet.tsx:73
-#: src/pages/RecoverWallet.tsx:49
+#: src/pages/RecoverWallet.tsx:48
 msgid "Select a valid network"
 msgstr ""
 
 #: src/components/AccountBar.tsx:32
-#: src/components/SendDigitalObject.tsx:235
-#: src/components/SendFungible.tsx:250
-#: src/components/SendRXD.tsx:240
-#: src/components/ViewDigitalObject.tsx:272
+#: src/components/SendDigitalObject.tsx:216
+#: src/components/SendFungible.tsx:227
+#: src/components/SendRXD.tsx:218
+#: src/components/ViewDigitalObject.tsx:284
 #: src/components/ViewFungible.tsx:249
 #: src/pages/MobileHome.tsx:45
 msgid "Send"
 msgstr ""
 
-#: src/components/SendFungible.tsx:192
-#: src/components/SendRXD.tsx:181
+#: src/components/SendFungible.tsx:169
+#: src/components/SendRXD.tsx:159
 msgid "Send {0}"
 msgstr ""
 
@@ -747,19 +773,19 @@ msgstr ""
 msgid "Send {0} coins and tokens to this address"
 msgstr ""
 
-#: src/components/SendDigitalObject.tsx:188
+#: src/components/SendDigitalObject.tsx:169
 msgid "Send Non-Fungible Token"
 msgstr ""
 
-#: src/components/SendRXD.tsx:136
+#: src/components/SendRXD.tsx:113
 msgid "Sent {0} {1}"
 msgstr ""
 
-#: src/components/SendFungible.tsx:147
+#: src/components/SendFungible.tsx:120
 msgid "Sent {value} {ticker}"
 msgstr ""
 
-#: src/components/SendDigitalObject.tsx:130
+#: src/components/SendDigitalObject.tsx:105
 msgid "Sent NFT"
 msgstr ""
 
@@ -773,7 +799,7 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: src/pages/WalletSettings.tsx:96
+#: src/pages/WalletSettings.tsx:99
 msgid "Show recovery phrase"
 msgstr ""
 
@@ -785,7 +811,7 @@ msgstr ""
 msgid "Store HashStamp on-chain"
 msgstr ""
 
-#: src/pages/RecoverWallet.tsx:140
+#: src/pages/RecoverWallet.tsx:139
 msgid "Submit"
 msgstr ""
 
@@ -795,6 +821,18 @@ msgstr ""
 
 #: src/components/WalletNotifier.tsx:51
 msgid "Suppressed {0} more notifications"
+msgstr ""
+
+#: src/components/SideBar.tsx:105
+#: src/components/SwapTable.tsx:68
+#: src/layouts/SwapLayout.tsx:47
+#: src/pages/SwapMissing.tsx:166
+#: src/pages/SwapPending.tsx:157
+msgid "Swap"
+msgstr ""
+
+#: src/components/ViewDigitalObject.tsx:241
+msgid "Swap pending"
 msgstr ""
 
 #: src/pages/Mint.tsx:786
@@ -852,7 +890,7 @@ msgstr ""
 
 #: src/components/MeltDigitalObject.tsx:101
 #: src/components/MeltFungible.tsx:117
-#: src/components/SendDigitalObject.tsx:160
+#: src/components/SendDigitalObject.tsx:140
 msgid "Transaction rejected"
 msgstr ""
 
@@ -864,11 +902,13 @@ msgstr ""
 msgid "Transaction successful"
 msgstr ""
 
+#: src/components/SwapTable.tsx:67
 #: src/pages/Coins.tsx:49
+#: src/pages/SwapMissing.tsx:165
 msgid "TX ID"
 msgstr ""
 
-#: src/components/ViewDigitalObject.tsx:298
+#: src/components/ViewDigitalObject.tsx:311
 msgid "Type"
 msgstr ""
 
@@ -876,19 +916,19 @@ msgstr ""
 msgid "Type of content the URL links to. Leave empty for a website link."
 msgstr ""
 
-#: src/components/ViewDigitalObject.tsx:326
+#: src/components/ViewDigitalObject.tsx:339
 msgid "Unconfirmed"
 msgstr ""
 
 #: src/components/SideBar.tsx:95
-msgid "Universal Names"
-msgstr ""
+#~ msgid "Universal Names"
+#~ msgstr ""
 
-#: src/pages/RecoverWallet.tsx:79
+#: src/pages/RecoverWallet.tsx:78
 msgid "Unknown error"
 msgstr ""
 
-#: src/components/PasswordModal.tsx:95
+#: src/components/PasswordModal.tsx:105
 msgid "Unlock"
 msgstr ""
 
@@ -925,7 +965,7 @@ msgstr ""
 msgid "URL"
 msgstr ""
 
-#: src/components/ViewDigitalObject.tsx:235
+#: src/components/ViewDigitalObject.tsx:246
 #: src/components/ViewFungible.tsx:230
 msgid "URLs may be unsafe and result in loss of funds"
 msgstr ""
@@ -941,6 +981,7 @@ msgstr ""
 
 #: src/pages/Coins.tsx:52
 #: src/pages/Mint.tsx:1013
+#: src/pages/SwapMissing.tsx:168
 msgid "Value"
 msgstr ""
 
@@ -948,7 +989,7 @@ msgstr ""
 msgid "Version:"
 msgstr ""
 
-#: src/components/ViewDigitalObject.tsx:288
+#: src/components/ViewDigitalObject.tsx:301
 msgid "View contents"
 msgstr ""
 
@@ -973,6 +1014,10 @@ msgstr ""
 
 #: src/components/Unlock.tsx:28
 msgid "Wallet unlocked"
+msgstr ""
+
+#: src/components/SideBar.tsx:95
+msgid "Wave Names"
 msgstr ""
 
 #: src/pages/Mint.tsx:781

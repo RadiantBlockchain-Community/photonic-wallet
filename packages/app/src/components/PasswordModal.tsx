@@ -19,11 +19,12 @@ import {
 import { t } from "@lingui/macro";
 import { decryptKeys } from "@app/keys";
 import { wallet } from "@app/signals";
+import db from "@app/db";
 
 interface Props {
   header: string;
   allowClose?: boolean;
-  onSuccess?: (mnemonic: string, wif: string) => void;
+  onSuccess?: (mnemonic: string, wif: string, swapWif: string) => void;
 }
 
 export default function PasswordModal({
@@ -51,9 +52,18 @@ export default function PasswordModal({
     requestAnimationFrame(async () => {
       const pwd: string = password.current?.value || "";
       try {
-        const { mnemonic, wif } = await decryptKeys(wallet.value.net, pwd);
+        const { mnemonic, wif, swapWif, swapAddress } = await decryptKeys(
+          wallet.value.net,
+          pwd
+        );
 
-        onSuccess && onSuccess(mnemonic, wif);
+        // For old wallets, put swapAddress into database and signal
+        if (!wallet.value.swapAddress) {
+          db.kvp.update("wallet", { swapAddress });
+          wallet.value.swapAddress = swapAddress;
+        }
+
+        onSuccess && onSuccess(mnemonic, wif, swapWif);
       } catch (error) {
         setSuccess(false);
         setLoading(false);

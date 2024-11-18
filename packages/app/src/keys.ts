@@ -13,6 +13,7 @@ import db from "@app/db";
 import { NetworkKey } from "@lib/types";
 
 const derivationPath = "m/44'/0'/0'/0/0";
+const swapDerivationPath = "m/44'/0'/0'/0/1";
 
 export async function decryptKeys(net: NetworkKey, password: string) {
   const data = (await db.kvp.get("wallet")) as EncryptedData;
@@ -26,11 +27,16 @@ export async function decryptKeys(net: NetworkKey, password: string) {
   const key = Buffer.from(
     hdKey.derive(derivationPath).privateKey as Uint8Array
   ).toString("hex");
-  if (!key) {
+  const swapKey = Buffer.from(
+    hdKey.derive(swapDerivationPath).privateKey as Uint8Array
+  ).toString("hex");
+  if (!key || !swapKey) {
     throw new Error("Invalid mnemonic phrase");
   }
   const privKey = new PrivateKey(key, Networks[net]);
+  const swapPrivKey = new PrivateKey(swapKey, Networks[net]);
   const address = privKey?.toAddress().toString() as string;
+  const swapAddress = swapPrivKey?.toAddress().toString() as string;
 
   return {
     net,
@@ -38,6 +44,8 @@ export async function decryptKeys(net: NetworkKey, password: string) {
     privKey,
     wif: privKey.toString(),
     address,
+    swapWif: swapPrivKey.toString(),
+    swapAddress,
     locked: false,
   };
 }
@@ -57,12 +65,17 @@ export async function recoverKeys(
   const key = Buffer.from(
     hdKey.derive(derivationPath).privateKey as Uint8Array
   ).toString("hex");
-  if (!key) return;
+  const swapKey = Buffer.from(
+    hdKey.derive(swapDerivationPath).privateKey as Uint8Array
+  ).toString("hex");
+  if (!key || !swapKey) return;
   const privKey = new PrivateKey(key, Networks[net]);
   const address = privKey?.toAddress().toString() as string;
+  const swapPrivKey = new PrivateKey(swapKey, Networks[net]);
+  const swapAddress = swapPrivKey?.toAddress().toString() as string;
   const entropy = mnemonicToEntropy(mnemonic, wordlist);
   await db.kvp.put(
-    { ...(await encrypt(entropy, password)), address, net: net },
+    { ...(await encrypt(entropy, password)), address, swapAddress, net: net },
     "wallet"
   );
 

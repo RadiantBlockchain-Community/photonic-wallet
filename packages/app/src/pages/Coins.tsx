@@ -75,7 +75,7 @@ export default function Coins() {
                     <ExternalLinkIcon />
                   </a>
                 </Td>
-                <Td display={{ base: "none", lg: "initial" }} />
+                <Td display={{ base: "none", lg: "table-cell" }} />
               </Tr>
             ))}
         </Tbody>

@@ -252,7 +252,7 @@ export class NFTWorker implements Subscription {
     // Dedup reveal txids
     const revealTxIds = Array.from(
       new Set(Object.values(refReveals) as string[])
-    );
+    ).filter(Boolean);
     const foundDelegates = new Set<string>();
 
     // Fetch reveals, object is indexed by txid
@@ -341,14 +341,17 @@ export class NFTWorker implements Subscription {
           revealTxs[refReveals[ref]]?.delegates.flatMap(
             (r) => delegateRefMap[r]
           ) || [];
+        const revealTx = revealTxs[refReveals[ref]]?.tx;
+        // Will be undefined if the token wasn't found
+        if (!revealTx) return [];
         const { related, valid, glyph } = await this.saveGlyph(
           ref,
           txo,
-          revealTxs[refReveals[ref]].tx,
+          revealTx,
           delegatedRefs,
           fresh.includes(ref)
         );
-        if (valid && txo && glyph) {
+        if (valid && glyph) {
           accepted[glyph.ref] = glyph;
         }
         return related;
@@ -498,5 +501,14 @@ export class NFTWorker implements Subscription {
 
       await this.addTokens(Object.fromEntries(relatedRefs));
     }
+  }
+
+  // Fetch a glyph, add it to the database and return the id
+  async fetchGlyph(refBE: string) {
+    const { accepted } = await this.addTokens({ [refBE]: undefined });
+    if (accepted[refBE]) {
+      return accepted[refBE];
+    }
+    return undefined;
   }
 }

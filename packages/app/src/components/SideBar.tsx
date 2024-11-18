@@ -11,7 +11,7 @@ import AccountBar from "./AccountBar";
 import Logo from "./Logo";
 import StatusBar from "./StatusBar";
 import { language, openMenu } from "@app/signals";
-import { RepeatClockIcon } from "@chakra-ui/icons";
+import { RiSwap2Line } from "react-icons/ri";
 import { t } from "@lingui/macro";
 import { HiOutlineAtSymbol } from "react-icons/hi";
 import { MdHome } from "react-icons/md";
@@ -92,13 +92,17 @@ export default function SideBar({ ...rest }: GridProps) {
           to="/names"
           leftIcon={<Icon as={HiOutlineAtSymbol} boxSize={5} />}
         >
-          {t`Universal Names`}
+          {t`Wave Names`}
         </MenuButton>
         <MenuButton to="/coins" leftIcon={<Icon as={TbCoins} boxSize={5} />}>
           {t`Coins`}
         </MenuButton>
-        <MenuButton to="/history" leftIcon={<RepeatClockIcon boxSize={5} />}>
-          {t`History`}
+        <MenuButton
+          to="/swap"
+          match={["/swap"]}
+          leftIcon={<Icon as={RiSwap2Line} boxSize={5} />}
+        >
+          {t`Swap`}
         </MenuButton>
       </SimpleGrid>
       <Box />

@@ -29,7 +29,12 @@ export function coinSelect(
   }[],
   changeScript: string,
   feeRate: number
-): { inputs: SelectableInput[]; outputs: UnfinalizedInput[]; fee: number } {
+): {
+  inputs: SelectableInput[];
+  outputs: UnfinalizedInput[];
+  fee: number;
+  remaining: SelectableInput[];
+} {
   const inputs = utxos.map((u) => ({
     address,
     txid: u.txid,
@@ -55,6 +60,14 @@ export function coinSelect(
       script: scriptPubKey,
     })
   );
+  // Remove spent UTXOs
+  const remaining = utxos.filter(
+    ({ utxo }) =>
+      !(selected.inputs as SelectableInput[]).some(
+        (input) => input.utxo === utxo
+      )
+  );
+  selected.remaining = remaining;
   return selected;
 }
 
@@ -124,17 +137,6 @@ export function fundTx(
 
   // Find change outputs
   const change = selected.outputs.slice(target.length);
-
-  // Coinselect has had bugs so double check it's funded. This library needs to be replaced.
-  if (funding.length === 0) {
-    return {
-      funded: false,
-      funding: [],
-      remaining: utxos,
-      change: [],
-      fee: 0,
-    };
-  }
 
   return { funded: true, funding, remaining, change, fee: selected.fee };
 }

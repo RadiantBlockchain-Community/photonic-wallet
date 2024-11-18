@@ -1,8 +1,8 @@
 import { wallet } from "./signals";
 import { SavedWallet, WalletState } from "./types";
 
-export function unlockWallet(wif: string) {
-  wallet.value = { ...wallet.value, wif, locked: false };
+export function unlockWallet(wif: string, swapWif: string) {
+  wallet.value = { ...wallet.value, wif, swapWif, locked: false };
 }
 
 export function lockWallet() {
@@ -13,6 +13,7 @@ export function loadWalletFromSaved(savedWallet?: SavedWallet) {
   wallet.value = {
     ready: true,
     address: savedWallet?.address || "",
+    swapAddress: savedWallet?.swapAddress || "",
     exists: !!savedWallet,
     net: savedWallet?.net || "testnet",
     locked: true,

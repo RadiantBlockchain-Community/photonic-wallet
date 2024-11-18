@@ -230,6 +230,17 @@ export default function ViewDigitalObject({
               {nft.embed && !isKnownEmbed && (
                 <Warning>{t`Files may be unsafe and result in loss of funds`}</Warning>
               )}
+              {nft.swapPending && (
+                <Alert
+                  status="info"
+                  as={GridItem}
+                  justifyContent="center"
+                  colSpan={2}
+                >
+                  <AlertIcon />
+                  <Trans>Swap pending</Trans>
+                </Alert>
+              )}
               {!nft.embed && nft.remote && !isIPFS && (
                 <Warning>
                   {t`URLs may be unsafe and result in loss of funds`}
@@ -266,12 +277,14 @@ export default function ViewDigitalObject({
                 </>
               )} */}
               <Button
+                disabled={nft.swapPending}
                 leftIcon={<ActionIcon as={TbArrowUpRight} />}
                 onClick={() => unlock(openSend)}
               >
                 {t`Send`}
               </Button>
               <Button
+                disabled={nft.swapPending}
                 leftIcon={<ActionIcon as={MdDeleteForever} />}
                 onClick={() => unlock(openMelt)}
                 _hover={{ bg: "red.600" }}

@@ -18,7 +18,6 @@ import { t } from "@lingui/macro";
 import { recoverKeys } from "@app/keys";
 import Card from "@app/components/Card";
 import { NetworkKey } from "@lib/types";
-import { wallet } from "@app/signals";
 import config from "@app/config.json";
 import { initWallet } from "@app/wallet";
 

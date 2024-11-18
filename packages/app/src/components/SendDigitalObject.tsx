@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { t } from "@lingui/macro";
-import { PrivateKey } from "@radiantblockchain/radiantjs";
-import coinSelect, { SelectableInput } from "@lib/coinSelect";
+import { SelectableInput } from "@lib/coinSelect";
 import {
   Modal,
   ModalOverlay,
@@ -26,8 +25,7 @@ import { photonsToRXD } from "@lib/format";
 import { useLiveQuery } from "dexie-react-hooks";
 import db from "@app/db";
 import { ContractType, SmartToken, TxO } from "@app/types";
-import { p2pkhScript, nftScript } from "@lib/script";
-import { buildTx } from "@lib/tx";
+import { p2pkhScript } from "@lib/script";
 import Identifier from "./Identifier";
 import Outpoint from "@lib/Outpoint";
 import { feeRate, network, wallet } from "@app/signals";
@@ -35,6 +33,7 @@ import { electrumWorker } from "@app/electrum/Electrum";
 import { updateRxdBalances, updateWalletUtxos } from "@app/utxos";
 import { BsQrCodeScan } from "react-icons/bs";
 import AddressInput from "./AddressInput";
+import { TransferError, transferNonFungible } from "@lib/transfer";
 
 interface Props {
   glyph: SmartToken;
@@ -85,44 +84,20 @@ export default function SendDigitalObject({
       setLoading(false);
       return;
     }
+    const coins: SelectableInput[] = rxd.slice();
 
-    // Set script to "" so P2PKH scriptSig is used for fee calculation
-    const required: SelectableInput = { ...txo, required: true, script: "" };
-    const inputs: SelectableInput[] = [required, ...rxd.slice()];
-
-    const changeScript = p2pkhScript(wallet.value.address);
-    const script = nftScript(
-      toAddress.current?.value as string,
-      ref.toString()
-    );
-    const sendToSelf = toAddress.current?.value === wallet.value.address;
-
-    const selected = coinSelect(
-      wallet.value.address,
-      inputs,
-      [{ script, value: txo.value }],
-      changeScript,
-      feeRate.value
-    );
-    if (!selected.inputs?.length) {
-      setErrorMessage(t`Insufficient funds`);
-      setSuccess(false);
-      setLoading(false);
-      return;
-    }
-
-    selected.inputs[0].script = txo.script;
-
-    const privKey = PrivateKey.fromString(wallet.value.wif as string);
-
-    const rawTx = buildTx(
-      wallet.value.address,
-      privKey.toString(),
-      selected.inputs,
-      selected.outputs,
-      false
-    ).toString();
     try {
+      const { tx, selected } = transferNonFungible(
+        coins,
+        txo,
+        ref.toString(),
+        wallet.value.address,
+        toAddress.current?.value as string,
+        feeRate.value,
+        wallet.value.wif as string
+      );
+
+      const rawTx = tx.toString();
       const txid = await electrumWorker.value.broadcast(rawTx);
       db.broadcast.put({ txid, date: Date.now(), description: "nft_send" });
 
@@ -130,6 +105,8 @@ export default function SendDigitalObject({
         title: t`Sent NFT`,
         status: "success",
       });
+      const changeScript = p2pkhScript(wallet.value.address);
+      const sendToSelf = toAddress.current?.value === wallet.value.address;
 
       const newTxos = await updateWalletUtxos(
         ContractType.NFT,
@@ -157,7 +134,11 @@ export default function SendDigitalObject({
 
       onSuccess && onSuccess(txid);
     } catch (error) {
-      setErrorMessage(t`Transaction rejected`);
+      if (error instanceof TransferError) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage(t`Transaction rejected`);
+      }
       console.debug(error);
       setSuccess(false);
       setLoading(false);

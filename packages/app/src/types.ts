@@ -33,6 +33,26 @@ export interface TxO {
   contractType: ContractType;
 }
 
+export enum SwapStatus {
+  PENDING,
+  CANCEL,
+  COMPLETE,
+}
+
+export interface TokenSwap {
+  id?: number;
+  txid: string;
+  tx: string;
+  from: ContractType;
+  fromGlyph: string | null;
+  fromValue: number;
+  to: ContractType;
+  toGlyph: string | null;
+  toValue: number;
+  status: SwapStatus;
+  date: number;
+}
+
 export interface SubscriptionStatus {
   scriptHash: string;
   status: string;
@@ -65,6 +85,7 @@ export interface BroadcastResult {
 }
 
 // Tokens that follow Radiant Smart Token standard
+// TODO rename all instances of SmartToken to Glyph
 export interface SmartToken {
   id?: number;
   p?: (number | string)[];
@@ -91,6 +112,7 @@ export interface SmartToken {
     hs?: ArrayBuffer;
   }; // Remote file
   height?: number;
+  swapPending?: boolean;
 }
 
 export interface Subscription {
@@ -114,7 +136,11 @@ export type ElectrumStatusUpdate = (
   utxoCount?: number;
 }>;
 
-export type SavedWallet = EncryptedData & { address: string; net: NetworkKey };
+export type SavedWallet = EncryptedData & {
+  address: string;
+  swapAddress: string;
+  net: NetworkKey;
+};
 
 export interface WalletState {
   net: NetworkKey;
@@ -123,6 +149,8 @@ export interface WalletState {
   locked: boolean;
   wif?: string;
   address: string;
+  swapWif?: string;
+  swapAddress: string;
 }
 
 export enum ElectrumStatus {
@@ -144,5 +172,13 @@ export type NetworkConfig = {
     tx: string;
   };
 };
+
+export class SwapError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "SwapError";
+    Object.setPrototypeOf(this, SwapError.prototype);
+  }
+}
 
 export {};

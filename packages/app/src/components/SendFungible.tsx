@@ -41,6 +41,7 @@ import FtBalance from "./FtBalance";
 import { updateFtBalances, updateWalletUtxos } from "@app/utxos";
 import AddressInput from "./AddressInput";
 import { BsQrCodeScan } from "react-icons/bs";
+import { TransferError, transferFungible } from "@lib/transfer";
 
 interface Props {
   glyph: SmartToken;
@@ -98,47 +99,19 @@ export default function SendFungible({ glyph, onSuccess, disclosure }: Props) {
 
     const coins: SelectableInput[] = rxd.slice();
     try {
-      const changeScript = p2pkhScript(wallet.value.address);
-      const toScript = ftScript(toAddress.current?.value as string, refLE);
-
-      if (!toScript) {
-        return setFailure(t`Invalid address`);
-      }
-
-      const accum = accumulateInputs(tokens, value);
-
-      if (accum.sum < value) {
-        return setFailure(t`Insufficient token balance`);
-      }
-
-      const outputs = [{ script: toScript, value }];
-      if (accum.sum > value) {
-        // Create FT change output
-        outputs.push({ script: fromScript, value: accum.sum - value });
-      }
-
-      const selected = coinSelect(
+      const { tx, selected } = transferFungible(
+        coins,
+        tokens,
+        refLE,
         wallet.value.address,
-        // FIXME check script is using scriptSig not scriptPubKey
-        [...accum.inputs, ...coins],
-        outputs,
-        changeScript,
-        feeRate.value
+        toAddress.current?.value as string,
+        value,
+        feeRate.value,
+        wallet.value.wif as string
       );
+      const rawTx = tx.toString();
+      const changeScript = p2pkhScript(wallet.value.address);
 
-      if (!selected.inputs?.length) {
-        return setFailure(t`Insufficient funds`);
-      }
-
-      const privKey = PrivateKey.fromString(wallet.value.wif as string);
-
-      const rawTx = buildTx(
-        wallet.value.address,
-        privKey.toString(),
-        selected.inputs,
-        selected.outputs,
-        false
-      ).toString();
       console.debug("Broadcasting", rawTx);
       const txid = await electrumWorker.value.broadcast(rawTx);
       db.broadcast.put({ txid, date: Date.now(), description: "ft_send" });
@@ -160,7 +133,11 @@ export default function SendFungible({ glyph, onSuccess, disclosure }: Props) {
 
       onSuccess && onSuccess(txid);
     } catch (error) {
-      setErrorMessage(t`Could not send transaction`);
+      if (error instanceof TransferError) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage(t`Could not send transaction`);
+      }
       console.error(error);
       setSuccess(false);
       setLoading(false);

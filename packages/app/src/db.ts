@@ -6,6 +6,7 @@ import {
   SubscriptionStatus,
   ContractBalance,
   BroadcastResult,
+  TokenSwap,
 } from "./types";
 import config from "@app/config.json";
 import { shuffle } from "@lib/util";
@@ -20,6 +21,7 @@ export class Database extends Dexie {
   header!: Table<BlockHeader>;
   balance!: Table<ContractBalance>;
   broadcast!: Table<BroadcastResult>;
+  swap!: Table<TokenSwap>;
 
   constructor() {
     super("photonic");
@@ -68,6 +70,10 @@ export class Database extends Dexie {
 
       const testnet = config.defaultConfig.servers.testnet;
       transaction.table("kvp").put({ mainnet, testnet }, "servers");
+    });
+
+    this.version(6).stores({
+      swap: "++id, status, txid",
     });
   }
 }

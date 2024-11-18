@@ -14,7 +14,8 @@
     "./encryption": "./src/encryption.ts",
     "./mint": "./src/mint.ts",
     "./types": "./src/types.ts",
-    "./protocols": "./src/protocols.ts"
+    "./protocols": "./src/protocols.ts",
+    "./transfer": "./src/transfer.ts"
   },
   "scripts": {
     "lint": "eslint \"src/**/*.ts*\"",

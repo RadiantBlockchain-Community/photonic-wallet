@@ -4,10 +4,10 @@ import db from "@app/db";
 import { useEffect } from "react";
 import { electrumStatus, wallet } from "@app/signals";
 import { useToast } from "@chakra-ui/react";
-import { ElectrumStatus } from "@app/types";
+import { ContractType, ElectrumStatus, SmartToken } from "@app/types";
 import { wrap } from "comlink";
 import { signal } from "@preact/signals-react";
-import { ElectrumRefResponse } from "@lib/types";
+import { ElectrumRefResponse, ElectrumUtxo } from "@lib/types";
 
 // Android Chrome doesn't support shared workers, fall back to dedicated worker
 const sharedSupported = "SharedWorker" in globalThis;
@@ -34,6 +34,11 @@ const wrapped = wrap<{
   manualSync: () => void;
   setActive: (active: boolean) => void;
   isActive: () => boolean;
+  fetchGlyph: (refBE: string) => SmartToken | undefined;
+  findSwaps(
+    address: string
+  ): { contractType: ContractType; utxo: ElectrumUtxo }[];
+  isUtxoUnspent: (txid: string, vout: number, scriptHash: string) => boolean;
 }>(worker);
 export const electrumWorker = signal<typeof wrapped>(wrapped);
 

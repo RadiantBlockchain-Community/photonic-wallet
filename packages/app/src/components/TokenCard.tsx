@@ -8,6 +8,7 @@ import TokenContent from "@app/components/TokenContent";
 import { TbBox, TbUserCircle } from "react-icons/tb";
 import { IconType } from "react-icons/lib";
 import { LinkIcon } from "@chakra-ui/icons";
+import { RiSwap2Line } from "react-icons/ri";
 
 export default function TokenCard({
   glyph,
@@ -47,6 +48,18 @@ export default function TokenCard({
             borderRadius={4}
           >
             <LinkIcon boxSize={8} />
+          </Box>
+        )}
+        {glyph?.swapPending && (
+          <Box
+            position="absolute"
+            bottom={2}
+            right={2}
+            bgColor="blackAlpha.400"
+            p={2}
+            borderRadius={4}
+          >
+            <Icon as={RiSwap2Line} boxSize={8} />
           </Box>
         )}
         <TokenContent glyph={glyph} defaultIcon={defaultIcon} thumbnail />

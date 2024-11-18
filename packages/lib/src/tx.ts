@@ -13,16 +13,19 @@ type Script = rjs.Script;
 
 export const buildTx = (
   address: string,
-  wif: string,
+  wif: string | string[],
   inputs: Utxo[],
   outputs: UnfinalizedOutput[],
   addChangeOutput = true,
-  setInputScriptCallback?: (index: number, script: Script) => void,
-  sighashFlags?: number
+  setInputScriptCallback?: (index: number, script: Script) => Script | void,
+  sighashFlags?: number,
+  skipFeeCheck?: boolean
 ) => {
   const tx = new Transaction();
   const p2pkh = Script.fromAddress(address).toHex();
-  const privKey = PrivateKey.fromWIF(wif);
+
+  // Keys can be given as an array if inputs are from different addresses
+  const privKeys = (Array.isArray(wif) ? wif : [wif]).map(PrivateKey.fromWIF);
 
   inputs.forEach((input, index) => {
     if (input.script) {
@@ -39,6 +42,7 @@ export const buildTx = (
       );
       // @ts-ignore
       tx.setInputScript(index, (tx, output) => {
+        const privKey = privKeys[index] || privKeys[0];
         const sigType =
           (sighashFlags || crypto.Signature.SIGHASH_ALL) |
           crypto.Signature.SIGHASH_FORKID; // Always enforce fork id
@@ -56,7 +60,11 @@ export const buildTx = (
           .add(Buffer.concat([sig.toBuffer(), Buffer.from([sigType])]))
           .add(privKey.toPublicKey().toBuffer());
         if (setInputScriptCallback) {
-          setInputScriptCallback(index, spendScript);
+          // TODO refactor uses of this to only use return value
+          const script = setInputScriptCallback(index, spendScript);
+          if (script) {
+            return script.toString();
+          }
         }
         return spendScript.toString();
       });
@@ -83,10 +91,12 @@ export const buildTx = (
   if (addChangeOutput) {
     tx.change(address);
   }
-  tx.sign(privKey);
+  tx.sign(privKeys[0]);
   tx.seal();
 
-  feeCheck(tx, 20000);
+  if (!skipFeeCheck) {
+    feeCheck(tx, 20000);
+  }
 
   return tx;
 };

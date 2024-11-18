@@ -309,6 +309,14 @@ export function parseMutableScript(script: string) {
   return { hash, ref };
 }
 
+export function parseP2pkhScript(script: string): {
+  address?: string;
+} {
+  const pattern = /^76a914([0-9a-f]{40})88ac$/;
+  const [, address] = script.match(pattern) || [];
+  return { address };
+}
+
 export function parseNftScript(script: string): {
   ref?: string;
   address?: string;

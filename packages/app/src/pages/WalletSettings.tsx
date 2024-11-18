@@ -80,7 +80,10 @@ export default function WalletSettings() {
       <FormSection>
         <Heading size="md">{t`Address`}</Heading>
         <Text pt="2" fontSize="sm">
-          {wallet.value.address}
+          Main: {wallet.value.address}
+        </Text>
+        <Text pt="2" fontSize="sm">
+          Swap: {wallet.value.swapAddress}
         </Text>
       </FormSection>
 

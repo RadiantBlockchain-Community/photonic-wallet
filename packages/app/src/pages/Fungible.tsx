@@ -61,23 +61,32 @@ function TokenGrid() {
   return (
     <>
       <PageHeader toolbar={<MintMenu />}>{t`Fungible Tokens`}</PageHeader>
-      <Box px={2} overflowY="auto" sx={{ scrollbarGutter: "stable both-edges" }}>
+      <Box
+        px={2}
+        overflowY="auto"
+        sx={{ scrollbarGutter: "stable both-edges" }}
+      >
         {withBalance.length === 0 ? (
           <NoContent>{t`No assets`}</NoContent>
         ) : (
-          tokens.map((token) => (
-            <TokenRow
-              glyph={token}
-              value={
-                (balances[token.ref]?.confirmed || 0) +
-                (balances[token.ref]?.unconfirmed || 0)
-              }
-              key={token.ref}
-              to={`/fungible/token/${token.ref}`}
-              size="sm"
-              defaultIcon={RiQuestionFill}
-            />
-          ))
+          tokens.map(
+            (token) =>
+              (balances[token.ref]?.confirmed || 0) +
+                (balances[token.ref]?.unconfirmed || 0) >
+                0 && (
+                <TokenRow
+                  glyph={token}
+                  value={
+                    (balances[token.ref]?.confirmed || 0) +
+                    (balances[token.ref]?.unconfirmed || 0)
+                  }
+                  key={token.ref}
+                  to={`/fungible/token/${token.ref}`}
+                  size="sm"
+                  defaultIcon={RiQuestionFill}
+                />
+              )
+          )
         )}
       </Box>
     </>
