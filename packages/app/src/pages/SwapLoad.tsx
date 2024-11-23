@@ -28,7 +28,6 @@ import {
   parseFtScript,
   parseNftScript,
   parseP2pkhScript,
-  scriptHash,
 } from "@lib/script";
 import { bytesToHex } from "@noble/hashes/utils";
 // @ts-ignore
@@ -129,7 +128,7 @@ async function loadSwap(psrt: Transaction): Promise<SwapParams | null> {
   const isUnspent = await electrumWorker.value.isUtxoUnspent(
     tx.id,
     vout,
-    scriptHash(tx.outputs[vout].script.toHex())
+    tx.outputs[vout].script.toHex()
   );
 
   if (!isUnspent) {

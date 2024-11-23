@@ -52,7 +52,7 @@ export default function SwapLayout() {
         )}
       </PageHeader>
 
-      <HStack mb={8} px={4}>
+      <HStack mb={8} px={4} wrap="wrap">
         <Button
           size="sm"
           as={Link}
