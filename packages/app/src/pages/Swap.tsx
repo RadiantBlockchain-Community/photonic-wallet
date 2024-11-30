@@ -149,7 +149,7 @@ async function prepareRadiant(coins: SelectableInput[], value: number) {
   const { tx, selected } = transferRadiant(
     coins,
     wallet.value.address,
-    wallet.value.swapAddress,
+    p2pkhScript(wallet.value.swapAddress),
     value,
     feeRate.value,
     wallet.value.wif as string

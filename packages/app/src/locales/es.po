@@ -63,7 +63,7 @@ msgstr ""
 msgid "Address"
 msgstr ""
 
-#: src/components/SendDigitalObject.tsx:203
+#: src/components/SendDigitalObject.tsx:202
 #: src/components/SendFungible.tsx:212
 #: src/components/SendRXD.tsx:195
 msgid "Amount"
@@ -109,7 +109,7 @@ msgstr ""
 
 #: src/components/MeltDigitalObject.tsx:136
 #: src/components/MeltFungible.tsx:152
-#: src/components/SendDigitalObject.tsx:218
+#: src/components/SendDigitalObject.tsx:217
 #: src/components/SendFungible.tsx:229
 #: src/components/SendRXD.tsx:220
 msgid "Cancel"
@@ -146,12 +146,13 @@ msgstr ""
 msgid "Completed"
 msgstr ""
 
-#: src/pages/CreateWallet.tsx:191
+#: src/pages/CreateWallet.tsx:196
+#: src/pages/CreateWallet.tsx:204
 msgid "Confirm"
 msgstr ""
 
 #: src/pages/CreateWallet.tsx:149
-#: src/pages/RecoverWallet.tsx:120
+#: src/pages/RecoverWallet.tsx:122
 msgid "Confirm password"
 msgstr ""
 
@@ -219,7 +220,7 @@ msgstr ""
 msgid "Couldn't find user"
 msgstr ""
 
-#: src/pages/RecoverWallet.tsx:146
+#: src/pages/RecoverWallet.tsx:148
 msgid "Create a new wallet"
 msgstr ""
 
@@ -314,7 +315,7 @@ msgstr ""
 msgid "Enter password"
 msgstr ""
 
-#: src/pages/RecoverWallet.tsx:106
+#: src/pages/RecoverWallet.tsx:108
 msgid "Enter your 12 word recovery phrase"
 msgstr ""
 
@@ -414,18 +415,18 @@ msgstr ""
 #~ msgid "Insufficient token balance"
 #~ msgstr ""
 
-#: src/components/SendDigitalObject.tsx:79
+#: src/components/SendDigitalObject.tsx:78
 #: src/components/SendFungible.tsx:90
 #: src/components/SendRXD.tsx:83
 msgid "Invalid address"
 msgstr ""
 
 #: src/components/SendFungible.tsx:86
-#: src/components/SendRXD.tsx:78
+#: src/components/SendRXD.tsx:76
 msgid "Invalid amount"
 msgstr ""
 
-#: src/pages/RecoverWallet.tsx:73
+#: src/pages/RecoverWallet.tsx:75
 msgid "Invalid recovery phrase"
 msgstr ""
 
@@ -567,7 +568,7 @@ msgid "Name"
 msgstr ""
 
 #: src/pages/CreateWallet.tsx:157
-#: src/pages/RecoverWallet.tsx:124
+#: src/pages/RecoverWallet.tsx:126
 msgid "Network"
 msgstr ""
 
@@ -576,7 +577,7 @@ msgstr ""
 msgid "New"
 msgstr ""
 
-#: src/pages/RecoverWallet.tsx:116
+#: src/pages/RecoverWallet.tsx:118
 msgid "New password"
 msgstr ""
 
@@ -618,7 +619,7 @@ msgid "No, allow token owner to modify"
 msgstr ""
 
 #: src/components/MintMenu.tsx:36
-#: src/components/SendDigitalObject.tsx:199
+#: src/components/SendDigitalObject.tsx:198
 msgid "Non-Fungible Token"
 msgstr ""
 
@@ -670,7 +671,7 @@ msgid "Password"
 msgstr ""
 
 #: src/pages/CreateWallet.tsx:68
-#: src/pages/RecoverWallet.tsx:43
+#: src/pages/RecoverWallet.tsx:45
 msgid "Passwords do not match"
 msgstr ""
 
@@ -718,15 +719,15 @@ msgstr ""
 msgid "Recover my wallet"
 msgstr ""
 
-#: src/pages/RecoverWallet.tsx:96
+#: src/pages/RecoverWallet.tsx:98
 msgid "Recover your wallet"
 msgstr ""
 
-#: src/pages/RecoverWallet.tsx:137
+#: src/pages/RecoverWallet.tsx:139
 msgid "Recovering"
 msgstr ""
 
-#: src/pages/RecoverWallet.tsx:109
+#: src/pages/RecoverWallet.tsx:111
 #: src/pages/WalletSettings.tsx:92
 msgid "Recovery phrase"
 msgstr ""
@@ -750,12 +751,12 @@ msgid "Saved"
 msgstr ""
 
 #: src/pages/CreateWallet.tsx:73
-#: src/pages/RecoverWallet.tsx:48
+#: src/pages/RecoverWallet.tsx:50
 msgid "Select a valid network"
 msgstr ""
 
 #: src/components/AccountBar.tsx:32
-#: src/components/SendDigitalObject.tsx:216
+#: src/components/SendDigitalObject.tsx:215
 #: src/components/SendFungible.tsx:227
 #: src/components/SendRXD.tsx:218
 #: src/components/ViewDigitalObject.tsx:284
@@ -773,7 +774,7 @@ msgstr ""
 msgid "Send {0} coins and tokens to this address"
 msgstr ""
 
-#: src/components/SendDigitalObject.tsx:169
+#: src/components/SendDigitalObject.tsx:168
 msgid "Send Non-Fungible Token"
 msgstr ""
 
@@ -785,7 +786,7 @@ msgstr ""
 msgid "Sent {value} {ticker}"
 msgstr ""
 
-#: src/components/SendDigitalObject.tsx:105
+#: src/components/SendDigitalObject.tsx:104
 msgid "Sent NFT"
 msgstr ""
 
@@ -811,7 +812,7 @@ msgstr ""
 msgid "Store HashStamp on-chain"
 msgstr ""
 
-#: src/pages/RecoverWallet.tsx:139
+#: src/pages/RecoverWallet.tsx:141
 msgid "Submit"
 msgstr ""
 
@@ -890,7 +891,7 @@ msgstr ""
 
 #: src/components/MeltDigitalObject.tsx:101
 #: src/components/MeltFungible.tsx:117
-#: src/components/SendDigitalObject.tsx:140
+#: src/components/SendDigitalObject.tsx:139
 msgid "Transaction rejected"
 msgstr ""
 
@@ -924,7 +925,7 @@ msgstr ""
 #~ msgid "Universal Names"
 #~ msgstr ""
 
-#: src/pages/RecoverWallet.tsx:78
+#: src/pages/RecoverWallet.tsx:80
 msgid "Unknown error"
 msgstr ""
 

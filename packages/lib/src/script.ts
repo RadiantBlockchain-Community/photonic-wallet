@@ -111,6 +111,21 @@ export function p2pkhScript(address: string): string {
   }
 }
 
+// Handles p2pkh and p2sh
+export function payToScript(address: string): string {
+  try {
+    return Script.fromAddress(address).toHex();
+  } catch {
+    return "";
+  }
+}
+
+export function isP2pkh(address: string): boolean {
+  const addr = new Address(address);
+  // @ts-expect-error missing definition
+  return addr.isPayToPublicKeyHash();
+}
+
 export function p2pkhScriptHash(address: string): string {
   return scriptHash(p2pkhScript(address));
 }

@@ -19,7 +19,7 @@ const assetToText = (item: Asset) =>
     ? `${item} RXD`
     : item.glyph.tokenType === SmartTokenType.FT
     ? `${item.value} ${item.glyph.ticker || item.glyph.name}`
-    : `${item.value} ${item.glyph.name}`;
+    : `${item.glyph.name}`;
 
 function CopyButton({ value, ...rest }: { value: string } & ButtonProps) {
   const { onCopy, hasCopied } = useClipboard(value);

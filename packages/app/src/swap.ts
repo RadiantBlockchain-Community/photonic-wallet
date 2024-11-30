@@ -135,6 +135,11 @@ export const syncSwaps = async () => {
     for (const swap of dbSwaps) {
       if (!activeSwaps.has(swap.txid) && swap.id) {
         db.swap.update(swap.id, { status: SwapStatus.COMPLETE });
+        if (swap.fromGlyph) {
+          await db.glyph.where({ ref: swap.fromGlyph }).modify({
+            swapPending: false,
+          });
+        }
       }
     }
   } catch {

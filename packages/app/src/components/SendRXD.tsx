@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { t } from "@lingui/macro";
-import { PrivateKey } from "@radiantblockchain/radiantjs";
 import Big from "big.js";
-import coinSelect, { SelectableInput } from "@lib/coinSelect";
+import { SelectableInput } from "@lib/coinSelect";
 import {
   Modal,
   ModalOverlay,
@@ -32,8 +31,7 @@ import { photonsToRXD } from "@lib/format";
 import { useLiveQuery } from "dexie-react-hooks";
 import db from "@app/db";
 import { ContractType } from "@app/types";
-import { p2pkhScript } from "@lib/script";
-import { buildTx } from "@lib/tx";
+import { p2pkhScript, payToScript } from "@lib/script";
 import { feeRate, network, wallet } from "@app/signals";
 import { electrumWorker } from "@app/electrum/Electrum";
 import Balance from "./Balance";
@@ -78,7 +76,9 @@ export default function SendRXD({ onSuccess, disclosure }: Props) {
       setErrorMessage(t`Invalid amount`);
     }
 
-    if (!toAddress.current?.value) {
+    const p2script = payToScript(toAddress.current?.value || "");
+
+    if (!p2script) {
       fail = true;
       setErrorMessage(t`Invalid address`);
     }
@@ -98,7 +98,7 @@ export default function SendRXD({ onSuccess, disclosure }: Props) {
       const { tx, selected } = transferRadiant(
         coins,
         wallet.value.address,
-        toAddress.current?.value as string,
+        p2script,
         value,
         feeRate.value,
         wallet.value.wif as string
