@@ -14,6 +14,7 @@ import {
   HStack,
   Icon,
   Image,
+  Link,
   Spinner,
   Text,
   Textarea,
@@ -40,13 +41,13 @@ import {
 import { useState } from "react";
 import { MdOutlineSwapVert } from "react-icons/md";
 import { AiOutlineSignature } from "react-icons/ai";
-import { useLocation } from "react-router-dom";
+import { Link as RouterLink, useLocation } from "react-router-dom";
 import rxdIcon from "/rxd.png";
 import Card from "@app/components/Card";
 import Identifier from "@app/components/Identifier";
 import Identicon from "@app/components/Identicon";
 import { feeRate, openModal, wallet } from "@app/signals";
-import { CheckIcon, CopyIcon } from "@chakra-ui/icons";
+import { CheckIcon, CopyIcon, ExternalLinkIcon } from "@chakra-ui/icons";
 import { TbSend } from "react-icons/tb";
 import { photonsToRXD } from "@lib/format";
 import { accumulateInputs, fundTx, SelectableInput } from "@lib/coinSelect";
@@ -54,6 +55,7 @@ import { UnfinalizedOutput, Utxo } from "@lib/types";
 import { TransferError } from "@lib/transfer";
 import { SwapPrepareError } from "./Swap";
 import { buildTx } from "@lib/tx";
+import createExplorerUrl from "@app/network/createExplorerUrl";
 
 type SwapItemParams = {
   contractType: ContractType;
@@ -273,6 +275,7 @@ function ViewSwap({ swapParams }: { swapParams: SwapParams }) {
   const [signed, setSigned] = useState("");
   const { onCopy, hasCopied } = useClipboard(signed);
   const [complete, setComplete] = useState(false);
+  const [txid, setTxid] = useState("");
 
   const signTransaction = async () => {
     setSigned("");
@@ -390,6 +393,7 @@ function ViewSwap({ swapParams }: { swapParams: SwapParams }) {
       });
 
       setComplete(true);
+      setTxid(txid);
     } catch (error) {
       console.debug(error);
       toast({ status: "error", title: "Transaction failed" });
@@ -417,7 +421,17 @@ function ViewSwap({ swapParams }: { swapParams: SwapParams }) {
       {complete ? (
         <Alert mt={8} status="success">
           <AlertIcon />
-          Swap complete!
+          Swap complete!{" "}
+          <Link
+            as={RouterLink}
+            to={createExplorerUrl(txid)}
+            target="_blank"
+            isExternal
+            ml={2}
+          >
+            View on block explorer
+            <ExternalLinkIcon ml={1} />
+          </Link>
         </Alert>
       ) : (
         <>

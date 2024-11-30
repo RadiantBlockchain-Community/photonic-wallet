@@ -13,6 +13,7 @@ import {
   Input,
   Select,
   Textarea,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import { t } from "@lingui/macro";
 import { recoverKeys } from "@app/keys";
@@ -33,6 +34,7 @@ export default function RecoverWallet() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const isMobile = useBreakpointValue({ base: true, lg: false });
 
   const submit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -65,7 +67,7 @@ export default function RecoverWallet() {
         }
         const { address, wif, net } = result;
         initWallet({ net, wif, address });
-        navigate("/objects");
+        navigate(isMobile ? "/home" : "/objects");
       } catch (error) {
         console.log(error);
         if (error instanceof Error) {

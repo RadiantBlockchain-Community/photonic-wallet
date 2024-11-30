@@ -25,7 +25,7 @@ import { photonsToRXD } from "@lib/format";
 import { useLiveQuery } from "dexie-react-hooks";
 import db from "@app/db";
 import { ContractType, SmartToken, TxO } from "@app/types";
-import { p2pkhScript } from "@lib/script";
+import { isP2pkh, p2pkhScript } from "@lib/script";
 import Identifier from "./Identifier";
 import Outpoint from "@lib/Outpoint";
 import { feeRate, network, wallet } from "@app/signals";
@@ -73,8 +73,7 @@ export default function SendDigitalObject({
     setLoading(true);
 
     let fail = false;
-    if (!toAddress.current?.value) {
-      // TODO validate address
+    if (!toAddress.current?.value || !isP2pkh(toAddress.current.value)) {
       fail = true;
       setErrorMessage(t`Invalid address`);
     }

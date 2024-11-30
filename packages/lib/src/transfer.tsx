@@ -112,22 +112,21 @@ export function transferNonFungible(
 export function transferRadiant(
   coins: SelectableInput[],
   fromAddress: string,
-  toAddress: string,
+  toScript: string,
   value: number,
   feeRate: number,
   wif: string
 ) {
-  const script = p2pkhScript(toAddress);
   const changeScript = p2pkhScript(fromAddress);
 
-  if (!script || !changeScript) {
+  if (!toScript || !changeScript) {
     throw new TransferError("Invalid address");
   }
 
   const selected = coinSelect(
     fromAddress,
     coins,
-    [{ script, value }],
+    [{ script: toScript, value }],
     changeScript,
     feeRate
   );

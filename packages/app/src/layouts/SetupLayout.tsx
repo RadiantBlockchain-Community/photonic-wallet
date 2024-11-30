@@ -8,7 +8,7 @@ export default function SetupLayout() {
       <Flex
         position="fixed"
         alignSelf="stretch"
-        pl={{ base: 2, lg: 4 }}
+        pl={4}
         height={{ base: "60px", lg: "72px" }}
         top="0"
         left="0"

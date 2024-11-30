@@ -1002,7 +1002,7 @@ export default function Mint({ tokenType }: { tokenType: TokenType }) {
               <FormControl>
                 <FormLabel>{t`Attributes`}</FormLabel>
                 <Box>
-                  <HStack>
+                  <HStack wrap="wrap">
                     <Input
                       placeholder={t`Name`}
                       ref={attrName}

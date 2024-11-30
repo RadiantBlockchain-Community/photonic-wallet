@@ -30,7 +30,7 @@ import {
 import { useLiveQuery } from "dexie-react-hooks";
 import db from "@app/db";
 import { SmartToken, ContractType } from "@app/types";
-import { ftScript, p2pkhScript } from "@lib/script";
+import { ftScript, isP2pkh, p2pkhScript } from "@lib/script";
 import { buildTx } from "@lib/tx";
 import { feeRate, network, wallet } from "@app/signals";
 import { reverseRef } from "@lib/Outpoint";
@@ -86,7 +86,7 @@ export default function SendFungible({ glyph, onSuccess, disclosure }: Props) {
       return setFailure(t`Invalid amount`);
     }
 
-    if (!toAddress.current?.value) {
+    if (!toAddress.current?.value || !isP2pkh(toAddress.current.value)) {
       return setFailure(t`Invalid address`);
     }
 

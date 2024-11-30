@@ -187,7 +187,20 @@ export default function CreateWallet() {
                   {t`Your wallet has been created. Please record your recovery phrase below.`}
                 </Box>
                 <RecoveryPhrase phrase={phrase} />
-                <Button as={Link} to="/objects" width="full">
+                <Button
+                  display={{ base: "none", lg: "flex" }}
+                  as={Link}
+                  to="/objects"
+                  width="full"
+                >
+                  {t`Confirm`}
+                </Button>
+                <Button
+                  display={{ base: "flex", lg: "none" }}
+                  as={Link}
+                  to="/home"
+                  width="full"
+                >
                   {t`Confirm`}
                 </Button>
               </>
