@@ -10,9 +10,13 @@ import {
   GridItem,
   GridProps,
   Heading,
+  HStack,
   Icon,
   IconButton,
-  SimpleGrid,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   useClipboard,
   useDisclosure,
 } from "@chakra-ui/react";
@@ -37,11 +41,13 @@ import { useViewPanelContext } from "@app/layouts/ViewPanelLayout";
 import TokenDetails from "./TokenDetails";
 import ValueTag from "./ValueTag";
 import SendFungible from "./SendFungible";
+import AirdropFungible from "./AirdropFungible";
 import MeltFungible from "./MeltFungible";
-import { TbArrowUpRight } from "react-icons/tb";
+import { TbArrowUpRight, TbParachute } from "react-icons/tb";
 import { MdDeleteForever } from "react-icons/md";
 import ActionIcon from "./ActionIcon";
 import FtBalance from "./FtBalance";
+import { BsThreeDotsVertical } from "react-icons/bs";
 
 export const PropertyCard = ({
   heading,
@@ -97,6 +103,7 @@ export default function ViewFungible({
   const [collapsed, setCollapsed] = useViewPanelContext();
   const size = collapsed ? "md" : "sm";
   const sendDisclosure = useDisclosure();
+  const airdropDisclosure = useDisclosure();
   const meltDisclosure = useDisclosure();
   const successDisclosure = useDisclosure();
   const [token, author, container] = useLiveQuery(
@@ -134,6 +141,8 @@ export default function ViewFungible({
   };
 
   const openSend = () => sendDisclosure.onOpen();
+
+  const openAirdrop = () => airdropDisclosure.onOpen();
 
   const openMelt = () => meltDisclosure.onOpen();
 
@@ -186,14 +195,13 @@ export default function ViewFungible({
             }
             alignItems="start"
           >
-            <SimpleGrid columns={2} gap={2}>
+            <Flex flexDir="column" gap={2}>
               <GridItem
                 p={4}
                 alignItems="left"
                 justifyContent="center"
                 position="relative"
                 as={Card}
-                colSpan={2}
                 sx={{
                   "& img": {
                     maxWidth: "400px",
@@ -236,26 +244,43 @@ export default function ViewFungible({
                     as={Button}
                     onClick={onLinkCopy}
                     leftIcon={<CopyIcon />}
-                    colSpan={2}
                   >
                     {t`Copy URL`}
                   </GridItem>
                 </>
               )}
-              <Button
-                leftIcon={<ActionIcon as={TbArrowUpRight} />}
-                onClick={() => unlock(openSend)}
-              >
-                {t`Send`}
-              </Button>
-              <Button
-                leftIcon={<ActionIcon as={MdDeleteForever} />}
-                onClick={() => unlock(openMelt)}
-                _hover={{ bg: "red.600" }}
-              >
-                {t`Melt`}
-              </Button>
-            </SimpleGrid>
+              <HStack>
+                <Button
+                  leftIcon={<ActionIcon as={TbArrowUpRight} />}
+                  onClick={() => unlock(openSend)}
+                  flexGrow={1}
+                >
+                  {t`Send`}
+                </Button>
+                <Menu>
+                  <MenuButton
+                    as={IconButton}
+                    aria-label="Options"
+                    icon={<Icon as={BsThreeDotsVertical} />}
+                  />
+                  <MenuList>
+                    <MenuItem
+                      icon={<ActionIcon as={TbParachute} />}
+                      onClick={() => unlock(openAirdrop)}
+                    >
+                      Airdrop
+                    </MenuItem>
+                    <MenuItem
+                      icon={<ActionIcon as={MdDeleteForever} />}
+                      _hover={{ bg: "red.600" }}
+                      onClick={() => unlock(openMelt)}
+                    >
+                      Melt
+                    </MenuItem>
+                  </MenuList>
+                </Menu>
+              </HStack>
+            </Flex>
             <TokenDetails glyph={token} container={container} author={author} />
           </Grid>
         </Container>
@@ -273,6 +298,14 @@ export default function ViewFungible({
         disclosure={meltDisclosure}
         onSuccess={(txid: string) => {
           meltDisclosure.onClose();
+          openSuccess(txid);
+        }}
+      />
+      <AirdropFungible
+        glyph={token}
+        disclosure={airdropDisclosure}
+        onSuccess={(txid) => {
+          airdropDisclosure.onClose();
           openSuccess(txid);
         }}
       />

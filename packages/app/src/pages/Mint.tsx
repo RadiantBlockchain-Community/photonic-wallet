@@ -71,9 +71,9 @@ import {
 } from "@lib/types";
 import { electrumWorker } from "@app/electrum/Electrum";
 import { PromiseExtended } from "dexie";
+import { mintEmbedMaxBytes } from "@app/config.json";
 
 // IPFS uploading is currently disabled until an alternative to nft.storage can be found
-const MAX_BYTES = 100_000;
 //const MAX_IPFS_BYTES = 5_000_000;
 
 type ContentMode = "file" | "text" | "url";
@@ -590,7 +590,7 @@ export default function Mint({ tokenType }: { tokenType: TokenType }) {
       const newState: FileState = { ...noFile };
 
       //if (files[0].size > MAX_IPFS_BYTES) {
-      if (files[0].size > MAX_BYTES) {
+      if (files[0].size > mintEmbedMaxBytes) {
         toast({ title: t`File is too large`, status: "error" });
         setFileState(newState);
         return;

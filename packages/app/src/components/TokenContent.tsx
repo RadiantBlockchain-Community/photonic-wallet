@@ -104,11 +104,11 @@ export default function TokenContent({
 
     // Image file
     if (embed.t?.startsWith("image/")) {
+      const blob = new Blob([embed.b], { type: embed.t });
+      const imgUrl = URL.createObjectURL(blob);
       return (
         <Image
-          src={`data:${embed.t};base64, ${btoa(
-            String.fromCharCode(...new Uint8Array(embed.b))
-          )}`}
+          src={imgUrl}
           width="100%"
           height="100%"
           objectFit="contain"
