@@ -23,8 +23,8 @@ import {
   Heading,
   VStack,
   useToast,
-  IconButton,
   Flex,
+  Textarea,
 } from "@chakra-ui/react";
 import { useLiveQuery } from "dexie-react-hooks";
 import db from "@app/db";
@@ -38,8 +38,7 @@ import { electrumWorker } from "@app/electrum/Electrum";
 import FtBalance from "./FtBalance";
 import { updateFtBalances, updateWalletUtxos } from "@app/utxos";
 import AddressInput from "./AddressInput";
-import { BsQrCodeScan } from "react-icons/bs";
-import { TransferError, transferFungible } from "@lib/transfer";
+import { TransferError, transferFungibleToMany } from "@lib/transfer";
 
 interface Props {
   glyph: SmartToken;
@@ -47,12 +46,20 @@ interface Props {
   disclosure: UseDisclosureProps;
 }
 
-export default function SendFungible({ glyph, onSuccess, disclosure }: Props) {
+const splitAddresses = (addresses: string) =>
+  addresses.split("\n").map((addr) => addr.trim());
+
+export default function AirdropFungible({
+  glyph,
+  onSuccess,
+  disclosure,
+}: Props) {
   const { isOpen, onClose } = disclosure;
   const amount = useRef<HTMLInputElement>(null);
-  const toAddress = useRef<HTMLInputElement>(null);
+  const toAddresses = useRef<HTMLTextAreaElement>(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(true);
+  const [total, setTotal] = useState(0);
   const [errorMessage, setErrorMessage] = useState("");
   const toast = useToast();
 
@@ -84,8 +91,12 @@ export default function SendFungible({ glyph, onSuccess, disclosure }: Props) {
       return setFailure(t`Invalid amount`);
     }
 
-    if (!toAddress.current?.value || !isP2pkh(toAddress.current.value)) {
-      return setFailure(t`Invalid address`);
+    const addresses = splitAddresses(toAddresses.current?.value || "");
+
+    const invalid = addresses.find((addr) => !isP2pkh(addr));
+
+    if (!addresses.length || invalid) {
+      return setFailure(t`Invalid address` + (invalid ? ` "${invalid}"` : ""));
     }
 
     const value = parseInt(amount.current?.value, 10);
@@ -96,14 +107,15 @@ export default function SendFungible({ glyph, onSuccess, disclosure }: Props) {
       .toArray();
 
     const coins: SelectableInput[] = rxd.slice();
+    const values = addresses.map(() => value);
     try {
-      const { tx, selected } = transferFungible(
+      const { tx, selected } = transferFungibleToMany(
         coins,
         tokens,
         refLE,
         wallet.value.address,
-        toAddress.current?.value as string,
-        value,
+        addresses,
+        values,
         feeRate.value,
         wallet.value.wif as string
       );
@@ -146,9 +158,17 @@ export default function SendFungible({ glyph, onSuccess, disclosure }: Props) {
   const onScan = (value: string) => {
     setScan(false);
     setSuccess(true);
-    if (toAddress.current) {
-      toAddress.current.value = value;
+    if (toAddresses.current) {
+      toAddresses.current.value = value;
     }
+  };
+
+  const updateTotal = () => {
+    const value = amount.current?.value
+      ? parseInt(amount.current?.value, 10)
+      : 0;
+    const toCount = splitAddresses(toAddresses.current?.value || "").length;
+    setTotal(value * toCount);
   };
 
   if (!isOpen || !onClose) return null;
@@ -158,13 +178,13 @@ export default function SendFungible({ glyph, onSuccess, disclosure }: Props) {
       closeOnOverlayClick
       isOpen={isOpen}
       onClose={onClose}
-      initialFocusRef={toAddress}
+      initialFocusRef={toAddresses}
       isCentered
     >
       <form onSubmit={submit}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>{t`Send ${glyph.name || ticker}`}</ModalHeader>
+          <ModalHeader>{t`Airdrop ${glyph.name || ticker}`}</ModalHeader>
           <ModalCloseButton />
           <AddressInput
             open={scan}
@@ -194,25 +214,30 @@ export default function SendFungible({ glyph, onSuccess, disclosure }: Props) {
               <FormControl>
                 <FormLabel>To</FormLabel>
                 <Flex gap={2}>
-                  <Input
-                    ref={toAddress}
-                    type="text"
-                    placeholder={`${network.value.name} address`}
-                  />
-                  <IconButton
-                    icon={<BsQrCodeScan />}
-                    aria-label="Scan QR code"
-                    onClick={() => setScan(true)}
+                  <Textarea
+                    onChange={updateTotal}
+                    rows={5}
+                    ref={toAddresses}
+                    placeholder={`List of ${network.value.name} addresses, each address on a new line`}
+                    spellCheck={false}
                   />
                 </Flex>
               </FormControl>
               <FormControl>
-                <FormLabel>{t`Amount`}</FormLabel>
+                <FormLabel>{t`Amount per address`}</FormLabel>
                 <InputGroup>
-                  <Input ref={amount} type="number" placeholder="0" />
+                  <Input
+                    onChange={updateTotal}
+                    ref={amount}
+                    type="number"
+                    placeholder="0"
+                  />
                   <InputRightAddon children={ticker} userSelect="none" />
                 </InputGroup>
               </FormControl>
+              <Box>
+                Total: {total} {ticker || glyph.name}
+              </Box>
             </ModalBody>
 
             <ModalFooter hidden={scan}>

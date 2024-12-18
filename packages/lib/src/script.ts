@@ -121,9 +121,13 @@ export function payToScript(address: string): string {
 }
 
 export function isP2pkh(address: string): boolean {
-  const addr = new Address(address);
-  // @ts-expect-error missing definition
-  return addr.isPayToPublicKeyHash();
+  try {
+    const addr = new Address(address);
+    // @ts-expect-error missing definition
+    return addr.isPayToPublicKeyHash();
+  } catch {
+    return false;
+  }
 }
 
 export function p2pkhScriptHash(address: string): string {

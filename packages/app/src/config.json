@@ -51,5 +51,6 @@
       "es": "Español"
     },
     "defaultLanguage": "en"
-  }
+  },
+  "mintEmbedMaxBytes": 250000
 }

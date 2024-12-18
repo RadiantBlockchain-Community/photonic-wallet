@@ -1,22 +1,14 @@
 import { SmartToken, SmartTokenType } from "@app/types";
-import Card from "./Card";
-import {
-  Box,
-  BoxProps,
-  Button,
-  ButtonProps,
-  Flex,
-  Text,
-  useClipboard,
-} from "@chakra-ui/react";
+import { Box, Button, ButtonProps, Text, useClipboard } from "@chakra-ui/react";
 import { CheckIcon, CopyIcon } from "@chakra-ui/icons";
 import { PropsWithChildren, useState } from "react";
+import { photonsToRXD } from "@lib/format";
 
 type Asset = { glyph: SmartToken; value: number } | number;
 
 const assetToText = (item: Asset) =>
   typeof item === "number"
-    ? `${item} RXD`
+    ? `${photonsToRXD(item)} RXD`
     : item.glyph.tokenType === SmartTokenType.FT
     ? `${item.value} ${item.glyph.ticker || item.glyph.name}`
     : `${item.glyph.name}`;

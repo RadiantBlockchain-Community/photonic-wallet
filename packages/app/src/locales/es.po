@@ -63,10 +63,18 @@ msgstr ""
 msgid "Address"
 msgstr ""
 
+#: src/components/AirdropFungible.tsx:187
+msgid "Airdrop {0}"
+msgstr ""
+
 #: src/components/SendDigitalObject.tsx:202
-#: src/components/SendFungible.tsx:212
+#: src/components/SendFungible.tsx:210
 #: src/components/SendRXD.tsx:195
 msgid "Amount"
+msgstr ""
+
+#: src/components/AirdropFungible.tsx:227
+msgid "Amount per address"
 msgstr ""
 
 #: src/pages/IpfsSettings.tsx:67
@@ -94,12 +102,13 @@ msgstr ""
 msgid "Back to wallet"
 msgstr ""
 
-#: src/components/SendFungible.tsx:185
+#: src/components/AirdropFungible.tsx:203
+#: src/components/SendFungible.tsx:183
 #: src/components/SendRXD.tsx:168
 msgid "Balance"
 msgstr ""
 
-#: src/pages/Coins.tsx:51
+#: src/pages/Coins.tsx:49
 msgid "Block"
 msgstr ""
 
@@ -107,10 +116,11 @@ msgstr ""
 msgid "Calculate Fee"
 msgstr ""
 
+#: src/components/AirdropFungible.tsx:252
 #: src/components/MeltDigitalObject.tsx:136
 #: src/components/MeltFungible.tsx:152
 #: src/components/SendDigitalObject.tsx:217
-#: src/components/SendFungible.tsx:229
+#: src/components/SendFungible.tsx:227
 #: src/components/SendRXD.tsx:220
 msgid "Cancel"
 msgstr ""
@@ -137,7 +147,7 @@ msgid "Close"
 msgstr ""
 
 #: src/components/SideBar.tsx:98
-#: src/pages/Coins.tsx:43
+#: src/pages/Coins.tsx:42
 msgid "Coins"
 msgstr ""
 
@@ -203,11 +213,12 @@ msgid "Copy to clipboard"
 msgstr ""
 
 #: src/components/ViewDigitalObject.tsx:268
-#: src/components/ViewFungible.tsx:241
+#: src/components/ViewFungible.tsx:248
 msgid "Copy URL"
 msgstr ""
 
-#: src/components/SendFungible.tsx:139
+#: src/components/AirdropFungible.tsx:149
+#: src/components/SendFungible.tsx:137
 #: src/components/SendRXD.tsx:131
 msgid "Could not send transaction"
 msgstr ""
@@ -237,7 +248,6 @@ msgid "Data not found"
 msgstr ""
 
 #: src/components/SwapTable.tsx:69
-#: src/pages/Coins.tsx:50
 msgid "Date"
 msgstr ""
 
@@ -347,7 +357,7 @@ msgid "File is too large"
 msgstr ""
 
 #: src/components/ViewDigitalObject.tsx:231
-#: src/components/ViewFungible.tsx:226
+#: src/components/ViewFungible.tsx:234
 msgid "Files may be unsafe and result in loss of funds"
 msgstr ""
 
@@ -415,13 +425,15 @@ msgstr ""
 #~ msgid "Insufficient token balance"
 #~ msgstr ""
 
+#: src/components/AirdropFungible.tsx:99
 #: src/components/SendDigitalObject.tsx:78
-#: src/components/SendFungible.tsx:90
+#: src/components/SendFungible.tsx:88
 #: src/components/SendRXD.tsx:83
 msgid "Invalid address"
 msgstr ""
 
-#: src/components/SendFungible.tsx:86
+#: src/components/AirdropFungible.tsx:91
+#: src/components/SendFungible.tsx:84
 #: src/components/SendRXD.tsx:76
 msgid "Invalid amount"
 msgstr ""
@@ -498,7 +510,6 @@ msgstr ""
 #: src/components/MeltDigitalObject.tsx:134
 #: src/components/MeltFungible.tsx:150
 #: src/components/ViewDigitalObject.tsx:292
-#: src/components/ViewFungible.tsx:256
 msgid "Melt"
 msgstr ""
 
@@ -756,16 +767,17 @@ msgid "Select a valid network"
 msgstr ""
 
 #: src/components/AccountBar.tsx:32
+#: src/components/AirdropFungible.tsx:250
 #: src/components/SendDigitalObject.tsx:215
-#: src/components/SendFungible.tsx:227
+#: src/components/SendFungible.tsx:225
 #: src/components/SendRXD.tsx:218
 #: src/components/ViewDigitalObject.tsx:284
-#: src/components/ViewFungible.tsx:249
+#: src/components/ViewFungible.tsx:258
 #: src/pages/MobileHome.tsx:45
 msgid "Send"
 msgstr ""
 
-#: src/components/SendFungible.tsx:169
+#: src/components/SendFungible.tsx:167
 #: src/components/SendRXD.tsx:159
 msgid "Send {0}"
 msgstr ""
@@ -782,7 +794,8 @@ msgstr ""
 msgid "Sent {0} {1}"
 msgstr ""
 
-#: src/components/SendFungible.tsx:120
+#: src/components/AirdropFungible.tsx:130
+#: src/components/SendFungible.tsx:118
 msgid "Sent {value} {ticker}"
 msgstr ""
 
@@ -904,7 +917,7 @@ msgid "Transaction successful"
 msgstr ""
 
 #: src/components/SwapTable.tsx:67
-#: src/pages/Coins.tsx:49
+#: src/pages/Coins.tsx:48
 #: src/pages/SwapMissing.tsx:165
 msgid "TX ID"
 msgstr ""
@@ -942,7 +955,7 @@ msgid "Unlocked"
 msgstr ""
 
 #: src/components/ViewDigitalObject.tsx:189
-#: src/components/ViewFungible.tsx:178
+#: src/components/ViewFungible.tsx:187
 msgid "Unnamed token"
 msgstr ""
 
@@ -967,7 +980,7 @@ msgid "URL"
 msgstr ""
 
 #: src/components/ViewDigitalObject.tsx:246
-#: src/components/ViewFungible.tsx:230
+#: src/components/ViewFungible.tsx:238
 msgid "URLs may be unsafe and result in loss of funds"
 msgstr ""
 
@@ -980,7 +993,7 @@ msgstr ""
 msgid "UTXO consolidation complete"
 msgstr ""
 
-#: src/pages/Coins.tsx:52
+#: src/pages/Coins.tsx:50
 #: src/pages/Mint.tsx:1013
 #: src/pages/SwapMissing.tsx:168
 msgid "Value"

@@ -1,6 +1,5 @@
 import { useLocation } from "react-router-dom";
 import { t } from "@lingui/macro";
-import dayjs from "dayjs";
 import { Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import PageHeader from "@app/components/PageHeader";
@@ -47,7 +46,6 @@ export default function Coins() {
           <Tr>
             <Th display={{ base: "none", lg: "table-cell" }} />
             <Th>{t`TX ID`}</Th>
-            <Th display={{ base: "none", md: "table-cell" }}>{t`Date`}</Th>
             <Th>{t`Block`}</Th>
             <Th textAlign="right">{t`Value`}</Th>
             <Th width="50px" />
@@ -55,29 +53,24 @@ export default function Coins() {
           </Tr>
         </Thead>
         <Tbody fontFamily="mono">
-          {utxos
-            .slice(0, pageSize)
-            .map(({ txid, vout, value, date, height }) => (
-              <Tr key={`${txid}${vout}`}>
-                <Td display={{ base: "none", lg: "table-cell" }} />
-                <Td>
-                  {txid.substring(0, 4)}…{txid.substring(60, 64)}
-                </Td>
-                <Td display={{ base: "none", md: "table-cell" }}>
-                  {date ? dayjs(date * 1000).format("L LT") : "…"}
-                </Td>
-                <Td>{height === Infinity ? "…" : height}</Td>
-                <Td textAlign="right">
-                  <Photons value={value} />
-                </Td>
-                <Td>
-                  <a href={createExplorerUrl(txid)} target="_blank">
-                    <ExternalLinkIcon />
-                  </a>
-                </Td>
-                <Td display={{ base: "none", lg: "table-cell" }} />
-              </Tr>
-            ))}
+          {utxos.slice(0, pageSize).map(({ txid, vout, value, height }) => (
+            <Tr key={`${txid}${vout}`}>
+              <Td display={{ base: "none", lg: "table-cell" }} />
+              <Td>
+                {txid.substring(0, 4)}…{txid.substring(60, 64)}
+              </Td>
+              <Td>{height === Infinity ? "…" : height}</Td>
+              <Td textAlign="right">
+                <Photons value={value} />
+              </Td>
+              <Td>
+                <a href={createExplorerUrl(txid)} target="_blank">
+                  <ExternalLinkIcon />
+                </a>
+              </Td>
+              <Td display={{ base: "none", lg: "table-cell" }} />
+            </Tr>
+          ))}
         </Tbody>
       </Table>
     </ContentContainer>
