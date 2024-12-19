@@ -461,8 +461,8 @@ function Swap() {
           Transaction
         </Heading>
         <ViewSwap
-          from={send || sendRxd}
-          to={receive || receiveRxd}
+          from={send || sendRxd * 100000000}
+          to={receive || receiveRxd * 100000000}
           hex={psrt}
           BodyComponent={Card}
           FooterComponent={ViewFooter}
