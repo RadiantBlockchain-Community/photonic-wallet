@@ -52,7 +52,7 @@ export default function TokenRow({
       <Box w="48px" h="48px" /*sx={{ "& > *": { w: "64px", h: "64px" } }}*/>
         <TokenContent glyph={glyph} defaultIcon={defaultIcon} thumbnail />
       </Box>
-      <Box flexGrow={1}>
+      <Box flexGrow={1} width={0}>
         <Flex gap={2}>
           {glyph.type === "user" && <Icon as={TbUserCircle} fontSize="2xl" />}
           {glyph.type === "container" && <Icon as={TbBox} fontSize="2xl" />}

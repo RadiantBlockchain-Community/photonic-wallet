@@ -86,6 +86,12 @@ function cleanError(message: string) {
   return message.replace(/(\(code \d+\)).*/s, "$1").substring(0, 200);
 }
 
+function formatNumber(num: number) {
+  return new Intl.NumberFormat(navigator.language, {
+    maximumFractionDigits: 2,
+  }).format(num);
+}
+
 function TargetBox({
   getInputProps,
   isDragActive = false,
@@ -137,7 +143,10 @@ function TargetBox({
               {t`Upload file`}
             </Text>
             <Text color="gray.300" fontSize="md">
-              {t`Maximum 100kb`}
+              <Trans>
+                Maximum {formatNumber(mintEmbedMaxBytes / 1000)}
+                KB
+              </Trans>
             </Text>
           </>
         )}
