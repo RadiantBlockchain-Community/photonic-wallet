@@ -84,7 +84,10 @@ async function consolidate() {
       utxos,
       funding,
       true,
-      async (script) => await updateFtBalances(new Set([script]))
+      async (script) => {
+        await updateFtBalances(new Set([script]));
+        await updateRxdBalances(wallet.value.address);
+      }
     );
     funding = result.funding;
   }

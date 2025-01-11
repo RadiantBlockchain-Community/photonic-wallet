@@ -152,6 +152,7 @@ export const buildUpdateTXOs =
         for (const [id, utxo] of confs) {
           await db.txo.update(id, {
             height: utxo.height || Infinity,
+            spent: 0,
             // date: newTxs[utxo.tx_hash].raw.time || undefined, // how to get date without fetching?
           });
         }
