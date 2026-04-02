@@ -11,6 +11,35 @@ index 30647c24079f5e280e4ed85c4f7205d5014387fc..72fbd7c2dce726295acc4143a97173e5
  const CLOSE_CODE = 1000; // 1000 indicates a normal closure, meaning that the purpose for which the connection was established has been fulfilled
  /**
   * ElectrumWS is a WebSocket client for Electrum servers.
+@@ -179,14 +179,16 @@ class ElectrumWS extends observable_1.Observable {
+     onOpen() {
+         this.fire(ElectrumWSEvent.OPEN);
+         this.connectedTimeout = setTimeout(() => {
+             this.connected = true;
+-            this.fire(ElectrumWSEvent.CONNECTED);
+-            // Resubscribe to registered subscriptions
+-            for (const [subscriptionKey, callback] of this.subscriptions) {
++            // Snapshot subscriptions before firing CONNECTED to prevent duplicates
++            const existingSubscriptions = new Map(this.subscriptions);
++            this.fire(ElectrumWSEvent.CONNECTED);
++            // Resubscribe only to pre-existing subscriptions (not ones added during CONNECTED)
++            for (const [subscriptionKey, callback] of existingSubscriptions) {
+                 const params = subscriptionKey.split('-');
+                 const method = params.shift();
+                 if (!method) {
+                     if (this.verbose)
+                         console.warn('Cannot resubscribe, no method in subscription key:', subscriptionKey);
+                     continue;
+                 }
+                 this.subscribe(method, callback, ...params).catch((error) => {
+-                    if (this.ws.readyState === isomorphic_ws_1.default.CONNECTING ||
+-                        this.ws.readyState === isomorphic_ws_1.default.OPEN) {
+-                        this.ws.close(CLOSE_CODE, error.message);
+-                    }
++                    console.warn('Resubscription failed:', subscriptionKey, error.message);
+                 });
+             }
+         }, CONNECTED_TIMEOUT);
 diff --git a/build/module/lib/electrum-ws.js b/build/module/lib/electrum-ws.js
 index 888e2a60d324e997de325355ed101af62c4d3b74..b1d7a0dc5d62f84fdae4d76718d09af70e1af875 100644
 --- a/build/module/lib/electrum-ws.js
@@ -24,7 +53,36 @@ index 888e2a60d324e997de325355ed101af62c4d3b74..b1d7a0dc5d62f84fdae4d76718d09af7
  const CLOSE_CODE = 1000; // 1000 indicates a normal closure, meaning that the purpose for which the connection was established has been fulfilled
  /**
   * ElectrumWS is a WebSocket client for Electrum servers.
-@@ -204,7 +204,7 @@ export class ElectrumWS extends Observable {
+@@ -180,14 +180,16 @@ export class ElectrumWS extends Observable {
+     onOpen() {
+         this.fire(ElectrumWSEvent.OPEN);
+         this.connectedTimeout = setTimeout(() => {
+             this.connected = true;
+-            this.fire(ElectrumWSEvent.CONNECTED);
+-            // Resubscribe to registered subscriptions
+-            for (const [subscriptionKey, callback] of this.subscriptions) {
++            // Snapshot subscriptions before firing CONNECTED to prevent duplicates
++            const existingSubscriptions = new Map(this.subscriptions);
++            this.fire(ElectrumWSEvent.CONNECTED);
++            // Resubscribe only to pre-existing subscriptions (not ones added during CONNECTED)
++            for (const [subscriptionKey, callback] of existingSubscriptions) {
+                 const params = subscriptionKey.split('-');
+                 const method = params.shift();
+                 if (!method) {
+                     if (this.verbose)
+                         console.warn('Cannot resubscribe, no method in subscription key:', subscriptionKey);
+                     continue;
+                 }
+                 this.subscribe(method, callback, ...params).catch((error) => {
+-                    if (this.ws.readyState === WebSocket.CONNECTING ||
+-                        this.ws.readyState === WebSocket.OPEN) {
+-                        this.ws.close(CLOSE_CODE, error.message);
+-                    }
++                    console.warn('Resubscription failed:', subscriptionKey, error.message);
+                 });
+             }
+         }, CONNECTED_TIMEOUT);
+@@ -204,7 +206,7 @@ export class ElectrumWS extends Observable {
          // Handle potential multi-line frames
          const raw = typeof msg.data === 'string' ? msg.data : bytesToString(msg.data);
          // eslint-disable-next-line no-control-regex

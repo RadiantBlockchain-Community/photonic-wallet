@@ -28,6 +28,8 @@ export default function SideBar({ ...rest }: GridProps) {
       width={{ base: "75%", lg: "232px", "2xl": "284px" }}
       height="100svh"
       bgColor="bg.300"
+      borderRightWidth={{ lg: "1px" }}
+      borderRightColor="whiteAlpha.50"
       gridTemplateRows={{
         base: "72px auto auto 1fr",
         lg: "auto auto auto 1fr",

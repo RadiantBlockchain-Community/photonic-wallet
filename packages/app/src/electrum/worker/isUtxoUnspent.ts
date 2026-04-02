@@ -1,4 +1,4 @@
-import { Script, Transaction } from "@radiantblockchain/radiantjs";
+import { Script, Transaction } from "@radiant-core/radiantjs";
 import ElectrumManager from "../ElectrumManager";
 
 export async function isUtxoUnspent(

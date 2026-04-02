@@ -48,7 +48,10 @@ export default function PageHeader({
       height={{ base: "60px", lg: "72px" }}
       position="sticky"
       top="0"
-      bgColor="bg.100"
+      bgColor="bg.200"
+      backdropFilter="blur(12px)"
+      borderBottomWidth="1px"
+      borderBottomColor="whiteAlpha.50"
       mb={4}
       zIndex={10}
       {...rest}

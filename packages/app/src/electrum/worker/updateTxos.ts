@@ -2,7 +2,7 @@
 import {
   Transaction,
   // @ts-ignore
-} from "@radiantblockchain/radiantjs";
+} from "@radiant-core/radiantjs";
 import db from "@app/db";
 import { ContractType, TxO } from "@app/types";
 import ElectrumManager from "@app/electrum/ElectrumManager";

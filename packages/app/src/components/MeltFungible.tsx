@@ -21,7 +21,7 @@ import { WarningIcon } from "@chakra-ui/icons";
 import coinSelect, { SelectableInput } from "@lib/coinSelect";
 import { ftScript, p2pkhScript } from "@lib/script";
 import { buildTx } from "@lib/tx";
-import { PrivateKey } from "@radiantblockchain/radiantjs";
+import { PrivateKey } from "@radiant-core/radiantjs";
 import { useLiveQuery } from "dexie-react-hooks";
 import db from "../db";
 import { feeRate, wallet } from "@app/signals";

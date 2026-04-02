@@ -75,9 +75,7 @@ export default async function bundleInit(this: Command, inputDir: string) {
 
     token.files = {
       [payloadFilename]:
-        inscribe === 1
-          ? { path: destination }
-          : { src: destination, stamp },
+        inscribe === 1 ? { path: destination } : { src: destination, stamp },
     };
   }
 

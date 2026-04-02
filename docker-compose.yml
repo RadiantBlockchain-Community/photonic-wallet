@@ -1,0 +1,47 @@
+version: "3.8"
+
+services:
+  # Photonic Wallet Web App
+  photonic-wallet:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: photonic-wallet
+    restart: unless-stopped
+    expose:
+      - "80"
+    environment:
+      - NODE_ENV=production
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    networks:
+      - photonic
+
+  # Caddy reverse proxy with automatic HTTPS for photonic-wallet.com
+  caddy:
+    image: caddy:2-alpine
+    container_name: photonic-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - photonic-wallet
+    networks:
+      - photonic
+
+volumes:
+  caddy_data:
+  caddy_config:
+
+networks:
+  photonic:
+    driver: bridge

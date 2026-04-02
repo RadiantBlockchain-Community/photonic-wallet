@@ -1,0 +1,517 @@
+diff --git a/lib/address.js b/lib/address.js
+index 774ecb8cbac8bbc447f93e9c6f1e33175106eafe..5a40fd5f0f03f3ba4004b42694e04e09e776e385 100644
+--- a/lib/address.js
++++ b/lib/address.js
+@@ -8,6 +8,7 @@ var Networks = require('./networks')
+ var Hash = require('./crypto/hash')
+ var JSUtil = require('./util/js')
+ var PublicKey = require('./publickey')
++var Script = require('./script')
+ 
+ /**
+  * Instantiate an address from an address String or Buffer, a public key or script hash Buffer,
+@@ -90,6 +91,7 @@ function Address (data, network, type) {
+  * @returns {Object} An "info" object with "type", "network", and "hashBuffer"
+  */
+ Address.prototype._classifyArguments = function (data, network, type) {
++  Script = require('./script')
+   // transform and validate input data
+   if ((data instanceof Buffer || data instanceof Uint8Array) && data.length === 20) {
+     return Address._transformHash(data)
+@@ -237,6 +239,7 @@ Address._transformPublicKey = function (pubkey) {
+  * @private
+  */
+ Address._transformScript = function (script, network) {
++  Script = require('./script')
+   $.checkArgument(script instanceof Script, 'script must be a Script instance')
+   var info = script.getAddressInfo(network)
+   if (!info) {
+@@ -351,6 +354,7 @@ Address.fromScriptHash = function (hash, network) {
+  * @returns {Address} A new valid and frozen instance of an Address
+  */
+ Address.payingTo = function (script, network) {
++  Script = require('./script')
+   $.checkArgument(script, 'script is required')
+   $.checkArgument(script instanceof Script, 'script must be instance of Script')
+ 
+@@ -370,6 +374,7 @@ Address.payingTo = function (script, network) {
+  * @returns {Address} A new valid and frozen instance of an Address
+  */
+ Address.fromScript = function (script, network) {
++  Script = require('./script')
+   $.checkArgument(script instanceof Script, 'script must be a Script instance')
+   var info = Address._transformScript(script, network)
+   return new Address(info.hashBuffer, network, info.type)
+@@ -522,5 +527,3 @@ Address.prototype.toString = function () {
+ }
+ 
+ module.exports = Address
+-
+-var Script = require('./script')
+diff --git a/lib/crypto/bn.js b/lib/crypto/bn.js
+index 73231d9ee7a4071ec6a0140313b78ff69706aaa0..84e79c52e75be50b4dc73b6cd871829a3031ae69 100644
+--- a/lib/crypto/bn.js
++++ b/lib/crypto/bn.js
+@@ -106,7 +106,8 @@ BN.Minus1 = new BN(-1)
+  */
+ BN.fromNumber = function (n) {
+   $.checkArgument(_.isNumber(n))
+-  return new BN(n)
++  // Convert to string to get around bn.js safe number limit
++  return new BN(`${n}`)
+ }
+ 
+ /**
+diff --git a/lib/crypto/hash.browser.js b/lib/crypto/hash.browser.js
+index 1cf58d246b1ff81d9c46112d6597880cb28fd66c..8c8cf3004f25b9d52a13aca03faf0746be597c4b 100644
+--- a/lib/crypto/hash.browser.js
++++ b/lib/crypto/hash.browser.js
+@@ -1,6 +1,7 @@
+ 'use strict'
+ 
+ var hash = require('hash.js')
++var jsShaLib = require('js-sha512')
+ var $ = require('../util/preconditions')
+ 
+ var Hash = module.exports
+@@ -169,3 +170,29 @@ Hash.sha256hmac = function (data, key) {
+ Hash.sha512hmac = function (data, key) {
+   return Hash.hmac(Hash.sha512, data, key)
+ }
++
++/**
++ * A sha512_256 hash, which is always 256 bits or 32 bytes long.
++ *
++ *
++ * @param {Buffer} buf Data, a.k.a. pre-image, which can be any size.
++ * @returns {Buffer} The hash in the form of a buffer.
++ */
++Hash.sha512_256 = function (buf) {
++  $.checkArgument(Buffer.isBuffer(buf))
++  const hash = jsShaLib.sha512_256(buf)
++  return Buffer.from(hash, 'hex')
++}
++
++/**
++ * A double SHA512_256 hash, which is always 256 bits or 32 bytes bytes long. This
++ * hash function is used inside Radiant, particularly for the hash of a
++ * block and the hash of a transaction.
++ *
++ * @param {Buffer} buf Data, a.k.a. pre-image, which can be any size.
++ * @returns {Buffer} The hash in the form of a buffer.
++ */
++Hash.sha512_256sha512_256 = function (buf) {
++  $.checkArgument(Buffer.isBuffer(buf))
++  return Hash.sha512_256(Hash.sha512_256(buf))
++}
+diff --git a/lib/opcode.js b/lib/opcode.js
+index f64f2de277fdfd4b975756b127be1047d16416c5..92c0a0f40eed39aec05eb81bd26d08c1ba31a29a 100644
+--- a/lib/opcode.js
++++ b/lib/opcode.js
+@@ -259,9 +259,24 @@ Opcode.map = {
+   OP_CHECKDATASIG: 186,
+   OP_CHECKDATASIGVERIFY: 187,
+   OP_REVERSEBYTES: 188,
+-  OP_STATESEPERATOR: 189,
+-  OP_STATESEPERATORINDEX_UTXO: 190,
+-  OP_STATESEPERATORINDEX_OUTPUT: 191,
++  OP_STATESEPARATOR: 189,
++  OP_STATESEPARATORINDEX_UTXO: 190,
++  OP_STATESEPARATORINDEX_OUTPUT: 191,
++
++  OP_INPUTINDEX: 192,
++  OP_ACTIVEBYTECODE: 193,
++  OP_TXVERSION: 194,
++  OP_TXINPUTCOUNT: 195,
++  OP_TXOUTPUTCOUNT: 196,
++  OP_TXLOCKTIME: 197,
++  OP_UTXOVALUE: 198,
++  OP_UTXOBYTECODE: 199,
++  OP_OUTPOINTTXHASH: 200,
++  OP_OUTPOINTINDEX: 201,
++  OP_INPUTBYTECODE: 202,
++  OP_INPUTSEQUENCENUMBER: 203,
++  OP_OUTPUTVALUE: 204,
++  OP_OUTPUTBYTECODE: 205,
+ 
+   OP_SHA512_256: 206,
+   OP_HASH512_256: 207,
+@@ -297,8 +312,8 @@ Opcode.map = {
+   OP_CODESCRIPTHASHZEROVALUEDOUTPUTCOUNT_OUTPUTS: 232,
+   OP_CODESCRIPTBYTECODE_UTXO: 233,
+   OP_CODESCRIPTBYTECODE_OUTPUT: 234,
+-  OP_STATECRIPTBYTECODE_UTXO: 235,
+-  OP_STATECRIPTBYTECODE_OUTPUT: 236,
++  OP_STATESCRIPTBYTECODE_UTXO: 235,
++  OP_STATESCRIPTBYTECODE_OUTPUT: 236,
+ 
+   // template matching params
+   OP_PUBKEYHASH: 253,
+diff --git a/lib/script/interpreter.js b/lib/script/interpreter.js
+index 10464813f169313c539d1cbd8e1ff7fd8561dafb..2ff39ac90f2449a10896b5be4456f4b91499cabb 100644
+--- a/lib/script/interpreter.js
++++ b/lib/script/interpreter.js
+@@ -1946,9 +1946,9 @@ Interpreter.prototype.step = function (scriptType) {
+       case Opcode.OP_CHECKDATASIGVERIFY:
+       case Opcode.OP_REVERSEBYTES:
+ 
+-      case Opcode.OP_STATESEPERATOR:
+-      case Opcode.OP_STATESEPERATORINDEX_UTXO:
+-      case Opcode.OP_STATESEPERATORINDEX_OUTPUT:
++      case Opcode.OP_STATESEPARATOR:
++      case Opcode.OP_STATESEPARATORINDEX_UTXO:
++      case Opcode.OP_STATESEPARATORINDEX_OUTPUT:
+       case Opcode.OP_PUSHINPUTREF:
+       case Opcode.OP_REQUIREINPUTREF:
+       case Opcode.OP_DISALLOWPUSHINPUTREF:
+@@ -1978,8 +1978,25 @@ Interpreter.prototype.step = function (scriptType) {
+       case Opcode.OP_CODESCRIPTHASHOUTPUTCOUNT_OUTPUTS:
+       case Opcode.OP_CODESCRIPTHASHZEROVALUEDOUTPUTCOUNT_UTXOS:
+       case Opcode.OP_CODESCRIPTHASHZEROVALUEDOUTPUTCOUNT_OUTPUTS:
+-      case Opcode.OP_CODESCRIPTHASH_UTXO:
+-      case Opcode.OP_CODESCRIPTHASH_OUTPUT:
++      case OP_CODESCRIPTBYTECODE_UTXO:
++      case OP_CODESCRIPTBYTECODE_OUTPUT:
++      case OP_STATESCRIPTBYTECODE_UTXO:
++      case OP_STATESCRIPTBYTECODE_OUTPUT:
++
++      case Opcode.OP_INPUTINDEX:
++      case Opcode.OP_ACTIVEBYTECODE:
++      case Opcode.OP_TXVERSION:
++      case Opcode.OP_TXINPUTCOUNT:
++      case Opcode.OP_TXOUTPUTCOUNT:
++      case Opcode.OP_TXLOCKTIME:
++      case Opcode.OP_UTXOVALUE:
++      case Opcode.OP_UTXOBYTECODE:
++      case Opcode.OP_OUTPOINTTXHASH:
++      case Opcode.OP_OUTPOINTINDEX:
++      case Opcode.OP_INPUTBYTECODE:
++      case Opcode.OP_INPUTSEQUENCENUMBER:
++      case Opcode.OP_OUTPUTVALUE:
++      case Opcode.OP_OUTPUTBYTECODE:
+         break
+  
+       default:
+diff --git a/lib/script/script.js b/lib/script/script.js
+index cac7db3720715cbd228a919de5a8473b89bf2b13..02e3c1096d9c9d9af19e9d8c770d75e97d259322 100644
+--- a/lib/script/script.js
++++ b/lib/script/script.js
+@@ -70,7 +70,8 @@ var JSUtil = require('../util/js')
+  * @constructor
+  * @param {Object|string|Buffer=} from optional data to populate script
+  */
+-var Script = function Script (from) {
++function Script (from) {
++  Address = require('../address')
+   if (!(this instanceof Script)) {
+     return new Script(from)
+   }
+@@ -1070,6 +1071,7 @@ Script.buildP2SHMultisigIn = function (pubkeys, threshold, signatures, opts) {
+  * @param {(Address|PublicKey)} to - destination address or public key
+  */
+ Script.buildPublicKeyHashOut = function (to) {
++  Address = require('../address')
+   $.checkArgument(!_.isUndefined(to))
+   $.checkArgument(to instanceof PublicKey || to instanceof Address || _.isString(to))
+   if (to instanceof PublicKey) {
+diff --git a/package.json b/package.json
+index 4d78dfd78906c8f173d680649ca2a7e14a123fc6..feea0b242782d2c4d3b95cb6b9bd5a7f86a9045a 100644
+--- a/package.json
++++ b/package.json
+@@ -4,6 +4,7 @@
+   "version": "1.9.4",
+   "author": "Radiant Blockchain <radiantblockchain@protonmail.com>",
+   "main": "index.js",
++  "types": "radiant.d.ts",
+   "scripts": {
+     "lint": "standard",
+     "lint_test": "standard && mocha",
+diff --git a/radiant.d.ts b/radiant.d.ts
+index 4ab8d4205c43fa6c8436aa8400f31ddb941bb1ef..7686db4b422ceb3b269c7af23842147856256355 100644
+--- a/radiant.d.ts
++++ b/radiant.d.ts
+@@ -10,7 +10,7 @@
+ 
+ /// <reference types="node" />
+ 
+-declare module 'radiantjs' {
++declare module '@radiantblockchain/radiantjs' {
+ 
+     export namespace crypto {
+         class BN { }
+@@ -41,7 +41,11 @@ declare module 'radiantjs' {
+         class Signature {
+             static fromDER(sig: Buffer): Signature;
+             static fromString(data: string): Signature;
+-            SIGHASH_ALL: number;
++            static SIGHASH_ALL: number;
++            static SIGHASH_SINGLE: number;
++            static SIGHASH_NONE: number;
++            static SIGHASH_ANYONECANPAY: number;
++            static SIGHASH_FORKID: number;
+             toString(): string;
+         }
+     }
+@@ -77,6 +81,7 @@ declare module 'radiantjs' {
+         }
+ 
+         class Input {
++            constructor(object: any);
+             readonly prevTxId: Buffer;
+             readonly outputIndex: number;
+             readonly sequenceNumber: number;
+@@ -84,6 +89,10 @@ declare module 'radiantjs' {
+             output?: Output;
+             isValidSignature(tx: Transaction, sig: any): boolean;
+         }
++
++        class Sighash {
++            static sign(...args: any[]): Signature;
++        }
+     }
+ 
+     export class Transaction {
+@@ -97,12 +106,13 @@ declare module 'radiantjs' {
+ 
+         constructor(serialized?: any);
+ 
+-        from(utxos: Transaction.UnspentOutput | Transaction.UnspentOutput[]): this;
++        from(utxos: Transaction.UnspentOutput | Transaction.UnspentOutput[] | object): this;
+         to(address: Address[] | Address | string, amount: number): this;
+         change(address: Address | string): this;
+         fee(amount: number): this;
+         feePerKb(amount: number): this;
+         sign(privateKey: PrivateKey | string): this;
++        seal(): this;
+         applySignature(sig: crypto.Signature): this;
+         addInput(input: Transaction.Input): this;
+         addOutput(output: Transaction.Output): this;
+@@ -316,7 +326,7 @@ declare module 'radiantjs' {
+         function buildWitnessMultisigOutFromScript(script: Script): Script;
+         function buildMultisigIn(pubkeys: PublicKey[], threshold: number, signatures: Buffer[], opts: object): Script;
+         function buildP2SHMultisigIn(pubkeys: PublicKey[], threshold: number, signatures: Buffer[], opts: object): Script;
+-        function buildPublicKeyHashOut(address: Address): Script;
++        function buildPublicKeyHashOut(address: Address | string): Script;
+         function buildPublicKeyOut(pubkey: PublicKey): Script;
+         function buildDataOut(data: string | Buffer, encoding?: string): Script;
+         function buildScriptHashOut(script: Script): Script;
+@@ -343,7 +353,8 @@ declare module 'radiantjs' {
+     }
+ 
+     export class Script {
+-        constructor(data: string | object);
++        constructor(data?: string | object);
++        readonly chunks: { opcodenum: number, buf: Uint8Array }[];
+ 
+         set(obj: object): this;
+ 
+@@ -394,6 +405,9 @@ declare module 'radiantjs' {
+         getSignatureOperationsCount(accurate: boolean): number;
+ 
+         toAddress(network?: string): Address;
++        static fromString(script: string): Script;
++        static fromASM(script: string): Script;
++        static fromHex(script: string): Script;
+     }
+ 
+     export interface Util {
+@@ -423,6 +437,8 @@ declare module 'radiantjs' {
+         readonly type: string;
+ 
+         constructor(data: Buffer | Uint8Array | string | object, network?: Networks.Network | string, type?: string);
++        static fromString(address: string): Address;
++        toObject(): { hash: string; type: string; network: string; };
+     }
+ 
+     export class Unit {
+@@ -438,4 +454,190 @@ declare module 'radiantjs' {
+         toBits(): number;
+         toSatoshis(): number;
+     }
++
++    export class BlockHeader {
++        readonly bits: number;
++        readonly merkleRoot: Uint8Array;
++        readonly nonce: number;
++        readonly prevHash: Uint8Array;
++        readonly time: number;
++        readonly timestamp: number;
++        readonly version: number;
++        readonly hash: string;
++        readonly id: string;
++        static fromString(header: string): BlockHeader;
++        validProofOfWork(): boolean;
++    }
++
++    export const Opcode: {
++      OP_FALSE: number,
++      OP_0: number,
++      OP_PUSHDATA1: number,
++      OP_PUSHDATA2: number,
++      OP_PUSHDATA4: number,
++      OP_1NEGATE: number,
++      OP_RESERVED: number,
++      OP_TRUE: number,
++      OP_1: number,
++      OP_2: number,
++      OP_3: number,
++      OP_4: number,
++      OP_5: number,
++      OP_6: number,
++      OP_7: number,
++      OP_8: number,
++      OP_9: number,
++      OP_10: number,
++      OP_11: number,
++      OP_12: number,
++      OP_13: number,
++      OP_14: number,
++      OP_15: number,
++      OP_16: number,
++      OP_NOP: number,
++      OP_VER: number,
++      OP_IF: number,
++      OP_NOTIF: number,
++      OP_VERIF: number,
++      OP_VERNOTIF: number,
++      OP_ELSE: number,
++      OP_ENDIF: number,
++      OP_VERIFY: number,
++      OP_RETURN: number,
++      OP_TOALTSTACK: number,
++      OP_FROMALTSTACK: number,
++      OP_2DROP: number,
++      OP_2DUP: number,
++      OP_3DUP: number,
++      OP_2OVER: number,
++      OP_2ROT: number,
++      OP_2SWAP: number,
++      OP_IFDUP: number,
++      OP_DEPTH: number,
++      OP_DROP: number,
++      OP_DUP: number,
++      OP_NIP: number,
++      OP_OVER: number,
++      OP_PICK: number,
++      OP_ROLL: number,
++      OP_ROT: number,
++      OP_SWAP: number,
++      OP_TUCK: number,
++      OP_CAT: number,
++      OP_SPLIT: number,
++      OP_NUM2BIN: number,
++      OP_BIN2NUM: number,
++      OP_SIZE: number,
++      OP_INVERT: number,
++      OP_AND: number,
++      OP_OR: number,
++      OP_XOR: number,
++      OP_EQUAL: number,
++      OP_EQUALVERIFY: number,
++      OP_RESERVED1: number,
++      OP_RESERVED2: number,
++      OP_1ADD: number,
++      OP_1SUB: number,
++      OP_2MUL: number,
++      OP_2DIV: number,
++      OP_NEGATE: number,
++      OP_ABS: number,
++      OP_NOT: number,
++      OP_0NOTEQUAL: number,
++      OP_ADD: number,
++      OP_SUB: number,
++      OP_MUL: number,
++      OP_DIV: number,
++      OP_MOD: number,
++      OP_LSHIFT: number,
++      OP_RSHIFT: number,
++      OP_BOOLAND: number,
++      OP_BOOLOR: number,
++      OP_NUMEQUAL: number,
++      OP_NUMEQUALVERIFY: number,
++      OP_NUMNOTEQUAL: number,
++      OP_LESSTHAN: number,
++      OP_GREATERTHAN: number,
++      OP_LESSTHANOREQUAL: number,
++      OP_GREATERTHANOREQUAL: number,
++      OP_MIN: number,
++      OP_MAX: number,
++      OP_WITHIN: number,
++      OP_RIPEMD160: number,
++      OP_SHA1: number,
++      OP_SHA256: number,
++      OP_HASH160: number,
++      OP_HASH256: number,
++      OP_CODESEPARATOR: number,
++      OP_CHECKSIG: number,
++      OP_CHECKSIGVERIFY: number,
++      OP_CHECKMULTISIG: number,
++      OP_CHECKMULTISIGVERIFY: number,
++      OP_CHECKLOCKTIMEVERIFY: number,
++      OP_CHECKSEQUENCEVERIFY: number,
++      OP_NOP1: number,
++      OP_NOP2: number,
++      OP_NOP3: number,
++      OP_NOP4: number,
++      OP_NOP5: number,
++      OP_NOP6: number,
++      OP_NOP7: number,
++      OP_NOP8: number,
++      OP_NOP9: number,
++      OP_NOP10: number,
++      OP_CHECKDATASIG: number,
++      OP_CHECKDATASIGVERIFY: number,
++      OP_REVERSEBYTES: number,
++      OP_STATESEPARATOR: number,
++      OP_STATESEPARATORINDEX_UTXO: number,
++      OP_STATESEPARATORINDEX_OUTPUT: number,
++      OP_INPUTINDEX: number,
++      OP_ACTIVEBYTECODE: number,
++      OP_TXVERSION: number,
++      OP_TXINPUTCOUNT: number,
++      OP_TXOUTPUTCOUNT: number,
++      OP_TXLOCKTIME: number,
++      OP_UTXOVALUE: number,
++      OP_UTXOBYTECODE: number,
++      OP_OUTPOINTTXHASH: number,
++      OP_OUTPOINTINDEX: number,
++      OP_INPUTBYTECODE: number,
++      OP_INPUTSEQUENCENUMBER: number,
++      OP_OUTPUTVALUE: number,
++      OP_OUTPUTBYTECODE: number,
++      OP_SHA512_256: number,
++      OP_HASH512_256: number,
++      OP_PUSHINPUTREF: number,
++      OP_REQUIREINPUTREF: number,
++      OP_DISALLOWPUSHINPUTREF: number,
++      OP_DISALLOWPUSHINPUTREFSIBLING: number,
++      OP_REFHASHDATASUMMARY_UTXO: number,
++      OP_REFHASHVALUESUM_UTXOS: number,
++      OP_REFHASHDATASUMMARY_OUTPUT: number,
++      OP_REFHASHVALUESUM_OUTPUTS: number,
++      OP_PUSHINPUTREFSINGLETON: number,
++      OP_REFTYPE_UTXO: number,
++      OP_REFTYPE_OUTPUT: number,
++      OP_REFVALUESUM_UTXOS: number,
++      OP_REFVALUESUM_OUTPUTS: number,
++      OP_REFOUTPUTCOUNT_UTXOS: number,
++      OP_REFOUTPUTCOUNT_OUTPUTS: number,
++      OP_REFOUTPUTCOUNTZEROVALUED_UTXOS: number,
++      OP_REFOUTPUTCOUNTZEROVALUED_OUTPUTS: number,
++      OP_REFDATASUMMARY_UTXO: number,
++      OP_REFDATASUMMARY_OUTPUT: number,
++      OP_CODESCRIPTHASHVALUESUM_UTXOS: number,
++      OP_CODESCRIPTHASHVALUESUM_OUTPUTS: number,
++      OP_CODESCRIPTHASHOUTPUTCOUNT_UTXOS: number,
++      OP_CODESCRIPTHASHOUTPUTCOUNT_OUTPUTS: number,
++      OP_CODESCRIPTHASHZEROVALUEDOUTPUTCOUNT_UTXOS: number,
++      OP_CODESCRIPTHASHZEROVALUEDOUTPUTCOUNT_OUTPUTS: number,
++      OP_CODESCRIPTBYTECODE_UTXO: number,
++      OP_CODESCRIPTBYTECODE_OUTPUT: number,
++      OP_STATECRIPTBYTECODE_UTXO: number,
++      OP_STATECRIPTBYTECODE_OUTPUT: number,
++      OP_PUBKEYHASH: number,
++      OP_PUBKEY: number,
++      OP_INVALIDOPCODE: number,
++    };
+ }

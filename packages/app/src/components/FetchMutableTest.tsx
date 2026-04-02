@@ -7,7 +7,7 @@ import { decodeGlyph } from "@lib/token";
 import { parseMutableScript } from "@lib/script";
 import { findTokenOutput } from "@lib/tx";
 import { t } from "@lingui/macro";
-import { Transaction } from "@radiantblockchain/radiantjs";
+import { Transaction } from "@radiant-core/radiantjs";
 
 // Testing mutable tokens
 // Not used yet

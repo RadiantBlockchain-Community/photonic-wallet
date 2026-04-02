@@ -20,6 +20,16 @@ import { loadWalletFromSaved } from "./wallet";
 import useActivityDetector from "./hooks/useActivityDetector";
 import ConsolidationModal from "./components/ConsolidationModal";
 
+const MIN_FEE_RATE = 10000;
+
+const normalizeFeeRate = (value: unknown) => {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) {
+    return MIN_FEE_RATE;
+  }
+  return Math.max(MIN_FEE_RATE, parsed);
+};
+
 function Main() {
   useActivityDetector();
   const { exists } = wallet.value;
@@ -61,7 +71,7 @@ export default function App() {
       batch(() => {
         loadWalletFromSaved(savedWallet);
         network.value = config.networks[net as NetworkKey];
-        feeRate.value = savedFeeRate;
+        feeRate.value = normalizeFeeRate(savedFeeRate);
       });
     }
   }, [saved]);

@@ -168,10 +168,21 @@ export class FTWorker extends NFTWorker {
     this.scriptHash = ftScriptHash(address as string);
     this.address = address;
 
-    this.electrum.client?.subscribe(
-      "blockchain.scripthash",
-      this.onSubscriptionReceived.bind(this) as ElectrumCallback,
-      this.scriptHash
-    );
+    try {
+      await this.electrum.client?.subscribe(
+        "blockchain.scripthash",
+        this.onSubscriptionReceived.bind(this) as ElectrumCallback,
+        this.scriptHash
+      );
+    } catch (error) {
+      console.warn("[FT] Subscription failed, falling back to manual sync:", error);
+      // Subscription may fail for large histories, but listunspent still works
+      try {
+        await this.onSubscriptionReceived(this.scriptHash, "manual-fallback", true);
+        console.debug("[FT] Manual fallback sync completed");
+      } catch (fallbackError) {
+        console.warn("[FT] Manual fallback also failed:", fallbackError);
+      }
+    }
   }
 }

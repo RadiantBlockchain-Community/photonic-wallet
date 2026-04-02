@@ -2,7 +2,7 @@
 
 import { sha256 } from "@noble/hashes/sha256";
 import { bytesToHex } from "@noble/hashes/utils";
-import rjs from "@radiantblockchain/radiantjs";
+import rjs from "@radiant-core/radiantjs";
 import { Buffer } from "buffer";
 import { UnfinalizedOutput, Utxo } from "./types";
 import { parseNftScript } from "./script";
@@ -25,7 +25,7 @@ export const buildTx = (
   const p2pkh = Script.fromAddress(address).toHex();
 
   // Keys can be given as an array if inputs are from different addresses
-  const privKeys = (Array.isArray(wif) ? wif : [wif]).map(PrivateKey.fromWIF);
+  const privKeys: rjs.PrivateKey[] = (Array.isArray(wif) ? wif : [wif]).map(PrivateKey.fromWIF);
 
   inputs.forEach((input, index) => {
     if (input.script) {
@@ -124,7 +124,7 @@ export function findTokenOutput(
   refLE: string,
   parseFn: (script: string) => Partial<{ ref: string }> = parseNftScript
 ) {
-  const vout = tx.outputs.findIndex((output) => {
+  const vout = tx.outputs.findIndex((output: { script: { toHex: () => string } }) => {
     const { ref } = parseFn(output.script.toHex());
     return ref === refLE;
   });

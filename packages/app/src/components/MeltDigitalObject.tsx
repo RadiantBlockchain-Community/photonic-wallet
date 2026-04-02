@@ -21,7 +21,7 @@ import { WarningIcon } from "@chakra-ui/icons";
 import coinSelect, { SelectableInput } from "@lib/coinSelect";
 import { p2pkhScript } from "@lib/script";
 import { buildTx } from "@lib/tx";
-import { PrivateKey } from "@radiantblockchain/radiantjs";
+import { PrivateKey } from "@radiant-core/radiantjs";
 import { useLiveQuery } from "dexie-react-hooks";
 import db from "../db";
 import { feeRate, wallet } from "@app/signals";
@@ -93,7 +93,9 @@ export default function MeltDigitalObject({
       false
     ).toString();
     try {
+      console.log("[Melt] Broadcasting transaction...");
       const txid = await electrumWorker.value.broadcast(rawTx);
+      console.log("[Melt] Broadcast result txid:", txid, "type:", typeof txid);
       db.broadcast.put({ txid, date: Date.now(), description: "nft_melt" });
       onSuccess && onSuccess(txid);
       toast({ status: "success", title: t`Token melted` });

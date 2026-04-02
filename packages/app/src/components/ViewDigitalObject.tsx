@@ -362,7 +362,7 @@ export default function ViewDigitalObject({
       />
       <TxSuccessModal
         onClose={() => {
-          successDisclosure.onClose;
+          successDisclosure.onClose();
           navigate(context || "/objects");
         }}
         isOpen={successDisclosure.isOpen}

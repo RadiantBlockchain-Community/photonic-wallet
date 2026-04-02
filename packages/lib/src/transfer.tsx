@@ -1,4 +1,4 @@
-import rjs from "@radiantblockchain/radiantjs";
+import rjs from "@radiant-core/radiantjs";
 import coinSelect, { accumulateInputs, SelectableInput } from "./coinSelect";
 import { ftScript, nftScript, p2pkhScript } from "./script";
 import { buildTx } from "./tx";

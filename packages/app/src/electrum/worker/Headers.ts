@@ -1,9 +1,9 @@
 import { Buffer } from "buffer";
-import { BlockHeader as RadJSBlockHeader } from "@radiantblockchain/radiantjs";
+import { BlockHeader as RadJSBlockHeader } from "@radiant-core/radiantjs";
 import { Subscription } from "@app/types";
 import { ElectrumHeaderResponse, ElectrumHeadersResponse } from "@lib/types";
 import ElectrumManager from "@app/electrum/ElectrumManager";
-import { nextBitsAserti32D, bitsToTarget } from "@lib/difficulty";
+import { nextBitsAserti32D, bitsToTarget, ASERT_HALF_LIFE_UPGRADE_HEIGHT, HALF_LIFE_V2 } from "@lib/difficulty";
 import db from "@app/db";
 import { network } from "@app/signals";
 // import { workerInstance } from "@app/verifier";
@@ -142,13 +142,20 @@ export class HeadersSubscription implements Subscription {
     }
 
     const { height, hex } = raw as ElectrumHeaderResponse;
-    const anchor = network.value.anchor;
     console.debug(`Processing header height ${height}`);
     const buffer = Buffer.from(hex, "hex").buffer;
+
+    // Select anchor and half-life based on whether we are past the upgrade height
+    const anchorV2 = network.value.anchorV2;
+    const useV2 = height >= ASERT_HALF_LIFE_UPGRADE_HEIGHT && anchorV2;
+    const anchor = useV2 ? anchorV2 : network.value.anchor;
+    const halfLife = useV2 ? HALF_LIFE_V2 : undefined;
+
     const nextBits = nextBitsAserti32D(
       anchor.bits,
       this.latestBlock.timestamp - anchor.prevTime,
-      this.latestBlock.height - anchor.height
+      this.latestBlock.height - anchor.height,
+      halfLife
     );
 
     const header = RadJSBlockHeader.fromString(hex);

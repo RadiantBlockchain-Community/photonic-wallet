@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Transaction } from "@radiantblockchain/radiantjs";
+import { Transaction } from "@radiant-core/radiantjs";
 import opfs from "@app/opfs";
 import Outpoint from "@lib/Outpoint";
 import { Box, SimpleGrid } from "@chakra-ui/react";

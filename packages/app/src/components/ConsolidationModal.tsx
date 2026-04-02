@@ -1,6 +1,6 @@
 import { useState } from "react";
 import db from "@app/db";
-import { PrivateKey } from "@radiantblockchain/radiantjs";
+import { PrivateKey } from "@radiant-core/radiantjs";
 import { ContractType, TxO } from "@app/types";
 import {
   Modal,

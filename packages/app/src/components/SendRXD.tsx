@@ -54,6 +54,12 @@ export default function SendRXD({ onSuccess, disclosure }: Props) {
   const [errorMessage, setErrorMessage] = useState("");
   const toast = useToast();
 
+  const setFailure = (reason: string) => {
+    setErrorMessage(reason);
+    setSuccess(false);
+    setLoading(false);
+  };
+
   const rxd = useLiveQuery(
     () => db.txo.where({ contractType: ContractType.RXD, spent: 0 }).toArray(),
     [],
@@ -70,28 +76,25 @@ export default function SendRXD({ onSuccess, disclosure }: Props) {
     setSuccess(true);
     setLoading(true);
 
-    let fail = false;
     if (!amount.current?.value) {
-      fail = true;
-      setErrorMessage(t`Invalid amount`);
+      return setFailure(t`Invalid amount`);
     }
 
     const p2script = payToScript(toAddress.current?.value || "");
 
     if (!p2script) {
-      fail = true;
-      setErrorMessage(t`Invalid address`);
+      return setFailure(t`Invalid address`);
     }
 
-    if (fail) {
-      setSuccess(false);
-      setLoading(false);
-      return;
+    const amountBig = Big(amount.current.value);
+    if (amountBig.lte(0)) {
+      return setFailure(t`Invalid amount`);
     }
 
-    const value = Big(amount.current?.value || 0)
-      .times(100000000)
-      .toNumber();
+    const value = Number(amountBig.times(100000000).round(0, 0).toString());
+    if (!Number.isSafeInteger(value) || value <= 0) {
+      return setFailure(t`Invalid amount`);
+    }
 
     const coins: SelectableInput[] = rxd.slice();
     try {
@@ -127,11 +130,19 @@ export default function SendRXD({ onSuccess, disclosure }: Props) {
       updateRxdBalances(wallet.value.address);
 
       onSuccess && onSuccess(txid);
-    } catch (error) {
-      setErrorMessage(t`Could not send transaction`);
-      console.error(error);
-      setSuccess(false);
       setLoading(false);
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        error.message === "Electrum client not connected"
+      ) {
+        setFailure(t`Not connected to server. Check your network connection.`);
+      } else if (error instanceof Error) {
+        setFailure(error.message);
+      } else {
+        setFailure(t`Could not send transaction`);
+      }
+      console.error(error);
     }
   };
   const [scan, setScan] = useState(false);

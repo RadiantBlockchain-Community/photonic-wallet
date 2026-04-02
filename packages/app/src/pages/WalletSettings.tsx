@@ -26,6 +26,16 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { PromiseExtended } from "dexie";
 import { electrumWorker } from "@app/electrum/Electrum";
 
+const MIN_FEE_RATE = 10000;
+
+const normalizeFeeRate = (value: string | number) => {
+  const parsed = typeof value === "number" ? value : parseInt(value, 10);
+  if (!Number.isFinite(parsed)) {
+    return MIN_FEE_RATE;
+  }
+  return Math.max(MIN_FEE_RATE, parsed);
+};
+
 export default function WalletSettings() {
   const disclosure = useDisclosure();
   const [showMnemonic, setShowMnemonic] = useState(false);
@@ -43,7 +53,7 @@ export default function WalletSettings() {
   const save = async () => {
     const newLanguage = languageRef.current?.value;
     const changeLang = language.value !== newLanguage;
-    const feeRateNum = parseInt(feeRateRef.current?.value || "", 10);
+    const feeRateNum = normalizeFeeRate(feeRateRef.current?.value || "");
 
     db.kvp.bulkPut([languageRef.current?.value, feeRateNum], keys);
     toast({
@@ -123,7 +133,12 @@ export default function WalletSettings() {
       <FormSection>
         <FormControl>
           <FormLabel>{t`Language`}</FormLabel>
-          <Select ref={languageRef} defaultValue={savedLanguage || ""}>
+          <Select
+            ref={languageRef}
+            defaultValue={savedLanguage || ""}
+            aria-label="Language"
+            title="Language"
+          >
             {Object.entries(config.i18n.languages).map(([k, v]) => (
               <option value={k} key={k}>
                 {v}
@@ -135,11 +150,16 @@ export default function WalletSettings() {
           <FormLabel>{t`Fee Rate`}</FormLabel>
           <Input
             ref={feeRateRef}
-            placeholder="5000"
+            type="number"
+            min={MIN_FEE_RATE}
+            step={1}
+            placeholder={`${MIN_FEE_RATE}`}
             name="gateway"
-            defaultValue={savedFeeRate}
+            defaultValue={normalizeFeeRate(savedFeeRate || MIN_FEE_RATE)}
           />
-          <FormHelperText>Photons per byte</FormHelperText>
+          <FormHelperText>
+            {`Photons per byte (minimum ${MIN_FEE_RATE})`}
+          </FormHelperText>
         </FormControl>
       </FormSection>
       <Flex justifyContent="center" py={8} mb={16}>

@@ -39,11 +39,11 @@ import {
 import { fundTx, targetToUtxo, updateUnspent } from "./coinSelect";
 import { buildTx } from "./tx";
 import Outpoint from "./Outpoint";
-import rjs from "@radiantblockchain/radiantjs";
+import rjs from "@radiant-core/radiantjs";
 import { GLYPH_NFT } from "./protocols";
 const { Script, crypto } = rjs;
 
-const defaultFeeRate = 5000;
+const defaultFeeRate = 10000;
 
 export function commitBundle(
   deployMethod: DeployMethod,
@@ -107,6 +107,7 @@ export function commitBundle(
   } = fundTx(address, utxos, [], target, p2pkh, defaultFeeRate);
 
   if (!funded) {
+    console.error("[mint] Coin selection failed. UTXOs:", utxos.length, "Target value:", target.reduce((a, t) => a + t.value, 0));
     throw new Error("Couldn't fund transaction");
   }
 
@@ -151,6 +152,7 @@ function createLinkCommit(
   }
 ) {
   const linkPayload: SmartTokenPayload = {
+    v: 2, // Glyph v2 version
     p: [GLYPH_NFT],
     loc: targetRefVout,
   };
@@ -412,7 +414,10 @@ export function createRevealOutputs(
             tokenRef,
             dmintParams.maxHeight,
             dmintParams.reward,
-            dMintDiffToTarget(dmintParams.difficulty)
+            dMintDiffToTarget(dmintParams.difficulty),
+            dmintParams.algorithm || 'sha256d',
+            dmintParams.daaMode || 'fixed',
+            dmintParams.daaParams
           ),
           value: mint.outputValue,
         });

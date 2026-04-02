@@ -14,10 +14,10 @@
   }
 }
 
+/* Scrollbar */
 ::-webkit-scrollbar {
   background: none;
-  width: 10px;
-  margin-left: -8px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-corner {
@@ -29,16 +29,28 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--chakra-colors-whiteAlpha-300);
+  background: var(--chakra-colors-whiteAlpha-200);
   background-clip: padding-box;
-  border-radius: 0.75rem;
+  border-radius: 100px;
   border: 2px solid transparent;
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--chakra-colors-whiteAlpha-400);
+  background-clip: padding-box;
 }
 
 body :not(:hover, :focus, :focus-within)::-webkit-scrollbar-thumb {
   visibility: hidden;
 }
 
+/* Selection */
+::selection {
+  background: rgba(98, 0, 234, 0.3);
+}
+
+/* Logo animations */
 @keyframes spin1 {
   100% {
     transform: rotate(360deg);
@@ -60,6 +72,18 @@ body :not(:hover, :focus, :focus-within)::-webkit-scrollbar-thumb {
   }
   100% {
     background-position-x: 0;
+  }
+}
+
+/* Fade-in for page transitions */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

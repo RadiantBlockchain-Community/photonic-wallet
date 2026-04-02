@@ -8,12 +8,12 @@ export default function DownloadLink({
   mimeType,
   ...rest
 }: {
-  data: ArrayBuffer;
+  data: ArrayBuffer | Uint8Array;
   filename: string;
   mimeType: string;
 } & ButtonProps) {
   const downloadUint8ArrayAsFile = () => {
-    const blob = new Blob([data], { type: mimeType });
+    const blob = new Blob([data as BlobPart], { type: mimeType });
     const blobUrl = URL.createObjectURL(blob);
 
     const a = document.createElement("a");

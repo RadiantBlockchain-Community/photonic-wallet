@@ -37,6 +37,7 @@ import SwapPending from "./pages/SwapPending";
 import SwapCompleted from "./pages/SwapCompleted";
 import SwapLoad from "./pages/SwapLoad";
 import SwapMissing from "./pages/SwapMissing";
+import OpenOrders from "./pages/OpenOrders";
 
 dayjs.extend(localizedFormat);
 
@@ -66,19 +67,39 @@ const theme = extendTheme({
     Input: {
       defaultProps: {
         variant: "filled",
-        focusBorderColor: "lightBlue.A400",
+        focusBorderColor: "brand.400",
+      },
+      variants: {
+        filled: {
+          field: {
+            bg: "whiteAlpha.50",
+            borderWidth: "1px",
+            borderColor: "whiteAlpha.100",
+            _hover: { bg: "whiteAlpha.100" },
+            _focus: { bg: "whiteAlpha.100", borderColor: "brand.400" },
+          },
+        },
       },
     },
     Textarea: {
       defaultProps: {
         variant: "filled",
-        focusBorderColor: "lightBlue.A400",
+        focusBorderColor: "brand.400",
+      },
+      variants: {
+        filled: {
+          bg: "whiteAlpha.50",
+          borderWidth: "1px",
+          borderColor: "whiteAlpha.100",
+          _hover: { bg: "whiteAlpha.100" },
+          _focus: { bg: "whiteAlpha.100", borderColor: "brand.400" },
+        },
       },
     },
     Select: {
       defaultProps: {
         variant: "filled",
-        focusBorderColor: "lightBlue.A400",
+        focusBorderColor: "brand.400",
       },
     },
     Tag: {
@@ -100,14 +121,14 @@ const theme = extendTheme({
           tab: {
             _selected: {
               color: "chakra-body-text",
-              borderColor: "deepPurple.A100",
+              borderColor: "brand.400",
               bg: `url(${gradient})`,
               bgSize: "cover",
               bgPosition: "center center",
             },
             _active: {
               bg: "transparent",
-              borderColor: "deepPurple.A100",
+              borderColor: "brand.400",
             },
           },
         },
@@ -116,13 +137,11 @@ const theme = extendTheme({
     Alert: {
       baseStyle: {
         container: {
-          borderRadius: "md",
+          borderRadius: "lg",
         },
       },
       variants: {
         subtle: {
-          // Default subtle toast colours are too transparent and difficult to read
-          // This will apply to Alert and Toast
           container: {
             "&[data-status='success']": { bg: "#1C4532EE" },
             "&[data-status='error']": { bg: "#C53030EE" },
@@ -134,8 +153,9 @@ const theme = extendTheme({
     },
     Button: {
       baseStyle: {
-        transition: "none",
-        fontWeight: "medium",
+        transition: "all 0.15s ease",
+        fontWeight: "semibold",
+        borderRadius: "lg",
       },
       variants: {
         primary: (props: ButtonProps) => {
@@ -146,33 +166,62 @@ const theme = extendTheme({
             bgSize: "cover",
             bgPosition: "center center",
             _hover: {
-              filter: "brightness(1.1)",
+              filter: "brightness(1.15)",
+              transform: "translateY(-1px)",
+              boxShadow: "0 4px 12px rgba(98, 0, 234, 0.3)",
               _disabled: {
                 bg: "deepPurple.A700",
+                transform: "none",
+                boxShadow: "none",
               },
             },
             _active: {
-              filter: "brightness(1.5)",
+              filter: "brightness(1.3)",
+              transform: "translateY(0)",
             },
           };
+        },
+        solid: {
+          bg: "whiteAlpha.200",
+          _hover: {
+            bg: "whiteAlpha.300",
+            transform: "translateY(-1px)",
+          },
+          _active: {
+            bg: "whiteAlpha.400",
+            transform: "translateY(0)",
+          },
+        },
+        ghost: {
+          _hover: {
+            bg: "whiteAlpha.100",
+          },
         },
       },
     },
     Modal: {
       baseStyle: {
         overlay: {
-          bg: "blackAlpha.400",
+          bg: "blackAlpha.600",
           backdropFilter: "blur(24px)",
         },
         dialog: {
           mx: { base: 4, md: 0 },
-          bgGradient: "linear(to-b, transparent, blackAlpha.500)",
-          bgColor: "#2D2D2DA0",
+          bg: "bg.100",
+          borderWidth: "1px",
+          borderColor: "whiteAlpha.100",
+          borderRadius: "xl",
+          boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
         },
         body: {
           display: "flex",
           flexDirection: "column",
         },
+      },
+    },
+    Divider: {
+      baseStyle: {
+        borderColor: "whiteAlpha.100",
       },
     },
   },
@@ -189,6 +238,18 @@ const theme = extendTheme({
       700: "#2D2D2D",
       800: "#1A1A1A",
       900: "#171717",
+    },
+    brand: {
+      50: "#e8eaff",
+      100: "#c4c6ff",
+      200: "#9da2ff",
+      300: "#757dff",
+      400: "#5c64ff",
+      500: "#4a4eff",
+      600: "#4845f7",
+      700: "#4339ea",
+      800: "#3e2cdd",
+      900: "#3400ca",
     },
     purple: {
       50: "#f3e5f5",
@@ -239,11 +300,11 @@ const theme = extendTheme({
       A700: "#0091ea",
     },
     bg: {
-      50: "#323235",
-      100: "#2c2c32",
-      200: "#26262b",
-      300: "#202024",
-      400: "#19191d",
+      50: "#2e2e36",
+      100: "#252530",
+      200: "#1c1c28",
+      300: "#161622",
+      400: "#10101a",
     },
     blueGrayAlpha: {
       50: "#4A55680a",
@@ -260,7 +321,12 @@ const theme = extendTheme({
   },
   shadows: {
     "dark-md":
-      "rgba(0, 0, 0, 0.1) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 10px, rgba(0, 0, 0, 0.1) 0px 2px 20px",
+      "rgba(0, 0, 0, 0.15) 0px 0px 0px 1px, rgba(0, 0, 0, 0.15) 0px 10px 20px, rgba(0, 0, 0, 0.1) 0px 4px 8px",
+  },
+  radii: {
+    lg: "12px",
+    xl: "16px",
+    "2xl": "24px",
   },
 });
 
@@ -348,6 +414,10 @@ const router = createHashRouter([
               {
                 path: "/swap/load",
                 element: <SwapLoad />,
+              },
+              {
+                path: "/swap/orders",
+                element: <OpenOrders />,
               },
             ],
           },

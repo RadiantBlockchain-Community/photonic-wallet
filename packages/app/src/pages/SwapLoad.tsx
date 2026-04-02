@@ -37,7 +37,7 @@ import {
   Networks,
   Script,
   Transaction,
-} from "@radiantblockchain/radiantjs";
+} from "@radiant-core/radiantjs";
 import { useState } from "react";
 import { MdOutlineSwapVert } from "react-icons/md";
 import { AiOutlineSignature } from "react-icons/ai";
@@ -56,6 +56,8 @@ import { TransferError } from "@lib/transfer";
 import { SwapPrepareError } from "./Swap";
 import { buildTx } from "@lib/tx";
 import createExplorerUrl from "@app/network/createExplorerUrl";
+import opfs from "@app/opfs";
+import { decodeGlyph } from "@lib/token";
 
 type SwapItemParams = {
   contractType: ContractType;
@@ -70,6 +72,90 @@ type SwapParams = {
   to: SwapItemParams;
   address: string;
 };
+
+type RoyaltySplit = { address: string; bps: number };
+
+function parseRoyalty(payload: unknown): {
+  enforced: boolean;
+  bps: number;
+  address: string;
+  minimum: number;
+  maximum: number | null;
+  splits: RoyaltySplit[];
+} | null {
+  if (!payload || typeof payload !== "object") return null;
+  const royalty = (payload as { royalty?: unknown }).royalty;
+  if (!royalty || typeof royalty !== "object") return null;
+
+  const r = royalty as {
+    enforced?: unknown;
+    bps?: unknown;
+    address?: unknown;
+    minimum?: unknown;
+    maximum?: unknown;
+    splits?: unknown;
+  };
+
+  const enforced = r.enforced === true;
+  const bps = typeof r.bps === "number" ? r.bps : NaN;
+  const address = typeof r.address === "string" ? r.address : "";
+  const minimum = typeof r.minimum === "number" ? r.minimum : 0;
+  const maximum = typeof r.maximum === "number" ? r.maximum : null;
+
+  const splits: RoyaltySplit[] = Array.isArray(r.splits)
+    ? (r.splits
+        .map((s) => {
+          if (!s || typeof s !== "object") return null;
+          const so = s as { address?: unknown; bps?: unknown };
+          const a = typeof so.address === "string" ? so.address : "";
+          const b = typeof so.bps === "number" ? so.bps : NaN;
+          if (!a || !Number.isFinite(b)) return null;
+          return { address: a, bps: b };
+        })
+        .filter(Boolean) as RoyaltySplit[])
+    : [];
+
+  if (!Number.isFinite(bps) || bps <= 0 || bps > 10000) return null;
+  if (!address) return null;
+
+  return { enforced, bps, address, minimum, maximum, splits };
+}
+
+function computeRoyaltyAmount(
+  salePrice: number,
+  bps: number,
+  minimum: number,
+  maximum: number | null
+): number {
+  const raw = Math.floor((salePrice * bps) / 10000);
+  let clamped = Math.max(raw, minimum);
+  if (maximum !== null) clamped = Math.min(clamped, maximum);
+  return clamped;
+}
+
+async function getTokenRoyalty(glyph: SmartToken): Promise<ReturnType<typeof parseRoyalty> | null> {
+  if (!glyph.revealOutpoint) return null;
+  try {
+    const reveal = Outpoint.fromString(glyph.revealOutpoint);
+    const txid = reveal.getTxid();
+    let hex = await opfs.getTx(txid);
+    if (!hex) {
+      hex = await electrumWorker.value.getTransaction(txid);
+      if (hex) {
+        await opfs.putTx(txid, hex);
+      }
+    }
+    if (!hex) return null;
+    const tx = new Transaction(hex);
+    const input = tx.inputs[reveal.getVout()];
+    if (!input?.script) return null;
+    const decoded = decodeGlyph(input.script);
+    if (!decoded) return null;
+    return parseRoyalty(decoded.payload);
+  } catch {
+    return null;
+  }
+}
 
 function parseScript(script: string) {
   return (
@@ -320,6 +406,65 @@ function ViewSwap({ swapParams }: { swapParams: SwapParams }) {
         value: swapParams.from.value,
       },
     ];
+
+    // REP-3012 enforced royalty support for RXD-priced NFT sales.
+    // Canonical ordering: vout0 = NFT to buyer, vout1 = seller payment, vout2.. = royalty outputs, change after.
+    if (
+      swapParams.from.contractType === ContractType.NFT &&
+      swapParams.to.contractType === ContractType.RXD &&
+      swapParams.to.value > 0
+    ) {
+      // Reorder to (NFT to buyer) then (seller payment)
+      const sellerPayment = outputs[0];
+      const nftToBuyer = outputs[1];
+      outputs[0] = nftToBuyer;
+      outputs[1] = sellerPayment;
+
+      if (swapParams.from.glyph) {
+        const royalty = await getTokenRoyalty(swapParams.from.glyph);
+        if (royalty?.enforced) {
+          const salePrice = swapParams.to.value;
+          const totalRoyalty = computeRoyaltyAmount(
+            salePrice,
+            royalty.bps,
+            royalty.minimum,
+            royalty.maximum
+          );
+
+          if (totalRoyalty > 0) {
+            const royaltyOutputs: UnfinalizedOutput[] = [];
+            if (royalty.splits.length > 0) {
+              let remaining = totalRoyalty;
+              for (let i = 0; i < royalty.splits.length; i++) {
+                const split = royalty.splits[i];
+                const isLast = i === royalty.splits.length - 1;
+                const amt = isLast
+                  ? remaining
+                  : Math.floor((totalRoyalty * split.bps) / royalty.bps);
+                remaining -= amt;
+                if (amt > 0) {
+                  const script = p2pkhScript(split.address);
+                  if (!script) {
+                    throw new SwapError("Invalid royalty split address");
+                  }
+                  royaltyOutputs.push({ script, value: amt });
+                }
+              }
+            } else {
+              const script = p2pkhScript(royalty.address);
+              if (!script) {
+                throw new SwapError("Invalid royalty address");
+              }
+              royaltyOutputs.push({ script, value: totalRoyalty });
+            }
+
+            if (royaltyOutputs.length > 0) {
+              outputs.splice(2, 0, ...royaltyOutputs);
+            }
+          }
+        }
+      }
+    }
 
     try {
       // Fund token swaps. Any RXD required for the swap will be done later when funding the whole transaction.

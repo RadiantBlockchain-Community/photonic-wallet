@@ -20,14 +20,13 @@
   "devDependencies": {
     "@photonic/cli": "workspace:*",
     "@types/node": "^18.19.56",
-    "eslint": "^8.57.1",
+    "eslint": "^9.18.0",
     "prettier": "^2.8.8",
     "turbo": "^1.13.4",
     "typescript": "^5.6.3"
   },
   "pnpm": {
     "patchedDependencies": {
-      "@radiantblockchain/radiantjs@1.9.4": "patches/@radiantblockchain__radiantjs@1.9.4.patch",
       "bsv-coinselect@4.2.5": "patches/bsv-coinselect@4.2.5.patch",
       "ws-electrumx-client@1.0.5": "patches/ws-electrumx-client@1.0.5.patch"
     }

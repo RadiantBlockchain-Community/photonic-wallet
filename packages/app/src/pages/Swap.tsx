@@ -15,6 +15,9 @@ import {
   Input,
   InputGroup,
   InputRightAddon,
+  Radio,
+  RadioGroup,
+  Stack,
   useToast,
 } from "@chakra-ui/react";
 import { MdOutlineSwapVert } from "react-icons/md";
@@ -25,6 +28,7 @@ import {
   SmartToken,
   SmartTokenType,
   SwapError,
+  SwapMode,
   SwapStatus,
 } from "@app/types";
 import { PropsWithChildren, useState } from "react";
@@ -33,7 +37,7 @@ import rxdIcon from "/rxd.png";
 import { useLocation } from "react-router-dom";
 import { ftScript, nftScript, p2pkhScript } from "@lib/script";
 import { feeRate, openModal, wallet } from "@app/signals";
-import { SelectableInput } from "@lib/coinSelect";
+import { fundTx, SelectableInput } from "@lib/coinSelect";
 import db from "@app/db";
 import {
   partiallySigned,
@@ -50,6 +54,18 @@ import {
 } from "@app/utxos";
 import { electrumWorker } from "@app/electrum/Electrum";
 import ViewSwap from "@app/components/ViewSwap";
+import {
+  assetToSwapTokenId,
+  encodePriceTermsOutputs,
+  getSwapRpcConfig,
+  isSwapIndexAvailable,
+} from "@app/swapBroadcast";
+import rjs from "@radiant-core/radiantjs";
+import { buildTx } from "@lib/tx";
+import { findTokenOutput } from "@lib/tx";
+import { Buffer } from "buffer";
+
+const { Opcode, Script } = rjs;
 
 export class SwapPrepareError extends Error {
   constructor(message: string) {
@@ -225,7 +241,7 @@ const Row = ({
             minW={16}
             step={step || "1"}
           />
-          {ticker && <InputRightAddon>{ticker}</InputRightAddon>}
+          <InputRightAddon>{ticker.length > 0 ? ticker : "TOKEN"}</InputRightAddon>
         </GridItem>
       )}
       <GridItem
@@ -242,6 +258,63 @@ type Asset = {
   glyph: SmartToken;
   value: number;
 };
+
+function encodeScriptNum(value: number) {
+  if (value === 0) {
+    return Buffer.alloc(0);
+  }
+
+  const result: number[] = [];
+  let remaining = value;
+  while (remaining > 0) {
+    result.push(remaining & 0xff);
+    remaining >>= 8;
+  }
+
+  if (result[result.length - 1] & 0x80) {
+    result.push(0);
+  }
+
+  return Buffer.from(result);
+}
+
+function buildSwapAdvertisementScript({
+  offeredType,
+  offeredTokenId,
+  wantTokenId,
+  offeredTxid,
+  offeredVout,
+  priceTerms,
+  signature,
+}: {
+  offeredType: ContractType;
+  offeredTokenId: string;
+  wantTokenId: string;
+  offeredTxid: string;
+  offeredVout: number;
+  priceTerms: string;
+  signature: string;
+}) {
+  const hasWantToken = wantTokenId !== "00".repeat(32);
+  const script = new Script()
+    .add(Opcode.OP_RETURN)
+    .add(Buffer.from("RSWP"))
+    .add(Buffer.from([0x02]))
+    .add(Buffer.from([hasWantToken ? 0x01 : 0x00]))
+    .add(Buffer.from([offeredType]))
+    .add(Buffer.from([0x01]))
+    .add(Buffer.from(offeredTokenId, "hex").reverse());
+
+  if (hasWantToken) {
+    script.add(Buffer.from(wantTokenId, "hex").reverse());
+  }
+
+  return script
+    .add(Buffer.from(offeredTxid, "hex").reverse())
+    .add(encodeScriptNum(offeredVout))
+    .add(Buffer.from(priceTerms, "hex"))
+    .add(Buffer.from(signature, "hex"));
+}
 
 function OutputSelection({
   heading,
@@ -331,6 +404,41 @@ function Swap() {
   const [receive, setReceive] = useState<Asset | null>(null);
   const [receiveRxd, setReceiveRxd] = useState(0);
   const [psrt, setPsrt] = useState("");
+  const [mode, setMode] = useState<SwapMode>(SwapMode.PRIVATE);
+  const [broadcastTxid, setBroadcastTxid] = useState("");
+
+  const validateSwap = () => {
+    const sendIsRxd = !send;
+    const receiveIsRxd = !receive;
+
+    if (sendIsRxd && sendRxd <= 0) {
+      throw new SwapPrepareError("Enter an RXD amount to send");
+    }
+
+    if (receiveIsRxd && receiveRxd <= 0) {
+      throw new SwapPrepareError("Enter an RXD amount to receive");
+    }
+
+    if (send && send.glyph.tokenType === SmartTokenType.FT && send.value <= 0) {
+      throw new SwapPrepareError("Enter a token amount to send");
+    }
+
+    if (
+      receive &&
+      receive.glyph.tokenType === SmartTokenType.FT &&
+      receive.value <= 0
+    ) {
+      throw new SwapPrepareError("Enter a token amount to receive");
+    }
+
+    if (send && receive && send.glyph.ref === receive.glyph.ref) {
+      throw new SwapPrepareError("Send and receive assets must be different");
+    }
+
+    if (sendIsRxd && receiveIsRxd) {
+      throw new SwapPrepareError("A swap cannot be RXD for RXD");
+    }
+  };
 
   const prepareTransaction = async () => {
     if (wallet.value.locked || !wallet.value.swapWif) {
@@ -349,11 +457,19 @@ function Swap() {
       .where({ contractType: ContractType.RXD, spent: 0 })
       .toArray();
 
-    // TODO check input values > 0
+    try {
+      validateSwap();
+    } catch (error) {
+      if (error instanceof SwapPrepareError) {
+        toast({ status: "error", title: error.message });
+        return;
+      }
+      throw error;
+    }
 
     let tx;
-    let from;
-    let fromValue;
+    let from: ContractType;
+    let fromValue: number;
     try {
       if (send) {
         // Token to RXD
@@ -385,14 +501,14 @@ function Swap() {
     }
 
     let psrtOutput;
-    let to;
-    let toValue;
+    let to: ContractType;
+    let toValue: number;
     if (receive) {
       const refLE = reverseRef(receive.glyph.ref);
       if (receive.glyph.tokenType === SmartTokenType.FT) {
         psrtOutput = {
           script: ftScript(wallet.value.address, refLE),
-          value: receive?.value as number,
+          value: receive.value,
         };
         to = ContractType.FT;
         toValue = receive.value;
@@ -421,11 +537,47 @@ function Swap() {
 
     updateRxdBalances(wallet.value.address);
 
+    const swapOutput = (() => {
+      if (from === ContractType.RXD) {
+        const swapScript = p2pkhScript(wallet.value.swapAddress);
+        const vout = tx.outputs.findIndex((output) => output.script.toHex() === swapScript);
+        if (vout < 0) {
+          throw new SwapPrepareError("Could not locate reserved RXD swap output");
+        }
+        return { vout, output: tx.outputs[vout] };
+      }
+
+      if (!send?.glyph?.ref) {
+        throw new SwapPrepareError("Missing offered token reference");
+      }
+
+      const refLE = reverseRef(send.glyph.ref);
+      if (from === ContractType.FT) {
+        const found = findTokenOutput(tx, refLE, (script) => {
+          const parsed = ftScript(wallet.value.swapAddress, refLE);
+          if (script === parsed) {
+            return { ref: refLE };
+          }
+          return {};
+        });
+        if (found.vout === undefined || !found.output) {
+          throw new SwapPrepareError("Could not locate reserved fungible swap output");
+        }
+        return { vout: found.vout, output: found.output };
+      }
+
+      const found = findTokenOutput(tx, refLE);
+      if (found.vout === undefined || !found.output) {
+        throw new SwapPrepareError("Could not locate reserved NFT swap output");
+      }
+      return { vout: found.vout, output: found.output };
+    })();
+
     const input = {
       txid: tx.id,
-      vout: 0,
-      script: tx.outputs[0].script.toHex(),
-      value: tx.outputs[0].satoshis,
+      vout: swapOutput.vout,
+      script: swapOutput.output.script.toHex(),
+      value: swapOutput.output.satoshis,
     };
 
     // Build Partially Signed Radiant Transaction
@@ -435,8 +587,80 @@ function Swap() {
       psrtOutput,
       wallet.value.swapWif
     ).toString();
+
+    let advertisementTxid: string | undefined;
+    if (mode === SwapMode.BROADCAST) {
+      const rpcConfig = getSwapRpcConfig();
+      const indexAvailable = await isSwapIndexAvailable();
+      if (!indexAvailable) {
+        throw new SwapPrepareError(
+          `Swap index not available at ${rpcConfig.url}. Connect to a Radiant Core node with -swapindex=1 enabled.`
+        );
+      }
+
+      const walletRxdScript = p2pkhScript(wallet.value.address);
+      const fundingCoins = await db.txo
+        .where({ contractType: ContractType.RXD, spent: 0 })
+        .toArray();
+      const spendableCoins = fundingCoins.filter(
+        (coin) =>
+          coin.script === walletRxdScript &&
+          !(coin.txid === input.txid && coin.vout === input.vout)
+      );
+
+      const offeredTokenId = assetToSwapTokenId(from, send?.glyph?.ref);
+      const wantTokenId = assetToSwapTokenId(to, receive?.glyph?.ref);
+      const makerOutputs = [{ script: psrtOutput.script, value: psrtOutput.value }];
+      const advertisementScript = buildSwapAdvertisementScript({
+        offeredType: from,
+        offeredTokenId,
+        wantTokenId,
+        offeredTxid: input.txid,
+        offeredVout: input.vout,
+        priceTerms: encodePriceTermsOutputs(makerOutputs),
+        signature: new rjs.Transaction(rawPsrt).inputs[0].script.toHex(),
+      }).toHex();
+
+      const funded = fundTx(
+        wallet.value.address,
+        spendableCoins,
+        [],
+        [{ script: advertisementScript, value: 0 }],
+        walletRxdScript,
+        feeRate.value
+      );
+
+      if (!funded.funded) {
+        throw new SwapPrepareError("Insufficient RXD to publish the public swap offer");
+      }
+
+      const advertisementTx = buildTx(
+        wallet.value.address,
+        wallet.value.wif as string,
+        funded.funding,
+        [{ script: advertisementScript, value: 0 }, ...funded.change],
+        false
+      );
+
+      advertisementTxid = await electrumWorker.value.broadcast(
+        advertisementTx.toString()
+      );
+      setBroadcastTxid(advertisementTxid);
+      await db.broadcast.put({
+        txid: advertisementTxid,
+        date: Date.now(),
+        description: "swap_advertisement",
+      });
+    }
+
     setPsrt(rawPsrt);
-    toast({ status: "success", title: "Swap transaction created" });
+    toast({
+      status: "success",
+      title:
+        mode === SwapMode.BROADCAST
+          ? "Public swap offer broadcast"
+          : "Swap transaction created",
+    });
 
     console.debug(rawPsrt);
 
@@ -451,6 +675,8 @@ function Swap() {
       toValue,
       status: SwapStatus.PENDING,
       date: Date.now(),
+      mode,
+      broadcastTxid: advertisementTxid,
     });
   };
 
@@ -460,12 +686,19 @@ function Swap() {
         <Heading size="md" pb={4} pl={2}>
           Transaction
         </Heading>
+        {broadcastTxid && (
+          <Alert status="success" mb={4}>
+            <AlertIcon />
+            Public swap advertisement broadcast: {broadcastTxid.substring(0, 16)}...
+          </Alert>
+        )}
         <ViewSwap
-          from={send || sendRxd * 100000000}
-          to={receive || receiveRxd * 100000000}
+          from={send ? send : sendRxd * 100000000}
+          to={receive ? receive : receiveRxd * 100000000}
           hex={psrt}
           BodyComponent={Card}
           FooterComponent={ViewFooter}
+          showBroadcast={false}
         />
       </Container>
     );
@@ -494,6 +727,22 @@ function Swap() {
         by the wallet. The transaction must be cancelled to make them spendable
         again.
       </Alert>
+      <Card>
+        <Heading size="sm" pb={4}>
+          Offer Type
+        </Heading>
+        <RadioGroup
+          value={mode === SwapMode.BROADCAST ? "broadcast" : "private"}
+          onChange={(value) =>
+            setMode(value === "broadcast" ? SwapMode.BROADCAST : SwapMode.PRIVATE)
+          }
+        >
+          <Stack direction={{ base: "column", md: "row" }} spacing={6}>
+            <Radio value="private">Private</Radio>
+            <Radio value="broadcast">Public (Swap Index)</Radio>
+          </Stack>
+        </RadioGroup>
+      </Card>
       <Flex
         justifyContent="center"
         py={8}

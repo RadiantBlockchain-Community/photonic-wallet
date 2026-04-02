@@ -13,6 +13,20 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
+#: src/pages/Mint.tsx:1216
+#: src/pages/Mint.tsx:1415
+msgid "(Large file - consider compressing)"
+msgstr ""
+
+#: src/pages/WaveRegister.tsx:302
+msgid "{\"twitter\": \"@alice\", \"website\": \"alice.com\"}"
+msgstr ""
+
+#: src/components/PolicyConfig.tsx:83
+#: src/components/RoyaltyConfig.tsx:110
+msgid "{0}"
+msgstr ""
+
 #: src/hooks/useContractNotifier.ts:11
 #: src/hooks/useContractNotifier.ts:30
 msgid "{0} {1} received"
@@ -26,23 +40,51 @@ msgstr ""
 msgid "{0} BALANCE"
 msgstr ""
 
+#: src/components/V2MetadataBadges.tsx:38
+msgid "{0} Royalty: {1}%"
+msgstr ""
+
+#: src/components/V2MetadataBadges.tsx:51
+msgid "{0}% Royalty"
+msgstr ""
+
+#: src/components/RoyaltyConfig.tsx:137
+msgid "{bps} basis points ({0}%)"
+msgstr ""
+
 #: src/components/ViewDigitalObject.tsx:90
 msgid "{children}"
 msgstr ""
 
-#: src/pages/Mint.tsx:883
+#: src/pages/Mint.tsx:1237
 msgid "<0>Your uploaded file will have the following URL</0><1>ipfs://{0}</1>"
 msgstr ""
 
-#: src/pages/Mint.tsx:910
+#: src/pages/WaveRegister.tsx:224
+msgid "✓ Available"
+msgstr ""
+
+#: src/pages/WaveRegister.tsx:229
+msgid "✗ Name already registered"
+msgstr ""
+
+#: src/pages/WaveRegister.tsx:263
+msgid "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
+msgstr ""
+
+#: src/pages/Mint.tsx:1264
 msgid "A compressed copy of the token image stored on-chain"
 msgstr ""
 
-#: src/pages/Mint.tsx:874
+#: src/pages/AuthorityManager.tsx:188
+msgid "A descriptive name for this authority"
+msgstr ""
+
+#: src/pages/Mint.tsx:1228
 msgid "A HashStamp image may be stored on-chain."
 msgstr ""
 
-#: src/components/TokenDetails.tsx:174
+#: src/components/TokenDetails.tsx:182
 msgid "A HashStamp is a compressed on-chain copy of the token image, displayed alongside the SHA-256 of the original file"
 msgstr ""
 
@@ -51,30 +93,67 @@ msgstr ""
 msgid "About"
 msgstr ""
 
+#: src/pages/OpenOrders.tsx:279
+msgid "Accept"
+msgstr ""
+
 #: src/pages/SwapMissing.tsx:169
 msgid "Actions"
 msgstr ""
 
-#: src/pages/Mint.tsx:1030
+#: src/pages/Mint.tsx:1521
 msgid "Add attribute"
 msgstr ""
 
+#: src/pages/AuthorityManager.tsx:218
+msgid "Add permission"
+msgstr ""
+
+#: src/components/RoyaltyConfig.tsx:185
+msgid "Add Split"
+msgstr ""
+
+#: src/pages/WaveRegister.tsx:306
+msgid "Additional metadata in JSON format"
+msgstr ""
+
+#: src/components/RoyaltyConfig.tsx:192
 #: src/pages/WalletSettings.tsx:81
 msgid "Address"
+msgstr ""
+
+#: src/components/MintV2Fields.tsx:179
+msgid "Adds a cryptographic signature proving you created this token. This provides verifiable provenance."
+msgstr ""
+
+#: src/pages/AuthorityManager.tsx:185
+msgid "Admin Authority"
+msgstr ""
+
+#: src/components/PolicyConfig.tsx:70
+msgid "Adult or sensitive content flag"
 msgstr ""
 
 #: src/components/AirdropFungible.tsx:187
 msgid "Airdrop {0}"
 msgstr ""
 
+#: src/pages/WaveRegister.tsx:208
+msgid "alice"
+msgstr ""
+
 #: src/components/SendDigitalObject.tsx:202
 #: src/components/SendFungible.tsx:210
-#: src/components/SendRXD.tsx:195
+#: src/components/SendRXD.tsx:201
 msgid "Amount"
 msgstr ""
 
 #: src/components/AirdropFungible.tsx:227
 msgid "Amount per address"
+msgstr ""
+
+#: src/components/BurnTokenModal.tsx:201
+msgid "Amount to Burn"
 msgstr ""
 
 #: src/pages/IpfsSettings.tsx:67
@@ -85,17 +164,57 @@ msgstr ""
 msgid "API key"
 msgstr ""
 
-#: src/pages/Mint.tsx:767
+#: src/pages/Mint.tsx:1677
+msgid "ASERT Asymptote (optional)"
+msgstr ""
+
+#: src/pages/Mint.tsx:1662
+msgid "ASERT Half Life (blocks)"
+msgstr ""
+
+#: src/pages/Mint.tsx:1107
 msgid "Assigning an author is recommended for authentication of tokens."
 msgstr ""
 
-#: src/pages/Mint.tsx:1012
+#: src/pages/Mint.tsx:1503
 msgid "Attributes"
 msgstr ""
 
-#: src/components/TokenDetails.tsx:114
-#: src/pages/Mint.tsx:757
+#: src/components/MintV2Fields.tsx:141
+msgid "Attribution"
+msgstr ""
+
+#: src/components/TokenDetails.tsx:122
+#: src/pages/Mint.tsx:1097
 msgid "Author"
+msgstr ""
+
+#: src/components/V2MetadataBadges.tsx:112
+msgid "Authority"
+msgstr ""
+
+#: src/pages/AuthorityManager.tsx:180
+msgid "Authority Name"
+msgstr ""
+
+#: src/components/V2MetadataBadges.tsx:109
+msgid "Authority Token"
+msgstr ""
+
+#: src/pages/AuthorityManager.tsx:123
+msgid "Authority Token Created!"
+msgstr ""
+
+#: src/pages/AuthorityManager.tsx:161
+msgid "Authority Token Manager"
+msgstr ""
+
+#: src/pages/AuthorityManager.tsx:127
+msgid "Authority: {name}"
+msgstr ""
+
+#: src/components/BurnTokenModal.tsx:216
+msgid "Available: {0} tokens"
 msgstr ""
 
 #: src/components/MintSuccessModal.tsx:62
@@ -104,25 +223,64 @@ msgstr ""
 
 #: src/components/AirdropFungible.tsx:203
 #: src/components/SendFungible.tsx:183
-#: src/components/SendRXD.tsx:168
+#: src/components/SendRXD.tsx:174
 msgid "Balance"
 msgstr ""
 
 #: src/pages/Coins.tsx:49
+#: src/pages/OpenOrders.tsx:760
 msgid "Block"
 msgstr ""
 
-#: src/pages/Mint.tsx:1278
+#: src/pages/OpenOrders.tsx:783
+msgid "Browse swap offers broadcast to the network. When you accept an offer, you complete the atomic swap by providing the requested asset and broadcasting the final transaction."
+msgstr ""
+
+#: src/components/BurnTokenModal.tsx:98
+msgid "Burn amount must be between 1 and {0}"
+msgstr ""
+
+#: src/components/BurnTokenModal.tsx:150
+msgid "Burn Failed"
+msgstr ""
+
+#: src/components/BurnTokenModal.tsx:169
+#: src/components/BurnTokenModal.tsx:260
+msgid "Burn Token"
+msgstr ""
+
+#: src/components/BurnTokenModal.tsx:181
+msgid "Burning will permanently destroy this token. The photons will be returned to your wallet."
+msgstr ""
+
+#: src/components/BurnTokenModal.tsx:258
+msgid "Burning..."
+msgstr ""
+
+#: src/pages/Mint.tsx:1951
 msgid "Calculate Fee"
 msgstr ""
 
+#: src/pages/AuthorityManager.tsx:281
+msgid "Can this authority be revoked later?"
+msgstr ""
+
 #: src/components/AirdropFungible.tsx:252
-#: src/components/MeltDigitalObject.tsx:136
+#: src/components/BurnTokenModal.tsx:252
+#: src/components/MeltDigitalObject.tsx:138
 #: src/components/MeltFungible.tsx:152
 #: src/components/SendDigitalObject.tsx:217
 #: src/components/SendFungible.tsx:227
-#: src/components/SendRXD.tsx:220
+#: src/components/SendRXD.tsx:226
 msgid "Cancel"
+msgstr ""
+
+#: src/components/MintV2Fields.tsx:123
+msgid "CC BY 4.0, MIT, etc."
+msgstr ""
+
+#: src/pages/WaveRegister.tsx:219
+msgid "Checking availability..."
 msgstr ""
 
 #: src/components/StatusBar.tsx:122
@@ -146,14 +304,36 @@ msgstr ""
 msgid "Close"
 msgstr ""
 
-#: src/components/SideBar.tsx:98
+#: src/components/SideBar.tsx:100
 #: src/pages/Coins.tsx:42
 msgid "Coins"
 msgstr ""
 
-#: src/layouts/SwapLayout.tsx:26
-#: src/layouts/SwapLayout.tsx:86
+#: src/components/V2MetadataBadges.tsx:103
+msgid "Collection"
+msgstr ""
+
+#: src/components/V2MetadataBadges.tsx:95
+msgid "Collection ({0}/{1})"
+msgstr ""
+
+#: src/pages/Mint.tsx:464
+#: src/pages/Mint.tsx:902
+#: src/pages/Mint.tsx:946
+msgid "Combined file size is too large"
+msgstr ""
+
+#: src/pages/Mint.tsx:1406
+msgid "Combined size: {0} / {1} KB"
+msgstr ""
+
+#: src/layouts/SwapLayout.tsx:27
+#: src/layouts/SwapLayout.tsx:88
 msgid "Completed"
+msgstr ""
+
+#: src/components/MintV2Fields.tsx:66
+msgid "Configure on-chain or advisory royalties"
 msgstr ""
 
 #: src/pages/CreateWallet.tsx:196
@@ -167,7 +347,7 @@ msgid "Confirm password"
 msgstr ""
 
 #: src/components/StatusBar.tsx:67
-#: src/electrum/Electrum.tsx:60
+#: src/electrum/Electrum.tsx:80
 msgid "Connected"
 msgstr ""
 
@@ -175,36 +355,69 @@ msgstr ""
 msgid "Connecting"
 msgstr ""
 
-#: src/components/ConsolidationModal.tsx:280
+#: src/components/ConsolidationModal.tsx:283
 msgid "Consolidating UTXOs"
 msgstr ""
 
-#: src/components/ConsolidationModal.tsx:271
+#: src/components/ConsolidationModal.tsx:274
 msgid "Consolidation required"
 msgstr ""
 
 #: src/components/MintMenu.tsx:50
-#: src/components/TokenDetails.tsx:137
-#: src/pages/Mint.tsx:772
+#: src/components/TokenDetails.tsx:145
+#: src/pages/Mint.tsx:1112
 #: src/pages/Wallet.tsx:106
 msgid "Container"
 msgstr ""
 
-#: src/pages/Mint.tsx:782
+#: src/pages/Mint.tsx:1122
 msgid "Containers can be used to create token collections"
 msgstr ""
 
-#: src/components/TokenDetails.tsx:208
+#: src/components/V2MetadataBadges.tsx:75
+msgid "Contains encrypted content"
+msgstr ""
+
+#: src/components/PolicyConfig.tsx:57
+msgid "Contains executable code (use with caution)"
+msgstr ""
+
+#: src/components/EncryptedContentUnlock.tsx:74
+msgid "Content Decrypted!"
+msgstr ""
+
+#: src/pages/Mint.tsx:1357
+msgid "Content File"
+msgstr ""
+
+#: src/pages/Mint.tsx:929
+msgid "Content file is too large"
+msgstr ""
+
+#: src/components/TokenDetails.tsx:216
 msgid "Content length"
 msgstr ""
 
-#: src/components/TokenDetails.tsx:211
+#: src/components/TokenDetails.tsx:219
 msgid "Content type"
 msgstr ""
 
+#: src/components/ContractAddresses.tsx:72
+msgid "Contract"
+msgstr ""
+
+#: src/components/ContractAddresses.tsx:84
 #: src/components/ReceiveRXD.tsx:53
 #: src/components/RecoveryPhrase.tsx:32
 msgid "Copied!"
+msgstr ""
+
+#: src/components/ContractAddresses.tsx:90
+msgid "Copy contract address"
+msgstr ""
+
+#: src/components/ContractAddresses.tsx:84
+msgid "Copy full address"
 msgstr ""
 
 #: src/components/ReceiveRXD.tsx:53
@@ -219,15 +432,15 @@ msgstr ""
 
 #: src/components/AirdropFungible.tsx:149
 #: src/components/SendFungible.tsx:137
-#: src/components/SendRXD.tsx:131
+#: src/components/SendRXD.tsx:136
 msgid "Could not send transaction"
 msgstr ""
 
-#: src/pages/Mint.tsx:425
+#: src/pages/Mint.tsx:535
 msgid "Couldn't find container"
 msgstr ""
 
-#: src/pages/Mint.tsx:405
+#: src/pages/Mint.tsx:515
 msgid "Couldn't find user"
 msgstr ""
 
@@ -239,8 +452,48 @@ msgstr ""
 msgid "Create a wallet"
 msgstr ""
 
+#: src/pages/AuthorityManager.tsx:168
+msgid "Create Authority"
+msgstr ""
+
+#: src/pages/AuthorityManager.tsx:295
+msgid "Create Authority Token"
+msgstr ""
+
+#: src/pages/AuthorityManager.tsx:214
+msgid "create_listing, approve_trades, etc."
+msgstr ""
+
 #: src/pages/CreateWallet.tsx:170
 msgid "Creating wallet"
+msgstr ""
+
+#: src/pages/AuthorityManager.tsx:293
+msgid "Creating..."
+msgstr ""
+
+#: src/pages/AuthorityManager.tsx:148
+msgid "Creation Failed"
+msgstr ""
+
+#: src/components/MintV2Fields.tsx:157
+msgid "Creator Signature"
+msgstr ""
+
+#: src/components/V2MetadataBadges.tsx:66
+msgid "Creator signature verified"
+msgstr ""
+
+#: src/components/MintV2Fields.tsx:160
+msgid "Cryptographically sign this token"
+msgstr ""
+
+#: src/pages/WaveRegister.tsx:297
+msgid "Custom Data (Optional JSON)"
+msgstr ""
+
+#: src/pages/WaveRegister.tsx:118
+msgid "Custom data must be valid JSON"
 msgstr ""
 
 #: src/components/TokenData.tsx:46
@@ -251,8 +504,24 @@ msgstr ""
 msgid "Date"
 msgstr ""
 
-#: src/pages/Mint.tsx:1089
+#: src/pages/Mint.tsx:1580
 msgid "Decentralized mint"
+msgstr ""
+
+#: src/components/EncryptedContentUnlock.tsx:165
+msgid "Decrypt Content"
+msgstr ""
+
+#: src/components/EncryptedContentUnlock.tsx:162
+msgid "Decrypting..."
+msgstr ""
+
+#: src/components/EncryptedContentUnlock.tsx:84
+msgid "Decryption Failed"
+msgstr ""
+
+#: src/components/EncryptedContentUnlock.tsx:140
+msgid "Decryption Password"
 msgstr ""
 
 #: src/pages/IpfsSettings.tsx:81
@@ -267,31 +536,43 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#: src/pages/Mint.tsx:1086
+#: src/pages/Mint.tsx:1577
 msgid "Deployment method"
 msgstr ""
 
-#: src/components/TokenDetails.tsx:83
-#: src/pages/Mint.tsx:996
-#: src/pages/Mint.tsx:998
+#: src/components/TokenDetails.tsx:84
+#: src/pages/Mint.tsx:1487
+#: src/pages/Mint.tsx:1489
 msgid "Description"
 msgstr ""
 
-#: src/components/TokenDetails.tsx:77
+#: src/pages/WaveRegister.tsx:272
+msgid "Description (Optional)"
+msgstr ""
+
+#: src/components/TokenDetails.tsx:78
 msgid "Details"
 msgstr ""
 
 #: src/pages/Mint.tsx:1096
-msgid "Difficulty"
+#~ msgid "Difficulty"
+#~ msgstr ""
+
+#: src/pages/Mint.tsx:1615
+msgid "Difficulty Adjustment"
 msgstr ""
 
-#: src/pages/Mint.tsx:1088
+#: src/pages/Mint.tsx:1750
+msgid "Difficulty Schedule"
+msgstr ""
+
+#: src/pages/Mint.tsx:1579
 msgid "Direct to wallet"
 msgstr ""
 
 #: src/components/StatusBar.tsx:69
 #: src/components/StatusBar.tsx:70
-#: src/electrum/Electrum.tsx:65
+#: src/electrum/Electrum.tsx:85
 msgid "Disconnected"
 msgstr ""
 
@@ -308,8 +589,12 @@ msgstr ""
 msgid "Download transaction"
 msgstr ""
 
-#: src/pages/Mint.tsx:130
+#: src/pages/Mint.tsx:162
 msgid "Drop file"
+msgstr ""
+
+#: src/components/BurnTokenModal.tsx:230
+msgid "e.g., Upgrading to v2, Reducing supply, etc."
 msgstr ""
 
 #: src/components/EditTokenTest.tsx:158
@@ -317,25 +602,79 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
+#: src/components/RoyaltyConfig.tsx:91
+msgid "Enable Royalties"
+msgstr ""
+
+#: src/components/V2MetadataBadges.tsx:78
+msgid "Encrypted"
+msgstr ""
+
+#: src/components/EncryptedContentUnlock.tsx:101
+msgid "Encrypted Content"
+msgstr ""
+
+#: src/components/RoyaltyConfig.tsx:103
+msgid "Enforce On-Chain"
+msgstr ""
+
 #: src/pages/LogOut.tsx:31
 msgid "Ensure you have saved your recovery phrase before logging out! Your recovery phrase is the only way you can recreate your wallet."
 msgstr ""
 
+#: src/pages/WaveRegister.tsx:214
+msgid "Enter a name (3-63 characters, lowercase alphanumeric and hyphens)"
+msgstr ""
+
+#: src/pages/Mint.tsx:1445
+msgid "Enter a URL (max {0} KB)"
+msgstr ""
+
+#: src/components/EncryptedContentUnlock.tsx:146
 #: src/pages/WalletSettings.tsx:104
 msgid "Enter password"
+msgstr ""
+
+#: src/components/RoyaltyConfig.tsx:148
+msgid "Enter Radiant address"
+msgstr ""
+
+#: src/pages/Mint.tsx:1429
+msgid "Enter text content (max {0} KB)"
 msgstr ""
 
 #: src/pages/RecoverWallet.tsx:108
 msgid "Enter your 12 word recovery phrase"
 msgstr ""
 
+#: src/pages/Mint.tsx:1715
+msgid "Epoch Length (blocks)"
+msgstr ""
+
+#: src/components/BurnTokenModal.tsx:67
 #: src/components/MeltFungible.tsx:62
-#: src/pages/Mint.tsx:318
-#: src/pages/Mint.tsx:587
+#: src/pages/AuthorityManager.tsx:68
+#: src/pages/Mint.tsx:379
+#: src/pages/Mint.tsx:796
+#: src/pages/WaveRegister.tsx:82
 msgid "Error"
 msgstr ""
 
-#: src/pages/Mint.tsx:1208
+#: src/pages/Mint.tsx:1213
+#: src/pages/Mint.tsx:1412
+msgid "Estimated fee: ~{0} {1}"
+msgstr ""
+
+#: src/components/PolicyConfig.tsx:49
+msgid "Executable"
+msgstr ""
+
+#: src/pages/AuthorityManager.tsx:258
+#: src/pages/WaveRegister.tsx:283
+msgid "Expiration Date (Optional)"
+msgstr ""
+
+#: src/pages/Mint.tsx:1881
 msgid "Fee"
 msgstr ""
 
@@ -347,12 +686,12 @@ msgstr ""
 msgid "Fetch"
 msgstr ""
 
-#: src/pages/Mint.tsx:793
-#: src/pages/Mint.tsx:805
+#: src/pages/Mint.tsx:1133
+#: src/pages/Mint.tsx:1146
 msgid "File"
 msgstr ""
 
-#: src/pages/Mint.tsx:603
+#: src/pages/Mint.tsx:812
 msgid "File is too large"
 msgstr ""
 
@@ -366,7 +705,7 @@ msgstr ""
 msgid "Filter"
 msgstr ""
 
-#: src/pages/Mint.tsx:1215
+#: src/pages/Mint.tsx:1888
 msgid "FT supply funding"
 msgstr ""
 
@@ -374,7 +713,7 @@ msgstr ""
 msgid "Fungible Token"
 msgstr ""
 
-#: src/components/SideBar.tsx:88
+#: src/components/SideBar.tsx:90
 #: src/pages/Fungible.tsx:63
 msgid "Fungible Tokens"
 msgstr ""
@@ -383,8 +722,8 @@ msgstr ""
 msgid "Gateway"
 msgstr ""
 
-#: src/components/TokenDetails.tsx:171
-#: src/pages/Mint.tsx:897
+#: src/components/TokenDetails.tsx:179
+#: src/pages/Mint.tsx:1251
 msgid "HashStamp"
 msgstr ""
 
@@ -392,19 +731,31 @@ msgstr ""
 msgid "Height"
 msgstr ""
 
+#: src/components/EncryptedContentUnlock.tsx:153
+msgid "Hint:"
+msgstr ""
+
 #: src/components/SideBar.tsx:101
 #~ msgid "History"
 #~ msgstr ""
 
-#: src/components/SideBar.tsx:74
+#: src/components/SideBar.tsx:76
 msgid "Home"
+msgstr ""
+
+#: src/pages/OpenOrders.tsx:781
+msgid "How it works"
+msgstr ""
+
+#: src/components/MintV2Fields.tsx:146
+msgid "How to credit the creator"
 msgstr ""
 
 #: src/pages/WalletSettings.tsx:115
 msgid "If your wallet fails to consolidate UTXOs, a resync may be required"
 msgstr ""
 
-#: src/pages/Mint.tsx:1054
+#: src/pages/Mint.tsx:1545
 msgid "Immutable"
 msgstr ""
 
@@ -412,7 +763,11 @@ msgstr ""
 msgid "Incorrect password"
 msgstr ""
 
-#: src/components/TokenDetails.tsx:78
+#: src/pages/Mint.tsx:1764
+msgid "Initial Difficulty"
+msgstr ""
+
+#: src/components/TokenDetails.tsx:79
 msgid "Inspect"
 msgstr ""
 
@@ -438,15 +793,35 @@ msgstr ""
 msgid "Invalid amount"
 msgstr ""
 
+#: src/components/BurnTokenModal.tsx:97
+msgid "Invalid Amount"
+msgstr ""
+
+#: src/pages/WaveRegister.tsx:117
+msgid "Invalid JSON"
+msgstr ""
+
+#: src/components/ContractAddresses.tsx:151
+msgid "Invalid link reference"
+msgstr ""
+
+#: src/pages/WaveRegister.tsx:91
+msgid "Invalid Name"
+msgstr ""
+
+#: src/components/EncryptedContentUnlock.tsx:85
+msgid "Invalid password or corrupted content"
+msgstr ""
+
 #: src/pages/RecoverWallet.tsx:75
 msgid "Invalid recovery phrase"
 msgstr ""
 
-#: src/pages/Mint.tsx:882
+#: src/pages/Mint.tsx:1236
 msgid "IPFS"
 msgstr ""
 
-#: src/components/TokenDetails.tsx:161
+#: src/components/TokenDetails.tsx:169
 msgid "IPFS CID"
 msgstr ""
 
@@ -462,22 +837,36 @@ msgstr ""
 msgid "Language"
 msgstr ""
 
+#: src/pages/AuthorityManager.tsx:266
+#: src/pages/WaveRegister.tsx:291
+msgid "Leave empty for no expiration"
+msgstr ""
+
+#: src/components/MintV2Fields.tsx:118
 #: src/pages/About.tsx:12
-#: src/pages/Mint.tsx:1004
-#: src/pages/Mint.tsx:1006
+#: src/pages/Mint.tsx:1495
+#: src/pages/Mint.tsx:1497
 msgid "License"
 msgstr ""
 
-#: src/components/TokenDetails.tsx:91
+#: src/components/MintV2Fields.tsx:106
+msgid "License, terms, and attribution"
+msgstr ""
+
+#: src/components/TokenDetails.tsx:93
 msgid "Link"
 msgstr ""
 
-#: src/layouts/SwapLayout.tsx:28
-#: src/layouts/SwapLayout.tsx:70
+#: src/pages/AuthorityManager.tsx:225
+msgid "List of permissions granted by this authority"
+msgstr ""
+
+#: src/layouts/SwapLayout.tsx:29
+#: src/layouts/SwapLayout.tsx:72
 msgid "Load"
 msgstr ""
 
-#: src/layouts/SwapLayout.tsx:43
+#: src/layouts/SwapLayout.tsx:45
 msgid "Load Swap"
 msgstr ""
 
@@ -499,25 +888,52 @@ msgstr ""
 msgid "Logging out will remove your wallet and all saved data from your browser."
 msgstr ""
 
+#: src/pages/Mint.tsx:1696
+msgid "LWMA Window Size (blocks)"
+msgstr ""
+
 #: src/pages/WalletSettings.tsx:113
 msgid "Manual Sync"
 msgstr ""
 
+#: src/pages/AuthorityManager.tsx:199
+msgid "marketplace, governance, etc."
+msgstr ""
+
+#: src/pages/Mint.tsx:1730
+msgid "Max Adjustment Factor"
+msgstr ""
+
 #: src/pages/Mint.tsx:146
-msgid "Maximum {0}KB"
+#~ msgid "Maximum {0}KB"
+#~ msgstr ""
+
+#: src/pages/Mint.tsx:178
+msgid "Maximum {0}KB - Images, Files, URLs, or Text"
 msgstr ""
 
 #: src/pages/Mint.tsx:140
 #~ msgid "Maximum 100kb"
 #~ msgstr ""
 
-#: src/components/MeltDigitalObject.tsx:134
+#: src/pages/Mint.tsx:903
+#: src/pages/Mint.tsx:947
+msgid "Maximum is {0} KB"
+msgstr ""
+
+#: src/pages/Mint.tsx:432
+#: src/pages/Mint.tsx:444
+#: src/pages/Mint.tsx:465
+msgid "Maximum size is {0} KB"
+msgstr ""
+
+#: src/components/MeltDigitalObject.tsx:136
 #: src/components/MeltFungible.tsx:150
 #: src/components/ViewDigitalObject.tsx:292
 msgid "Melt"
 msgstr ""
 
-#: src/components/MeltDigitalObject.tsx:112
+#: src/components/MeltDigitalObject.tsx:114
 msgid "Melt token"
 msgstr ""
 
@@ -529,13 +945,25 @@ msgstr ""
 msgid "Method to resolve IPFS token content"
 msgstr ""
 
-#: src/components/MintMenu.tsx:28
+#: src/components/RoyaltyConfig.tsx:154
+msgid "Minimum Royalty (photons)"
+msgstr ""
+
+#: src/pages/Mint.tsx:1587
+msgid "Mining Algorithm"
+msgstr ""
+
 #: src/components/TokenDetails.tsx:96
-#: src/pages/Mint.tsx:1263
+msgid "Mining Contracts"
+msgstr ""
+
+#: src/components/MintMenu.tsx:28
+#: src/components/TokenDetails.tsx:104
+#: src/pages/Mint.tsx:1936
 msgid "Mint"
 msgstr ""
 
-#: src/pages/Mint.tsx:720
+#: src/pages/Mint.tsx:1060
 msgid "Mint <0/>"
 msgstr ""
 
@@ -547,12 +975,12 @@ msgstr ""
 msgid "Mint successful"
 msgstr ""
 
-#: src/pages/Mint.tsx:580
+#: src/pages/Mint.tsx:789
 msgid "Minted. Fee {0} {1}"
 msgstr ""
 
-#: src/layouts/SwapLayout.tsx:27
-#: src/layouts/SwapLayout.tsx:94
+#: src/layouts/SwapLayout.tsx:28
+#: src/layouts/SwapLayout.tsx:96
 msgid "Missing"
 msgstr ""
 
@@ -564,22 +992,38 @@ msgstr ""
 msgid "Move up"
 msgstr ""
 
-#: src/pages/Mint.tsx:1124
+#: src/pages/Mint.tsx:1797
 msgid "Multiple contracts allows parallel mining, reducing congestion for low difficulty contracts"
 msgstr ""
 
-#: src/pages/Mint.tsx:1079
+#: src/pages/Mint.tsx:1570
 msgid "Mutable tokens are not yet fully supported by Photonic Wallet, however a mutable contract containing 1 photon will be created."
 msgstr ""
 
-#: src/pages/Mint.tsx:1070
+#: src/pages/Mint.tsx:1561
 msgid "Mutable tokens are recommended for user and container tokens"
 msgstr ""
 
-#: src/pages/Mint.tsx:987
-#: src/pages/Mint.tsx:989
-#: src/pages/Mint.tsx:1016
+#: src/pages/AuthorityManager.tsx:171
+msgid "My Authorities"
+msgstr ""
+
+#: src/pages/WaveRegister.tsx:277
+msgid "My primary Radiant address"
+msgstr ""
+
+#: src/pages/Mint.tsx:1478
+#: src/pages/Mint.tsx:1480
+#: src/pages/Mint.tsx:1507
 msgid "Name"
+msgstr ""
+
+#: src/pages/AuthorityManager.tsx:77
+msgid "Name Required"
+msgstr ""
+
+#: src/pages/WaveRegister.tsx:165
+msgid "Name: {fullName}"
 msgstr ""
 
 #: src/pages/CreateWallet.tsx:157
@@ -587,7 +1031,7 @@ msgstr ""
 msgid "Network"
 msgstr ""
 
-#: src/layouts/SwapLayout.tsx:62
+#: src/layouts/SwapLayout.tsx:64
 #: src/pages/Servers.tsx:34
 msgid "New"
 msgstr ""
@@ -613,23 +1057,31 @@ msgstr ""
 msgid "No assets"
 msgstr ""
 
-#: src/pages/Mint.tsx:906
+#: src/pages/Mint.tsx:455
+msgid "No files uploaded"
+msgstr ""
+
+#: src/pages/Mint.tsx:1260
 msgid "No HashStamp"
 msgstr ""
 
-#: src/pages/Mint.tsx:739
+#: src/pages/Mint.tsx:1079
 msgid "No NFT.Storage API key has been provided. To upload large files, please go to <0>IPFS Settings</0> and enter your key."
 msgstr ""
 
-#: src/pages/Mint.tsx:330
+#: src/pages/Mint.tsx:391
 msgid "No NFT.Storage API key provided"
+msgstr ""
+
+#: src/pages/OpenOrders.tsx:747
+msgid "No open orders found"
 msgstr ""
 
 #: src/components/StatusBar.tsx:76
 msgid "No servers defined"
 msgstr ""
 
-#: src/pages/Mint.tsx:1064
+#: src/pages/Mint.tsx:1555
 msgid "No, allow token owner to modify"
 msgstr ""
 
@@ -638,24 +1090,37 @@ msgstr ""
 msgid "Non-Fungible Token"
 msgstr ""
 
-#: src/components/SideBar.tsx:81
+#: src/components/SideBar.tsx:83
 #: src/pages/Wallet.tsx:84
 msgid "Non-Fungible Tokens"
 msgstr ""
 
-#: src/pages/Mint.tsx:759
+#: src/components/V2MetadataBadges.tsx:57
+msgid "Non-transferable (Soulbound)"
+msgstr ""
+
+#: src/pages/Mint.tsx:1099
 msgid "None"
 msgstr ""
 
-#: src/pages/Mint.tsx:1113
+#: src/components/SendRXD.tsx:132
+msgid "Not connected to server. Check your network connection."
+msgstr ""
+
+#: src/components/PolicyConfig.tsx:62
+msgid "NSFW Content"
+msgstr ""
+
+#: src/components/ContractAddresses.tsx:125
+#: src/pages/Mint.tsx:1786
 msgid "Number of contracts"
 msgstr ""
 
-#: src/pages/Mint.tsx:1128
+#: src/pages/Mint.tsx:1801
 msgid "Number of mints"
 msgstr ""
 
-#: src/pages/Mint.tsx:1152
+#: src/pages/Mint.tsx:1825
 msgid "Number of tokens created on each mint"
 msgstr ""
 
@@ -663,14 +1128,32 @@ msgstr ""
 msgid "Object"
 msgstr ""
 
-#: src/components/TokenDetails.tsx:43
-#: src/components/TokenDetails.tsx:102
+#: src/pages/OpenOrders.tsx:757
+msgid "Offering"
+msgstr ""
+
+#: src/components/TokenDetails.tsx:44
+#: src/components/TokenDetails.tsx:110
 #: src/components/ViewDigitalObject.tsx:321
 msgid "Open in block explorer"
 msgstr ""
 
-#: src/components/PageHeader.tsx:62
+#: src/components/PageHeader.tsx:65
 msgid "Open menu"
+msgstr ""
+
+#: src/layouts/SwapLayout.tsx:30
+#: src/layouts/SwapLayout.tsx:104
+#: src/pages/OpenOrders.tsx:685
+msgid "Open Orders"
+msgstr ""
+
+#: src/components/RoyaltyConfig.tsx:168
+msgid "Optional minimum royalty amount"
+msgstr ""
+
+#: src/pages/OpenOrders.tsx:749
+msgid "Orders will appear here when users broadcast swap offers for tokens you own"
 msgstr ""
 
 #: src/components/ViewDigitalObject.tsx:307
@@ -685,43 +1168,103 @@ msgstr ""
 msgid "Password"
 msgstr ""
 
+#: src/components/EncryptedContentUnlock.tsx:52
+msgid "Password Required"
+msgstr ""
+
 #: src/pages/CreateWallet.tsx:68
 #: src/pages/RecoverWallet.tsx:45
 msgid "Passwords do not match"
 msgstr ""
 
-#: src/layouts/SwapLayout.tsx:25
-#: src/layouts/SwapLayout.tsx:78
+#: src/layouts/SwapLayout.tsx:26
+#: src/layouts/SwapLayout.tsx:80
 msgid "Pending"
 msgstr ""
 
-#: src/pages/Mint.tsx:1173
+#: src/pages/AuthorityManager.tsx:208
+msgid "Permissions"
+msgstr ""
+
+#: src/pages/Mint.tsx:1846
 msgid "Photon Supply"
+msgstr ""
+
+#: src/components/BurnTokenModal.tsx:134
+msgid "Photons returned: {0} RXD"
+msgstr ""
+
+#: src/components/BurnTokenModal.tsx:239
+msgid "Photons to be returned:"
 msgstr ""
 
 #: src/pages/Exit.tsx:7
 msgid "Please close the window"
 msgstr ""
 
-#: src/pages/Mint.tsx:1248
+#: src/pages/WaveRegister.tsx:101
+msgid "Please enter a target address or reference"
+msgstr ""
+
+#: src/pages/AuthorityManager.tsx:78
+msgid "Please enter an authority name"
+msgstr ""
+
+#: src/components/EncryptedContentUnlock.tsx:53
+msgid "Please enter the decryption password"
+msgstr ""
+
+#: src/pages/Mint.tsx:1921
 msgid "Please reconnect to mint your token"
 msgstr ""
 
-#: src/pages/Mint.tsx:1156
+#: src/pages/Mint.tsx:456
+msgid "Please upload at least a preview image or content file"
+msgstr ""
+
+#: src/components/MintV2Fields.tsx:83
+msgid "Policy Settings"
+msgstr ""
+
+#: src/pages/Mint.tsx:1829
 msgid "Premine"
 msgstr ""
 
-#: src/pages/Mint.tsx:1226
+#: src/pages/Mint.tsx:1899
 msgid "Premine supply funding"
 msgstr ""
 
-#: src/pages/Mint.tsx:1036
+#: src/pages/Mint.tsx:1134
+msgid "Preview + Content"
+msgstr ""
+
+#: src/pages/Mint.tsx:1304
+msgid "Preview Image"
+msgstr ""
+
+#: src/pages/Mint.tsx:1296
+msgid "Preview Image + Content File"
+msgstr ""
+
+#: src/pages/Mint.tsx:881
+msgid "Preview image is too large"
+msgstr ""
+
+#: src/pages/Mint.tsx:887
+msgid "Preview must be an image file"
+msgstr ""
+
+#: src/pages/Mint.tsx:1527
 msgid "Properties that describe your asset"
 msgstr ""
 
-#: src/components/TokenDetails.tsx:87
+#: src/components/TokenDetails.tsx:88
 #: src/pages/SwapMissing.tsx:167
 msgid "Radiant ID"
+msgstr ""
+
+#: src/components/BurnTokenModal.tsx:225
+msgid "Reason (Optional)"
 msgstr ""
 
 #: src/components/AccountBar.tsx:25
@@ -747,12 +1290,77 @@ msgstr ""
 msgid "Recovery phrase"
 msgstr ""
 
+#: src/pages/OpenOrders.tsx:700
+msgid "Refresh"
+msgstr ""
+
+#: src/pages/WaveRegister.tsx:195
+#: src/pages/WaveRegister.tsx:318
+msgid "Register WAVE Name"
+msgstr ""
+
+#: src/pages/WaveRegister.tsx:316
+msgid "Registering..."
+msgstr ""
+
+#: src/pages/WaveRegister.tsx:241
+msgid "Registration Cost"
+msgstr ""
+
+#: src/pages/WaveRegister.tsx:182
+msgid "Registration Failed"
+msgstr ""
+
+#: src/pages/AuthorityManager.tsx:243
+msgid "Remove"
+msgstr ""
+
+#: src/components/RoyaltyConfig.tsx:209
+msgid "Remove split"
+msgstr ""
+
+#: src/components/PolicyConfig.tsx:36
+msgid "Renderable"
+msgstr ""
+
+#: src/components/MintV2Fields.tsx:86
+msgid "Renderable, transferable, NSFW flags"
+msgstr ""
+
 #: src/pages/WalletSettings.tsx:118
 msgid "Resync Wallet"
 msgstr ""
 
-#: src/pages/Mint.tsx:1142
+#: src/pages/AuthorityManager.tsx:272
+msgid "Revocable"
+msgstr ""
+
+#: src/pages/Mint.tsx:1815
 msgid "Reward"
+msgstr ""
+
+#: src/components/MintV2Fields.tsx:103
+msgid "Rights & Licensing"
+msgstr ""
+
+#: src/components/RoyaltyConfig.tsx:120
+msgid "Royalty Percentage"
+msgstr ""
+
+#: src/components/RoyaltyConfig.tsx:143
+msgid "Royalty Recipient Address"
+msgstr ""
+
+#: src/components/MintV2Fields.tsx:63
+msgid "Royalty Settings"
+msgstr ""
+
+#: src/components/RoyaltyConfig.tsx:177
+msgid "Royalty Splits (Optional)"
+msgstr ""
+
+#: src/components/PolicyConfig.tsx:44
+msgid "Safe to display in wallets and explorers"
 msgstr ""
 
 #: src/pages/IpfsSettings.tsx:102
@@ -765,6 +1373,18 @@ msgstr ""
 msgid "Saved"
 msgstr ""
 
+#: src/pages/AuthorityManager.tsx:194
+msgid "Scope"
+msgstr ""
+
+#: src/pages/OpenOrders.tsx:733
+msgid "Search"
+msgstr ""
+
+#: src/pages/OpenOrders.tsx:727
+msgid "Search by token ref..."
+msgstr ""
+
 #: src/pages/CreateWallet.tsx:73
 #: src/pages/RecoverWallet.tsx:50
 msgid "Select a valid network"
@@ -774,7 +1394,7 @@ msgstr ""
 #: src/components/AirdropFungible.tsx:250
 #: src/components/SendDigitalObject.tsx:215
 #: src/components/SendFungible.tsx:225
-#: src/components/SendRXD.tsx:218
+#: src/components/SendRXD.tsx:224
 #: src/components/ViewDigitalObject.tsx:284
 #: src/components/ViewFungible.tsx:258
 #: src/pages/MobileHome.tsx:45
@@ -782,7 +1402,7 @@ msgid "Send"
 msgstr ""
 
 #: src/components/SendFungible.tsx:167
-#: src/components/SendRXD.tsx:159
+#: src/components/SendRXD.tsx:165
 msgid "Send {0}"
 msgstr ""
 
@@ -817,15 +1437,35 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
+#: src/pages/WaveRegister.tsx:247
+msgid "Shorter names cost more. This is a one-time fee."
+msgstr ""
+
 #: src/pages/WalletSettings.tsx:99
 msgid "Show recovery phrase"
 msgstr ""
 
-#: src/components/ConsolidationModal.tsx:280
+#: src/components/MintV2Fields.tsx:171
+msgid "Sign with wallet key"
+msgstr ""
+
+#: src/components/V2MetadataBadges.tsx:60
+msgid "Soulbound"
+msgstr ""
+
+#: src/components/PolicyConfig.tsx:94
+msgid "Soulbound tokens are permanently bound to the original owner and can only be burned. This cannot be changed after minting."
+msgstr ""
+
+#: src/components/RoyaltyConfig.tsx:220
+msgid "Split percentages must sum to {0}% (currently {1}%)"
+msgstr ""
+
+#: src/components/ConsolidationModal.tsx:283
 msgid "Start consolidation process"
 msgstr ""
 
-#: src/pages/Mint.tsx:904
+#: src/pages/Mint.tsx:1258
 msgid "Store HashStamp on-chain"
 msgstr ""
 
@@ -833,7 +1473,11 @@ msgstr ""
 msgid "Submit"
 msgstr ""
 
-#: src/pages/Mint.tsx:1199
+#: src/components/EncryptedContentUnlock.tsx:75
+msgid "Successfully unlocked encrypted content"
+msgstr ""
+
+#: src/pages/Mint.tsx:1872
 msgid "Summary"
 msgstr ""
 
@@ -841,9 +1485,10 @@ msgstr ""
 msgid "Suppressed {0} more notifications"
 msgstr ""
 
-#: src/components/SideBar.tsx:105
+#: src/components/SideBar.tsx:107
 #: src/components/SwapTable.tsx:68
-#: src/layouts/SwapLayout.tsx:47
+#: src/layouts/SwapLayout.tsx:49
+#: src/pages/OpenOrders.tsx:756
 #: src/pages/SwapMissing.tsx:166
 #: src/pages/SwapPending.tsx:157
 msgid "Swap"
@@ -853,15 +1498,43 @@ msgstr ""
 msgid "Swap pending"
 msgstr ""
 
-#: src/pages/Mint.tsx:795
+#: src/pages/WaveRegister.tsx:258
+msgid "Target Address/Reference"
+msgstr ""
+
+#: src/pages/Mint.tsx:1642
+msgid "Target Block Time (seconds)"
+msgstr ""
+
+#: src/pages/WaveRegister.tsx:100
+msgid "Target Required"
+msgstr ""
+
+#: src/components/MintV2Fields.tsx:129
+msgid "Terms"
+msgstr ""
+
+#: src/pages/Mint.tsx:1136
 msgid "Text"
+msgstr ""
+
+#: src/pages/Mint.tsx:431
+msgid "Text content is too large"
+msgstr ""
+
+#: src/pages/WaveRegister.tsx:266
+msgid "The address or token reference this name points to"
+msgstr ""
+
+#: src/components/EncryptedContentUnlock.tsx:118
+msgid "This content will unlock in {0}"
 msgstr ""
 
 #: src/pages/Placeholder.tsx:11
 msgid "This feature is coming soon"
 msgstr ""
 
-#: src/components/MeltDigitalObject.tsx:123
+#: src/components/MeltDigitalObject.tsx:125
 msgid "This will destroy your token! Are you sure?"
 msgstr ""
 
@@ -869,23 +1542,47 @@ msgstr ""
 msgid "This will destroy your tokens! Are you sure?"
 msgstr ""
 
-#: src/pages/Mint.tsx:976
+#: src/pages/Mint.tsx:1467
 msgid "Ticker"
 msgstr ""
 
-#: src/components/MeltDigitalObject.tsx:99
+#: src/components/EncryptedContentUnlock.tsx:131
+msgid "Timelock has expired - content can now be decrypted"
+msgstr ""
+
+#: src/components/V2MetadataBadges.tsx:87
+msgid "Timelocked"
+msgstr ""
+
+#: src/components/EncryptedContentUnlock.tsx:115
+msgid "Timelocked Content"
+msgstr ""
+
+#: src/components/V2MetadataBadges.tsx:84
+msgid "Timelocked reveal"
+msgstr ""
+
+#: src/components/BurnTokenModal.tsx:127
+msgid "Token Burned Successfully"
+msgstr ""
+
+#: src/components/MeltDigitalObject.tsx:101
 msgid "Token melted"
 msgstr ""
 
-#: src/pages/Mint.tsx:368
+#: src/components/BurnTokenModal.tsx:192
+msgid "Token Name"
+msgstr ""
+
+#: src/pages/Mint.tsx:475
 msgid "Token supply is too high"
 msgstr ""
 
-#: src/pages/Mint.tsx:1183
+#: src/pages/Mint.tsx:1856
 msgid "Token supply requires an equal amount of RXD photons. This must be provided on mint for \"direct to wallet\" deployments."
 msgstr ""
 
-#: src/pages/Mint.tsx:1166
+#: src/pages/Mint.tsx:1839
 msgid "Token supply sent directly to your wallet. Requires an equal amount of RXD photons."
 msgstr ""
 
@@ -893,11 +1590,11 @@ msgstr ""
 msgid "Tokens melted"
 msgstr ""
 
-#: src/pages/Mint.tsx:1191
+#: src/pages/Mint.tsx:1864
 msgid "Total minted supply will be {totalDmintSupply} {0}"
 msgstr ""
 
-#: src/pages/Mint.tsx:1138
+#: src/pages/Mint.tsx:1811
 msgid "Total number of mints"
 msgstr ""
 
@@ -906,18 +1603,31 @@ msgstr ""
 msgid "Transaction ID:"
 msgstr ""
 
-#: src/components/MeltDigitalObject.tsx:101
+#: src/components/BurnTokenModal.tsx:131
+msgid "Transaction ID: {0}..."
+msgstr ""
+
+#: src/components/MeltDigitalObject.tsx:103
 #: src/components/MeltFungible.tsx:117
 #: src/components/SendDigitalObject.tsx:139
 msgid "Transaction rejected"
 msgstr ""
 
-#: src/pages/Mint.tsx:1206
+#: src/pages/Mint.tsx:1879
 msgid "Transaction size"
 msgstr ""
 
 #: src/components/TxSuccessModal.tsx:37
 msgid "Transaction successful"
+msgstr ""
+
+#: src/pages/AuthorityManager.tsx:130
+#: src/pages/WaveRegister.tsx:168
+msgid "Transaction: {0}..."
+msgstr ""
+
+#: src/components/PolicyConfig.tsx:75
+msgid "Transferable"
 msgstr ""
 
 #: src/components/SwapTable.tsx:67
@@ -930,7 +1640,7 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
-#: src/pages/Mint.tsx:966
+#: src/pages/Mint.tsx:1457
 msgid "Type of content the URL links to. Leave empty for a website link."
 msgstr ""
 
@@ -941,6 +1651,10 @@ msgstr ""
 #: src/components/SideBar.tsx:95
 #~ msgid "Universal Names"
 #~ msgstr ""
+
+#: src/components/TxSuccessModal.tsx:42
+msgid "Unknown"
+msgstr ""
 
 #: src/pages/RecoverWallet.tsx:80
 msgid "Unknown error"
@@ -963,24 +1677,36 @@ msgstr ""
 msgid "Unnamed token"
 msgstr ""
 
-#: src/pages/Mint.tsx:609
+#: src/pages/Mint.tsx:818
 msgid "Unrecognized file type"
 msgstr ""
 
-#: src/pages/Mint.tsx:359
+#: src/pages/Mint.tsx:420
 msgid "Unrecognized URL file type"
 msgstr ""
 
-#: src/pages/Mint.tsx:807
-msgid "Upload an image, text file or other content"
+#: src/pages/Mint.tsx:1298
+msgid "Upload a preview image (like book cover) and content file (max {0} KB total)"
 msgstr ""
 
-#: src/pages/Mint.tsx:143
+#: src/pages/Mint.tsx:807
+#~ msgid "Upload an image, text file or other content"
+#~ msgstr ""
+
+#: src/pages/Mint.tsx:1148
+msgid "Upload an image, text file or other content (max {0} KB)"
+msgstr ""
+
+#: src/pages/Mint.tsx:175
 msgid "Upload file"
 msgstr ""
 
-#: src/pages/Mint.tsx:794
+#: src/pages/Mint.tsx:1135
 msgid "URL"
+msgstr ""
+
+#: src/pages/Mint.tsx:443
+msgid "URL content is too large"
 msgstr ""
 
 #: src/components/ViewDigitalObject.tsx:246
@@ -988,19 +1714,34 @@ msgstr ""
 msgid "URLs may be unsafe and result in loss of funds"
 msgstr ""
 
+#: src/components/MintV2Fields.tsx:134
+msgid "Usage terms and conditions"
+msgstr ""
+
 #: src/components/MintMenu.tsx:57
 #: src/pages/Wallet.tsx:107
 msgid "User"
 msgstr ""
 
-#: src/components/ConsolidationModal.tsx:242
+#: src/components/ConsolidationModal.tsx:245
 msgid "UTXO consolidation complete"
 msgstr ""
 
+#: src/components/MintV2Fields.tsx:70
+#: src/components/MintV2Fields.tsx:90
+#: src/components/MintV2Fields.tsx:110
+#: src/components/MintV2Fields.tsx:164
+msgid "v2"
+msgstr ""
+
 #: src/pages/Coins.tsx:50
-#: src/pages/Mint.tsx:1022
+#: src/pages/Mint.tsx:1513
 #: src/pages/SwapMissing.tsx:168
 msgid "Value"
+msgstr ""
+
+#: src/components/V2MetadataBadges.tsx:69
+msgid "Verified"
 msgstr ""
 
 #: src/pages/About.tsx:10
@@ -1014,6 +1755,11 @@ msgstr ""
 #: src/components/MintSuccessModal.tsx:54
 #: src/components/TxSuccessModal.tsx:51
 msgid "View on block explorer"
+msgstr ""
+
+#: src/components/ContractAddresses.tsx:93
+#: src/components/ContractAddresses.tsx:101
+msgid "View on explorer"
 msgstr ""
 
 #: src/layouts/SettingsLayout.tsx:15
@@ -1030,27 +1776,65 @@ msgstr ""
 msgid "Wallet locked"
 msgstr ""
 
+#: src/components/BurnTokenModal.tsx:68
+msgid "Wallet not unlocked"
+msgstr ""
+
+#: src/pages/AuthorityManager.tsx:69
+#: src/pages/WaveRegister.tsx:83
+msgid "Wallet not unlocked or UTXOs not loaded"
+msgstr ""
+
 #: src/components/Unlock.tsx:28
 msgid "Wallet unlocked"
 msgstr ""
 
-#: src/components/SideBar.tsx:95
+#: src/pages/OpenOrders.tsx:758
+msgid "Wants"
+msgstr ""
+
+#: src/components/BurnTokenModal.tsx:178
+msgid "Warning: This action is irreversible!"
+msgstr ""
+
+#: src/components/V2MetadataBadges.tsx:120
+msgid "WAVE"
+msgstr ""
+
+#: src/components/V2MetadataBadges.tsx:118
+#: src/pages/WaveRegister.tsx:202
+msgid "WAVE Name"
+msgstr ""
+
+#: src/pages/WaveRegister.tsx:161
+msgid "WAVE Name Registered!"
+msgstr ""
+
+#: src/components/SideBar.tsx:97
 msgid "Wave Names"
 msgstr ""
 
-#: src/pages/Mint.tsx:790
+#: src/pages/Mint.tsx:1130
 msgid "What data do you want to store?"
 msgstr ""
 
-#: src/pages/Mint.tsx:1061
+#: src/pages/AuthorityManager.tsx:202
+msgid "What this authority governs"
+msgstr ""
+
+#: src/pages/Mint.tsx:1552
 msgid "Yes"
 msgstr ""
 
-#: src/pages/Mint.tsx:872
+#: src/pages/AuthorityManager.tsx:303
+msgid "Your authority tokens will appear here once created. This feature requires indexer integration to display existing authorities."
+msgstr ""
+
+#: src/pages/Mint.tsx:1226
 msgid "Your file will be stored in IPFS."
 msgstr ""
 
-#: src/pages/Mint.tsx:866
+#: src/pages/Mint.tsx:1208
 msgid "Your file will be stored on-chain."
 msgstr ""
 
@@ -1058,11 +1842,11 @@ msgstr ""
 msgid "Your recovery phrase is the only way to restore your wallet after logging out. Keep it in a safe place and never share it."
 msgstr ""
 
-#: src/pages/Mint.tsx:1243
+#: src/pages/Mint.tsx:1916
 msgid "Your token is ready to mint. Please review all data and the transaction fee before proceeding."
 msgstr ""
 
-#: src/components/ConsolidationModal.tsx:274
+#: src/components/ConsolidationModal.tsx:277
 msgid "Your wallet contains many unspent outputs that will cause long sync times. Output consolidation is required."
 msgstr ""
 

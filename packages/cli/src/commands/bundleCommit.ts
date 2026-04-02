@@ -4,7 +4,7 @@ import { Command } from "commander";
 import { sha256 } from "@noble/hashes/sha256";
 import { bytesToHex, hexToBytes } from "@noble/hashes/utils";
 import { ElectrumWS } from "ws-electrumx-client";
-import rjs from "@radiantblockchain/radiantjs";
+import rjs from "@radiant-core/radiantjs";
 import {
   electrumToCoinSel,
   errorMessage,
@@ -220,6 +220,7 @@ export default async function bundleCommit(
       contract,
       outputValue: (token as BundleTokenFt).supply || 1,
       payload: {
+        v: 2, // Glyph v2 version
         ...args,
         ...meta,
         ...files,
@@ -441,26 +442,28 @@ async function createRelatedDelegateTokens(
       const hexAddress = Address.fromString(wallet.address).toObject().hash;
 
       // TODO can use findTokenOutput
-      const refOutputIndex = tx.outputs.findIndex((output) => {
-        const params = parseNftScript(output.script.toHex());
-        const paramsRef =
-          params.ref && Outpoint.fromString(params.ref).reverse().toString();
-        if (paramsRef !== ref) {
-          debug("Ref not equal. This might need to be fixed!");
-          return false;
+      const refOutputIndex = tx.outputs.findIndex(
+        (output: { script: { toHex: () => string } }) => {
+          const params = parseNftScript(output.script.toHex());
+          const paramsRef =
+            params.ref && Outpoint.fromString(params.ref).reverse().toString();
+          if (paramsRef !== ref) {
+            debug("Ref not equal. This might need to be fixed!");
+            return false;
+          }
+          if (params.address !== hexAddress) {
+            cmd.error(
+              chalk(
+                "Token is in a different wallet:",
+                highlight(paramsRef),
+                "Wallet:",
+                highlight(params.address)
+              )
+            );
+          }
+          return true;
         }
-        if (params.address !== hexAddress) {
-          cmd.error(
-            chalk(
-              "Token is in a different wallet:",
-              highlight(paramsRef),
-              "Wallet:",
-              highlight(params.address)
-            )
-          );
-        }
-        return true;
-      });
+      );
       if (refOutputIndex === -1) {
         cmd.error(chalk("Ref not found:", highlight(ref)));
       }

@@ -1,20 +1,26 @@
 const IDEAL_BLOCK_TIME = 300;
 const HALF_LIFE = 2n * 24n * 3600n;
+const HALF_LIFE_V2 = 12n * 3600n; // 12 hours, activated at ASERT_HALF_LIFE_UPGRADE_HEIGHT
+export const ASERT_HALF_LIFE_UPGRADE_HEIGHT = 410000;
 const RBITS = 16n;
 const RADIX = 1n << RBITS;
 const MAX_BITS = 0x1d00ffff;
 const MAX_TARGET = bitsToTarget(MAX_BITS);
 
+export { HALF_LIFE_V2 };
+
 export function nextBitsAserti32D(
   anchorBits: number,
   timeDiff: number,
-  heightDiff: number
+  heightDiff: number,
+  halfLife?: bigint
 ): number {
+  const hl = halfLife ?? HALF_LIFE;
   let target = bitsToTarget(anchorBits);
   let exponent =
     ((BigInt(timeDiff) - BigInt(IDEAL_BLOCK_TIME) * (BigInt(heightDiff) + 1n)) *
       RADIX) /
-    HALF_LIFE;
+    hl;
   const shifts = exponent >> RBITS;
   exponent -= shifts * RADIX;
 

@@ -5,6 +5,7 @@ import { ElectrumWS } from "ws-electrumx-client";
 export default class ElectrumManager {
   public endpoint?: string;
   public client?: ElectrumWS;
+  public generation = 0;
 
   public connected(): boolean {
     return !!this.client && this.client.isConnected();
@@ -17,17 +18,24 @@ export default class ElectrumManager {
   }
 
   public changeEndpoint(endpoint: string): boolean {
-    if (this.connected() && this.client) {
-      this.client.close("");
+    console.debug("[ElectrumManager] changeEndpoint called:", endpoint);
+    this.generation++;
+    if (this.client) {
+      console.debug("[ElectrumManager] Closing existing connection");
+      this.client.close("switching");
     }
     this.endpoint = endpoint;
     try {
+      console.debug("[ElectrumManager] Creating new ElectrumWS client");
       this.client = new ElectrumWS(endpoint);
+      console.debug("[ElectrumManager] ElectrumWS client created successfully");
     } catch (error) {
+      console.error("[ElectrumManager] Failed to create ElectrumWS client:", error);
       return false;
     }
 
     this.events.forEach(([eventName, callback]) => {
+      console.debug("[ElectrumManager] Registering event:", eventName);
       this.client?.on(eventName, callback);
     });
 

@@ -77,10 +77,6 @@ export default function TokenSearch({
     }
   };
 
-  const onButtonBlur: React.FocusEventHandler<HTMLButtonElement> = () => {
-    reset();
-  };
-
   const onSelectItem = (index: number) => {
     onSelect(results[index]);
     reset();
@@ -126,8 +122,10 @@ export default function TokenSearch({
                   p={2}
                   key={glyph.id}
                   bgColor={index === focusIndex ? "bg.100" : "transparent"}
-                  onBlur={onButtonBlur}
-                  onClick={() => onSelectItem(index)}
+                  onMouseDown={(event) => {
+                    event.preventDefault();
+                    onSelectItem(index);
+                  }}
                   onMouseOver={() => setFocusIndex(index)}
                   w="full"
                   leftIcon={

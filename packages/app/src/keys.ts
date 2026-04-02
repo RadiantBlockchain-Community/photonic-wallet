@@ -1,5 +1,5 @@
 import { Buffer } from "buffer";
-import { Networks, PrivateKey } from "@radiantblockchain/radiantjs";
+import { Networks, PrivateKey } from "@radiant-core/radiantjs";
 import {
   generateMnemonic,
   mnemonicToEntropy,

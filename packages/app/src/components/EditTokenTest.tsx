@@ -16,7 +16,7 @@ import {
 import { buildTx, findTokenOutput } from "@lib/tx";
 import { SmartTokenPayload, UnfinalizedInput, Utxo } from "@lib/types";
 import { t } from "@lingui/macro";
-import { Transaction } from "@radiantblockchain/radiantjs";
+import { Transaction } from "@radiant-core/radiantjs";
 
 // Testing mutable tokens
 // Not used yet

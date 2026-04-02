@@ -26,7 +26,7 @@ import {
 import {
   Transaction,
   // @ts-ignore
-} from "@radiantblockchain/radiantjs";
+} from "@radiant-core/radiantjs";
 import { bytesToHex } from "@noble/hashes/utils";
 import ElectrumManager from "@app/electrum/ElectrumManager";
 import opfs from "@app/opfs";
@@ -206,11 +206,15 @@ export class NFTWorker implements Subscription {
     this.scriptHash = nftScriptHash(address as string);
     this.address = address;
 
-    this.electrum.client?.subscribe(
-      "blockchain.scripthash",
-      this.onSubscriptionReceived.bind(this) as ElectrumCallback,
-      this.scriptHash
-    );
+    try {
+      await this.electrum.client?.subscribe(
+        "blockchain.scripthash",
+        this.onSubscriptionReceived.bind(this) as ElectrumCallback,
+        this.scriptHash
+      );
+    } catch (error) {
+      console.warn("[NFT] Subscription failed:", error);
+    }
   }
 
   /**
@@ -278,7 +282,7 @@ export class NFTWorker implements Subscription {
 
               // Look for delegate burn
               const delegates = tx.outputs
-                .map((o) => parseDelegateBurnScript(o.script.toHex()) as string)
+                .map((o: { script: { toHex: () => string } }) => parseDelegateBurnScript(o.script.toHex()) as string)
                 .filter(Boolean);
               delegates.length && console.debug(`Found delegates`, delegates);
               delegates.forEach(foundDelegates.add, foundDelegates);
@@ -424,7 +428,7 @@ export class NFTWorker implements Subscription {
 
     // Look for related tokens in outputs
     const outputTokens = reveal.outputs
-      .map((o) => parseNftScript(o.script.toHex()).ref) // TODO handle FT, dat
+      .map((o: { script: { toHex: () => string } }) => parseNftScript(o.script.toHex()).ref) // TODO handle FT, dat
       .filter(Boolean) as string[];
     // Validate any author and container properties
     const allRefs = [...delegatedRefs, ...outputTokens];
@@ -435,9 +439,11 @@ export class NFTWorker implements Subscription {
     const immutable = isImmutableToken(payload);
 
     const remote = remoteFiles.main;
+    // Support dual-file tokens: use preview for thumbnails, fallback to main
+    const embedSource = embeddedFiles.preview || embeddedFiles.main;
     const embed =
-      embeddedFiles.main && embeddedFiles.main.b.length < fileSizeLimit
-        ? embeddedFiles.main
+      embedSource && embedSource.b.length < fileSizeLimit
+        ? embedSource
         : undefined;
 
     // Containers and authors will be fetched later

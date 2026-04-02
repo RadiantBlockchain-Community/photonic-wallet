@@ -9,6 +9,22 @@ import path from "path";
 
 export default defineConfig({
   base: "./",
+  server: {
+    headers: {
+      "X-Frame-Options": "DENY",
+      "X-Content-Type-Options": "nosniff",
+      "Referrer-Policy": "strict-origin-when-cross-origin",
+      "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+    },
+  },
+  preview: {
+    headers: {
+      "X-Frame-Options": "DENY",
+      "X-Content-Type-Options": "nosniff",
+      "Referrer-Policy": "strict-origin-when-cross-origin",
+      "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+    },
+  },
   plugins: [
     react({
       babel: {
@@ -78,10 +94,22 @@ export default defineConfig({
       },
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      plugins: [NodeGlobalsPolyfillPlugin({ buffer: false })],
+      plugins: [NodeGlobalsPolyfillPlugin({ buffer: true })],
     },
   },
   worker: {
     format: "es",
+    rollupOptions: {
+      output: {
+        // Ensure proper format for Safari compatibility
+        inlineDynamicImports: true,
+      },
+    },
+    plugins: () => [
+      topLevelAwait({
+        promiseExportName: "__tla",
+        promiseImportName: (i) => `__tla_${i}`,
+      }),
+    ],
   },
 });

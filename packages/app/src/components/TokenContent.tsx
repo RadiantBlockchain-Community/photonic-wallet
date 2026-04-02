@@ -104,7 +104,7 @@ export default function TokenContent({
 
     // Image file
     if (embed.t?.startsWith("image/")) {
-      const blob = new Blob([embed.b], { type: embed.t });
+      const blob = new Blob([embed.b as BlobPart], { type: embed.t });
       const imgUrl = URL.createObjectURL(blob);
       return (
         <Image

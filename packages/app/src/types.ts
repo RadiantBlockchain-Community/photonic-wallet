@@ -39,6 +39,12 @@ export enum SwapStatus {
   COMPLETE,
 }
 
+// Swap mode: private (share hex manually) or broadcast (publish to network)
+export enum SwapMode {
+  PRIVATE,
+  BROADCAST,
+}
+
 export interface TokenSwap {
   id?: number;
   txid: string;
@@ -51,6 +57,9 @@ export interface TokenSwap {
   toValue: number;
   status: SwapStatus;
   date: number;
+  // New fields for broadcast swaps
+  mode?: SwapMode;
+  broadcastTxid?: string; // txid of the broadcast advertisement tx
 }
 
 export interface SubscriptionStatus {
@@ -104,12 +113,12 @@ export interface SmartToken {
   author: string;
   container: string;
   attrs: { [key: string]: string };
-  embed?: { t: string; b: ArrayBuffer }; // Embedded file. TODO save multiple files? Should this go in OPFS or reference the OPFS raw tx?
+  embed?: { t: string; b: ArrayBuffer | Uint8Array }; // Embedded file. TODO save multiple files? Should this go in OPFS or reference the OPFS raw tx?
   remote?: {
     t: string;
     u: string;
-    h?: ArrayBuffer;
-    hs?: ArrayBuffer;
+    h?: ArrayBuffer | Uint8Array;
+    hs?: ArrayBuffer | Uint8Array;
   }; // Remote file
   height?: number;
   swapPending?: boolean;
@@ -164,6 +173,11 @@ export type NetworkConfig = {
   name: string;
   ticker: string;
   anchor: {
+    height: number;
+    bits: number;
+    prevTime: number;
+  };
+  anchorV2?: {
     height: number;
     bits: number;
     prevTime: number;

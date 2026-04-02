@@ -11,11 +11,13 @@ This is alpha software in active development. If you would like to test it, plea
 ## Features
 
 - Mint and transfer non-fungible and fungible tokens
-- PoW mint contract creation
+- PoW mint contract creation (v2: Blake3, KangarooTwelve, SHA256d per-algorithm bytecodes)
 - Container and author tokens
 - IPFS file uploading
 - On-chain image thumbnail generation
 - CLI for batch minting
+
+> **V2 Hard Fork (Radiant Core 2.1, Block 410,000):** Photonic Wallet supports Glyph v2 dMint contracts with per-algorithm bytecodes. After the fork activation, tokens using Blake3 and KangarooTwelve PoW are validated on-chain via OP_BLAKE3/OP_K12 consensus opcodes.
 
 ## Roadmap
 

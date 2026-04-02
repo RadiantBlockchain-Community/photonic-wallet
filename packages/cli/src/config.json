@@ -6,7 +6,13 @@
       "explorer": {
         "tx": "https://explorer.radiantblockchain.org/tx/{txid}"
       },
-      "servers": ["wss://electrumx.radiant4people.com:50012"]
+      "servers": [
+        "wss://electrumx.radiant4people.com:50022",
+        "wss://radiant2.bladenet.online:50022",
+        "wss://radiantus.bladenet.online:50022",
+        "wss://radiant4.bladenet.online:50022",
+        "wss://electrumx2.radiant4people.com:50022"
+      ]
     },
     "testnet": {
       "name": "Radiant Testnet",

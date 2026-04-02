@@ -1,4 +1,4 @@
-import rjs from "@radiantblockchain/radiantjs";
+import rjs from "@radiant-core/radiantjs";
 import {
   mnemonicToEntropy,
   mnemonicToSeed,

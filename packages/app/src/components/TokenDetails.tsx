@@ -25,6 +25,7 @@ import Outpoint from "@lib/Outpoint";
 import createExplorerUrl from "@app/network/createExplorerUrl";
 import { Link } from "react-router-dom";
 import { PropsWithChildren } from "react";
+import ContractAddresses from "./ContractAddresses";
 
 function RefProperty({ tokenRef }: { tokenRef: Outpoint }) {
   return (
@@ -88,9 +89,16 @@ export default function TokenDetails({
               <RefProperty tokenRef={ref} />
             </PropertyCard>
             {glyph.location && (
-              <PropertyCard heading={t`Link`} mb={4}>
-                <RefProperty tokenRef={Outpoint.fromString(glyph.location)} />
-              </PropertyCard>
+              <>
+                <PropertyCard heading={t`Link`} mb={4}>
+                  <RefProperty tokenRef={Outpoint.fromString(glyph.location)} />
+                </PropertyCard>
+                <PropertyCard heading={t`Mining Contracts`} mb={4}>
+                  <ContractAddresses 
+                    linkRef={Outpoint.fromString(glyph.location).ref()} 
+                  />
+                </PropertyCard>
+              </>
             )}
             {revealRef && (
               <PropertyCard heading={t`Mint`} mb={4}>

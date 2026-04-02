@@ -11,6 +11,7 @@ import {
   TbFileUpload,
   TbQuestionMark,
   TbRefresh,
+  TbWorld,
 } from "react-icons/tb";
 import { LuFilePlus } from "react-icons/lu";
 import ActionIcon from "@app/components/ActionIcon";
@@ -26,6 +27,7 @@ export default function SwapLayout() {
     "/swap/completed": t`Completed`,
     "/swap/missing": t`Missing`,
     "/swap/load": t`Load`,
+    "/swap/orders": t`Open Orders`,
   };
   const heading = headings[pathname];
 
@@ -92,6 +94,14 @@ export default function SwapLayout() {
           leftIcon={<ActionIcon as={TbQuestionMark} />}
         >
           {t`Missing`}
+        </Button>
+        <Button
+          size="sm"
+          as={Link}
+          to="/swap/orders"
+          leftIcon={<ActionIcon as={TbWorld} />}
+        >
+          {t`Open Orders`}
         </Button>
         <Button
           size="sm"

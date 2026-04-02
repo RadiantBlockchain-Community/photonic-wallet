@@ -19,7 +19,7 @@ export async function putTx(txid: string, hex: string) {
   const dir = await root.getDirectoryHandle("tx", { create: true });
   const fileHandle = await dir.getFileHandle(txid, { create: true });
   const writable = await fileHandle.createWritable();
-  await writable.write(hexToBytes(hex));
+  await writable.write(hexToBytes(hex) as BlobPart);
   await writable.close();
   return true;
 }

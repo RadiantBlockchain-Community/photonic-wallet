@@ -4,9 +4,14 @@
       "name": "Radiant",
       "ticker": "RXD",
       "anchor": {
-        "height": 1421481,
-        "bits": 486604799,
-        "prevTime": 1605445400
+        "height": 18206,
+        "bits": 453224288,
+        "prevTime": 1657404650
+      },
+      "anchorV2": {
+        "height": 409999,
+        "bits": 436243769,
+        "prevTime": 1773088826
       },
       "explorer": {
         "tx": "https://explorer.radiantblockchain.org/tx/{txid}"
@@ -34,14 +39,16 @@
         "wss://testnet.bladenet.online:53002"
       ],
       "mainnet": [
+        "wss://82.180.136.182:50004",
         "wss://electrumx.radiant4people.com:50022",
-        "wss://electrumx2.radiant4people.com:50022",
-        "wss://radiantus.bladenet.online:50022",
         "wss://radiant2.bladenet.online:50022",
-        "wss://radiant4.bladenet.online:50022"
+        "wss://radiantus.bladenet.online:50022",
+        "wss://radiant4.bladenet.online:50022",
+        "wss://electrumx2.radiant4people.com:50022",
+        "wss://radiantcore.org:50004"
       ]
     },
-    "feeRate": 2000,
+    "feeRate": 10000,
     "ipfsMethod": "gateway",
     "ipfsGatewayUrl": "https://{cid}.ipfs.nftstorage.link"
   },
@@ -52,5 +59,5 @@
     },
     "defaultLanguage": "en"
   },
-  "mintEmbedMaxBytes": 250000
+  "mintEmbedMaxBytes": 512000
 }

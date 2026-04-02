@@ -39,7 +39,7 @@ export default function TxSuccessModal({
         <ModalBody>
           <Text mb={2}>{t`Transaction ID:`}</Text>
           <div>
-            <Identifier showCopy>{txid}</Identifier>
+            <Identifier showCopy>{txid || t`Unknown`}</Identifier>
           </div>
           <Link
             as={RouterLink}

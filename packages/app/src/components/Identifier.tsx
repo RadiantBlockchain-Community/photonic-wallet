@@ -35,6 +35,7 @@ export default function Identifier({
         py={1}
         mx={1}
         bgColor="blackAlpha.400"
+        color="inherit"
         boxDecorationBreak="clone"
         boxShadow={`${shadow}, -${shadow}`}
         lineHeight={6}

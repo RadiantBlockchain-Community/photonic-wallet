@@ -1,6 +1,6 @@
 {
   "name": "@photonic/lib",
-  "version": "0.1.0",
+  "version": "2.0.0",
   "type": "module",
   "license": "MIT",
   "engines": {
@@ -22,17 +22,21 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "prettier": "prettier . --check --ignore-path=../../.prettierignore",
     "prettier:fix": "prettier . --write --ignore-path=../../.prettierignore",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "devDependencies": {
     "@photonic/eslint-config": "workspace:*",
     "@photonic/typescript-config": "workspace:*",
-    "@types/big.js": "^6.2.2"
+    "@types/big.js": "^6.2.2",
+    "vitest": "^1.6.0"
   },
   "dependencies": {
     "@bitauth/libauth": "^3.0.0",
     "@noble/hashes": "^1.5.0",
-    "@radiantblockchain/radiantjs": "github:radiantblockchain/radiantjs",
+    "@radiant-core/radiantjs": "^1.9.6",
     "@scure/base": "^1.1.9",
     "@scure/bip32": "^1.5.0",
     "@scure/bip39": "^1.4.0",
@@ -41,5 +45,9 @@
     "buffer": "^6.0.3",
     "cbor-x": "^1.6.0",
     "nft.storage": "^7.2.0"
-  }
+  },
+  "description": "",
+  "main": "eslint.config.js",
+  "keywords": [],
+  "author": ""
 }

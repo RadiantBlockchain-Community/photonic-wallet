@@ -1,0 +1,30 @@
+# Photonic Wallet - Caddy Reverse Proxy with Automatic HTTPS
+#
+# Replace wallet.yourdomain.com with your actual domain.
+# Caddy automatically provisions and renews Let's Encrypt certificates.
+#
+# Usage:
+#   docker compose --profile with-caddy up -d
+
+photonic-wallet.com {
+    reverse_proxy photonic-wallet:80
+
+    # Security headers
+    header {
+        X-Frame-Options "DENY"
+        X-Content-Type-Options "nosniff"
+        X-XSS-Protection "1; mode=block"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "camera=(), microphone=(), geolocation=()"
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    }
+
+    # Gzip compression
+    encode gzip
+
+    # Logging
+    log {
+        output file /var/log/caddy/access.log
+        format json
+    }
+}

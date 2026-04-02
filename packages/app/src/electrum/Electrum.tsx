@@ -1,7 +1,7 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { t } from "@lingui/macro";
 import db from "@app/db";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { electrumStatus, wallet } from "@app/signals";
 import { useToast } from "@chakra-ui/react";
 import { ContractType, ElectrumStatus, SmartToken } from "@app/types";
@@ -10,16 +10,36 @@ import { signal } from "@preact/signals-react";
 import { ElectrumRefResponse, ElectrumUtxo } from "@lib/types";
 
 // Android Chrome doesn't support shared workers, fall back to dedicated worker
-const sharedSupported = "SharedWorker" in globalThis;
+// TEMP: Force dedicated worker for debugging (SharedWorker logs go to separate console)
+const sharedSupported = false; // "SharedWorker" in globalThis;
+
+// Detect Safari - it has issues with ES module workers
+const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+if (isSafari) {
+  console.warn("[Electrum] Safari detected - module workers may have issues");
+}
 
 // SharedWorker and Worker must be used directly so Vite can compile the worker
-const worker = sharedSupported
-  ? new SharedWorker(new URL("./worker/electrumWorker.ts", import.meta.url), {
-      type: "module",
-    }).port
-  : new Worker(new URL("./worker/electrumWorker.ts", import.meta.url), {
-      type: "module",
-    });
+let worker: Worker | MessagePort;
+try {
+  worker = sharedSupported
+    ? new SharedWorker(new URL("./worker/electrumWorker.ts", import.meta.url), {
+        type: "module",
+      }).port
+    : new Worker(new URL("./worker/electrumWorker.ts", import.meta.url), {
+        type: "module",
+      });
+  
+  // Add error listener to catch worker initialization failures
+  if (worker instanceof Worker) {
+    worker.onerror = (e) => {
+      console.error("[Electrum] Worker error:", e.message, e);
+    };
+  }
+} catch (e) {
+  console.error("[Electrum] Failed to create worker:", e);
+  throw e;
+}
 
 const wrapped = wrap<{
   setServers: (servers: string[]) => void;
@@ -75,16 +95,28 @@ export default function Electrum() {
       mainnet: string[];
       testnet: string[];
     };
-    return servers[wallet.value.net];
+    return servers?.[wallet.value.net];
   }, [wallet.value.net]);
+
+  // Stabilize servers reference - only update when content actually changes
+  const serversRef = useRef<string[] | undefined>();
+  const stableServers = (() => {
+    const prev = serversRef.current;
+    if (prev && servers && prev.length === servers.length && prev.every((s, i) => s === servers[i])) {
+      return prev;
+    }
+    serversRef.current = servers;
+    return servers;
+  })();
 
   // Reconnect when server config changes or when wallet is ready
   useEffect(() => {
-    if (servers && wallet.value.address) {
-      electrumWorker.value.setServers(servers);
+    if (stableServers && wallet.value.address) {
+      console.debug("[Electrum] Connecting with servers:", stableServers.length);
+      electrumWorker.value.setServers(stableServers);
       electrumWorker.value.connect(wallet.value.address);
     }
-  }, [servers, wallet.value.address]);
+  }, [stableServers, wallet.value.address]);
 
   return null;
 }

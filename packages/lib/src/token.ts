@@ -3,7 +3,7 @@ import { sha256 } from "@noble/hashes/sha256";
 import { Buffer } from "buffer";
 import { decode, encode } from "cbor-x";
 // @ts-ignore
-import rjs from "@radiantblockchain/radiantjs";
+import rjs from "@radiant-core/radiantjs";
 import {
   SmartTokenEmbeddedFile,
   SmartTokenFile,

@@ -6,7 +6,7 @@ const { crypto } = globalThis;
 const { subtle } = crypto;
 
 export type EncryptedData = {
-  ciphertext: ArrayBuffer;
+  ciphertext: ArrayBuffer | Uint8Array;
   salt: Uint8Array;
   iv: Uint8Array;
   mac: Uint8Array;
@@ -41,11 +41,11 @@ export const encrypt = async (
   const ciphertext = await subtle.encrypt(
     {
       name: "AES-CTR",
-      counter: iv,
+      counter: iv as BufferSource,
       length: 64,
     },
     importedKey,
-    data
+    data as BufferSource
   );
 
   const concat = concatBytes(
@@ -90,11 +90,11 @@ export const decrypt = async (data: EncryptedData, password: string) => {
   const decrypted = await subtle.decrypt(
     {
       name: "AES-CTR",
-      counter: data.iv,
+      counter: data.iv as BufferSource,
       length: 128,
     },
     importedKey,
-    data.ciphertext
+    data.ciphertext as BufferSource
   );
 
   return new Uint8Array(decrypted);

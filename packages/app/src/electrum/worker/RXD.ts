@@ -94,10 +94,20 @@ export class RXDWorker implements Subscription {
     this.scriptHash = p2pkhScriptHash(address as string);
     this.address = address;
 
-    this.electrum.client?.subscribe(
-      "blockchain.scripthash",
-      this.onSubscriptionReceived.bind(this) as ElectrumCallback,
-      this.scriptHash
-    );
+    try {
+      await this.electrum.client?.subscribe(
+        "blockchain.scripthash",
+        this.onSubscriptionReceived.bind(this) as ElectrumCallback,
+        this.scriptHash
+      );
+    } catch (error) {
+      console.warn("[RXD] Subscription failed, falling back to manual sync:", error);
+      try {
+        await this.onSubscriptionReceived(this.scriptHash, "manual-fallback", true);
+        console.debug("[RXD] Manual fallback sync completed");
+      } catch (fallbackError) {
+        console.warn("[RXD] Manual fallback also failed:", fallbackError);
+      }
+    }
   }
 }

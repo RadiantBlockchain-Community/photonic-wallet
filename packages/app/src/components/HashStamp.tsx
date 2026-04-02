@@ -20,7 +20,7 @@ function buildUint8Array(chunks: Uint8Array[]): Uint8Array {
 }
 
 function uint8ArrayToDataURL(uint8Array: Uint8Array): string {
-  const blob = new Blob([uint8Array], { type: mimeType });
+  const blob = new Blob([uint8Array as BlobPart], { type: mimeType });
   const dataURL = URL.createObjectURL(blob);
   return dataURL;
 }
@@ -87,12 +87,12 @@ export default function HashStamp({
   onRender,
 }: {
   img: ArrayBuffer;
-  onRender?: (data: ArrayBuffer | undefined) => void;
+  onRender?: (data: Uint8Array | undefined) => void;
 }) {
   const ref = useRef<HTMLCanvasElement>(null);
   const temp = useRef<HTMLCanvasElement>(null);
   const [dataURL, setDataURL] = useState<string>("");
-  const [data, setData] = useState<ArrayBuffer>();
+  const [data, setData] = useState<Uint8Array>();
 
   useEffect(() => {
     const image = new Image();

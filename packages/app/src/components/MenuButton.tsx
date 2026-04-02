@@ -30,22 +30,40 @@ export default function MenuButton({
   return (
     <Button
       variant="ghost"
-      borderRadius={0}
+      borderRadius="lg"
+      mx={2}
       justifyContent="left"
+      alignItems="center"
       as={as || Link}
       to={to}
-      p={6}
-      color={active ? undefined : "whiteAlpha.700"}
+      py={6}
+      px={4}
+      width="calc(100% - 16px)"
+      overflow="hidden"
+      whiteSpace="nowrap"
+      textOverflow="ellipsis"
+      color={active ? "white" : "whiteAlpha.700"}
+      fontSize="sm"
       bgImage={active ? `url(${gradient})` : undefined}
       bgPosition="center center"
       bgSize="cover"
       bgRepeat="no-repeat"
+      transition="all 0.15s ease"
       sx={{
         _hover: {
           bg: active ? undefined : "whiteAlpha.100",
+          color: active ? undefined : "whiteAlpha.900",
         },
         _active: {
           bg: active ? undefined : "whiteAlpha.100",
+        },
+        "& .chakra-button__icon": {
+          marginEnd: "0.5rem",
+          flexShrink: 0,
+        },
+        "& > span": {
+          overflow: "hidden",
+          textOverflow: "ellipsis",
         },
       }}
       onClick={() => {

@@ -22,6 +22,7 @@ export default function TokenRow({
   glyph,
   value,
   to,
+  size = "md",
   defaultIcon,
 }: {
   glyph: SmartToken;
@@ -37,23 +38,24 @@ export default function TokenRow({
     <Flex
       bgGradient="linear(to-b, bg.100, bg.300)"
       alignItems="center"
-      p={2}
-      pr={4}
-      mb={4}
+      p={size === "sm" ? 2 : 3}
+      pr={size === "sm" ? 3 : 4}
+      minH={size === "sm" ? "56px" : "72px"}
       gap={2}
       borderRadius="md"
       overflow="hidden"
       as={Link}
       to={to}
       w="100%"
-      maxW={{ lg: "container.md" }}
-      mx="auto"
     >
-      <Box w="48px" h="48px" /*sx={{ "& > *": { w: "64px", h: "64px" } }}*/>
+      <Box
+        w={size === "sm" ? "40px" : "48px"}
+        h={size === "sm" ? "40px" : "48px"}
+      >
         <TokenContent glyph={glyph} defaultIcon={defaultIcon} thumbnail />
       </Box>
       <Box flexGrow={1} width={0}>
-        <Flex gap={2}>
+        <Flex gap={2} minW={0}>
           {glyph.type === "user" && <Icon as={TbUserCircle} fontSize="2xl" />}
           {glyph.type === "container" && <Icon as={TbBox} fontSize="2xl" />}
           {glyph.name ? (
@@ -71,13 +73,13 @@ export default function TokenRow({
           ) : (
             <Identifier>{short}</Identifier>
           )}
-          <Text as="div" color="gray.400">
+          <Text as="div" color="gray.400" whiteSpace="nowrap" flexShrink={0}>
             {(glyph.ticker as string) || ""}
           </Text>
         </Flex>
         <Ref value={glyph.ref} />
       </Box>
-      <ValueTag>{formatPhotons(value)}</ValueTag>
+      <ValueTag flexShrink={0}>{formatPhotons(value)}</ValueTag>
     </Flex>
   );
 }

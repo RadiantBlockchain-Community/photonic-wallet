@@ -5,7 +5,7 @@ export default function License() {
     <>
       <Text mb={4}>MIT License</Text>
 
-      <Text mb={4}>Copyright (c) 2024 The Photonic Developers</Text>
+      <Text mb={4}>Copyright (c) 2024-2026 The Photonic Developers</Text>
 
       <Text mb={4}>
         Permission is hereby granted, free of charge, to any person obtaining a

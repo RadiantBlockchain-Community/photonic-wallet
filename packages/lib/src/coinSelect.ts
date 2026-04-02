@@ -3,6 +3,15 @@
 import bsvCoinSelect from "bsv-coinselect";
 import { UnfinalizedInput, UnfinalizedOutput, Utxo } from "./types";
 
+const MIN_FEE_RATE = 10000;
+
+const normalizeFeeRate = (feeRate: number) => {
+  if (!Number.isFinite(feeRate)) {
+    return MIN_FEE_RATE;
+  }
+  return Math.max(MIN_FEE_RATE, feeRate);
+};
+
 export type SelectableInput = UnfinalizedInput & {
   required?: boolean;
   utxo?: unknown;
@@ -35,6 +44,7 @@ export function coinSelect(
   fee: number;
   remaining: SelectableInput[];
 } {
+  const safeFeeRate = normalizeFeeRate(feeRate);
   const inputs = utxos.map((u) => ({
     address,
     txid: u.txid,
@@ -50,7 +60,7 @@ export function coinSelect(
     utxo: u,
   }));
 
-  const selected = bsvCoinSelect(inputs, target, feeRate, changeScript);
+  const selected = bsvCoinSelect(inputs, target, safeFeeRate, changeScript);
   if (!selected.inputs?.length) {
     return selected;
   }
@@ -88,6 +98,7 @@ export function fundTx(
   changeScript: string,
   feeRate: number
 ) {
+  const safeFeeRate = normalizeFeeRate(feeRate);
   const required = requiredInputs.map((i) => ({ ...i, required: true }));
   const inputs = ([...required, ...utxos] as SelectableInput[]).map((u) => ({
     address,
@@ -104,7 +115,7 @@ export function fundTx(
     inputs: SelectableInput[];
     outputs: { script: string; value: number }[];
     fee: number;
-  } = bsvCoinSelect(inputs, target, feeRate, changeScript);
+  } = bsvCoinSelect(inputs, target, safeFeeRate, changeScript);
 
   if (!selected.inputs) {
     return {

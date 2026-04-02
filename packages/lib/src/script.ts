@@ -1,5 +1,5 @@
 //import { Address, Opcode, Script } from "@radiantblockchain/radiantjs";
-import rjs from "@radiantblockchain/radiantjs";
+import rjs from "@radiant-core/radiantjs";
 import { sha256 } from "@noble/hashes/sha256";
 import { Buffer } from "buffer";
 import { glyphMagicBytesBuffer, glyphMagicBytesHex } from "./token";
@@ -123,8 +123,7 @@ export function payToScript(address: string): string {
 export function isP2pkh(address: string): boolean {
   try {
     const addr = new Address(address);
-    // @ts-expect-error missing definition
-    return addr.isPayToPublicKeyHash();
+    return addr.type === "pubkeyhash";
   } catch {
     return false;
   }
@@ -418,7 +417,22 @@ export function push4bytes(n: number) {
 
 // Push a number with minimal encoding
 export function pushMinimal(n: bigint | number) {
-  return bytesToHex(encodeDataPush(bigIntToVmNumber(BigInt(n))));
+  const value = BigInt(n);
+
+  if (value === 0n) {
+    return "00"; // OP_0
+  }
+
+  if (value === -1n) {
+    return "4f"; // OP_1NEGATE
+  }
+
+  if (value >= 1n && value <= 16n) {
+    const opcode = 0x50 + Number(value); // OP_1 .. OP_16
+    return opcode.toString(16).padStart(2, "0");
+  }
+
+  return bytesToHex(encodeDataPush(bigIntToVmNumber(value)));
 }
 
 export function pushMinimalAsm(n: bigint | number) {
@@ -430,17 +444,283 @@ export function dMintDiffToTarget(difficulty: number) {
   return MAX_TARGET / BigInt(difficulty);
 }
 
+function buildDmintPreimageBytecodePartA(stateItemCount: number) {
+  const contractRefPickIndex = stateItemCount - 1;
+  const inputOutputPickIndex = stateItemCount + 3;
+  const nonceRollIndex = stateItemCount + 4;
+
+  return [
+    '51',
+    '75',
+    'c0',
+    'c8',
+    pushMinimal(contractRefPickIndex),
+    '79',
+    '7e',
+    'a8',
+    pushMinimal(inputOutputPickIndex),
+    '79',
+    pushMinimal(inputOutputPickIndex),
+    '79',
+    '7e',
+    'a8',
+    '7e',
+    pushMinimal(nonceRollIndex),
+    '7a',
+    '7e',
+  ].join('');
+}
+
+function parseScriptNumberToken(token: string): number {
+  if (/^OP_[0-9]+$/.test(token)) {
+    return Number(token.slice(3));
+  }
+  if (token === 'OP_0') {
+    return 0;
+  }
+  if (token === 'OP_1NEGATE') {
+    return -1;
+  }
+  if (!/^[0-9a-f]+$/i.test(token) || token.length % 2 !== 0) {
+    throw new Error(`Unsupported script number token: ${token}`);
+  }
+
+  const bytes = Array.from(Buffer.from(token, 'hex'));
+  if (bytes.length === 0) {
+    return 0;
+  }
+
+  const lastIndex = bytes.length - 1;
+  const negative = (bytes[lastIndex] & 0x80) !== 0;
+  bytes[lastIndex] &= 0x7f;
+
+  let value = 0;
+  for (let i = 0; i < bytes.length; i++) {
+    value |= bytes[i] << (8 * i);
+  }
+  return negative ? -value : value;
+}
+
+function pickStackItem(stack: string[], n: number): string {
+  const index = stack.length - 1 - n;
+  if (index < 0 || index >= stack.length) {
+    throw new Error(`Invalid stack index for OP_PICK/OP_ROLL: ${n}`);
+  }
+  return stack[index];
+}
+
+function stackPick(stack: string[], n: number) {
+  stack.push(pickStackItem(stack, n));
+}
+
+function stackCat(stack: string[]) {
+  const right = stack.pop();
+  const left = stack.pop();
+  stack.push(`cat(${left},${right})`);
+}
+
+function stackSha256(stack: string[]) {
+  const value = stack.pop();
+  stack.push(`sha256(${value})`);
+}
+
+function stackRoll(stack: string[], n: number): string {
+  const index = stack.length - 1 - n;
+  const [value] = stack.splice(index, 1);
+  stack.push(value);
+  return value;
+}
+
+function extractPreimageIndicesFromPartA(partAHex: string): {
+  contractRefPickIndex: number;
+  inputHashPickIndex: number;
+  outputHashPickIndex: number;
+  nonceRollIndex: number;
+} {
+  const asm = Script.fromHex(partAHex).toASM();
+  const match = asm.match(
+    /OP_OUTPOINTTXHASH\s+([^\s]+)\s+OP_PICK\s+OP_CAT\s+OP_SHA256\s+([^\s]+)\s+OP_PICK\s+([^\s]+)\s+OP_PICK\s+OP_CAT\s+OP_SHA256\s+OP_CAT\s+([^\s]+)\s+OP_ROLL\s+OP_CAT/
+  );
+
+  if (!match) {
+    throw new Error(`Unexpected dMint preimage bytecode Part A format: ${asm}`);
+  }
+
+  return {
+    contractRefPickIndex: parseScriptNumberToken(match[1]),
+    inputHashPickIndex: parseScriptNumberToken(match[2]),
+    outputHashPickIndex: parseScriptNumberToken(match[3]),
+    nonceRollIndex: parseScriptNumberToken(match[4]),
+  };
+}
+
+function assertDmintPreimageLayout(partAHex: string, stateItemCount: number) {
+  if (stateItemCount < 3) {
+    throw new Error(`Invalid dMint state item count: ${stateItemCount}`);
+  }
+
+  const {
+    contractRefPickIndex,
+    inputHashPickIndex,
+    outputHashPickIndex,
+    nonceRollIndex,
+  } = extractPreimageIndicesFromPartA(partAHex);
+
+  const stateLabels = [
+    'height',
+    'contractRef',
+    'tokenRef',
+    ...Array.from({ length: stateItemCount - 3 }, (_, i) => `state${i}`),
+  ];
+
+  const stack = [
+    'nonce',
+    'inputHash',
+    'outputHash',
+    'outputIndex',
+    ...stateLabels,
+    'outpointTxHash',
+  ];
+
+  stackPick(stack, contractRefPickIndex);
+  const pickContractRef = stack[stack.length - 1];
+  stackCat(stack);
+  stackSha256(stack);
+
+  stackPick(stack, inputHashPickIndex);
+  const pickInputHash = stack[stack.length - 1];
+  stackPick(stack, outputHashPickIndex);
+  const pickOutputHash = stack[stack.length - 1];
+  stackCat(stack);
+  stackSha256(stack);
+  stackCat(stack);
+
+  const rollNonce = stackRoll(stack, nonceRollIndex);
+
+  if (
+    pickContractRef !== 'contractRef' ||
+    pickInputHash !== 'inputHash' ||
+    pickOutputHash !== 'outputHash' ||
+    rollNonce !== 'nonce'
+  ) {
+    throw new Error(
+      `Invalid dMint preimage stack mapping: stateItems=${stateItemCount}, picks=[${pickContractRef},${pickInputHash},${pickOutputHash}], roll=${rollNonce}`
+    );
+  }
+}
+
 export function dMintScript(
   height: number,
   contractRef: string,
   tokenRef: string,
   maxHeight: number,
   reward: number,
-  target: bigint
+  target: bigint,
+  algorithm: string = 'sha256d',
+  daaMode: string = 'fixed',
+  daaParams: any = null
 ) {
-  return `${push4bytes(height)}d8${contractRef}d0${tokenRef}${pushMinimal(
+  // Enhanced dMint script with algorithm and DAA support
+  // Algorithm IDs: sha256d=0x00, blake3=0x01, k12=0x02
+  const algorithmIds: Record<string, number> = {
+    sha256d: 0,
+    blake3: 1,
+    k12: 2,
+  };
+  
+  // DAA Mode IDs: fixed=0x00, epoch=0x01, asert=0x02, lwma=0x03, schedule=0x04
+  const daaModeIds: Record<string, number> = {
+    fixed: 0,
+    epoch: 1,
+    asert: 2,
+    lwma: 3,
+    schedule: 4,
+  };
+  
+  const algoId = algorithmIds[algorithm] ?? 0;
+  const daaId = daaModeIds[daaMode] ?? 0;
+  
+  // dMint contract bytecode structure:
+  //   Part A (preimage building) uses state-length-aware stack indices.
+  //   PoW hash opcode: aa=OP_HASH256(SHA256d), ee=OP_BLAKE3, ef=OP_K12
+  //   Part B (target comparison + contract verification):
+  //     bc01147f77587f040000000088817600a269a269577ae500a069567ae600a069
+  //     01d053797e0cdec0e9aa76e378e4a269e69d7eaa76e47b9d547a818b76537a
+  //     9c537ade789181547ae6939d635279cd01d853797e016a7e886778de519d5478
+  //     54807ec0eb557f777e5379ec78885379eac0e9885379cc519d75686d7551
+  // NOTE: The 'aa' bytes in Part B are OP_HASH256 for contract integrity checks,
+  //       NOT the PoW hash, and must remain unchanged for all algorithms.
+  
+  const BYTECODE_PART_B = 'bc01147f77587f040000000088817600a269a269577ae500a069567ae600a06901d053797e0cdec0e9aa76e378e4a269e69d7eaa76e47b9d547a818b76537a9c537ade789181547ae6939d635279cd01d853797e016a7e886778de519d547854807ec0eb557f777e5379ec78885379eac0e9885379cc519d75686d7551';
+  
+  // Select PoW hash opcode based on algorithm
+  const powHashOpcodes: Record<string, string> = {
+    'sha256d': 'aa',  // OP_HASH256 (SHA256d)
+    'blake3': 'ee',   // OP_BLAKE3
+    'k12': 'ef',      // OP_K12
+  };
+  const powHashOp = powHashOpcodes[algorithm] || 'aa';
+  
+  const legacyStateItemCount = 6;
+  const enhancedBaseStateItemCount = 8;
+  
+  // For legacy contracts without algorithm support, omit the new fields
+  if (algorithm === 'sha256d' && daaMode === 'fixed') {
+    const bytecodePartA = buildDmintPreimageBytecodePartA(legacyStateItemCount);
+    assertDmintPreimageLayout(bytecodePartA, legacyStateItemCount);
+    const contractBytecode = `${bytecodePartA}${powHashOp}${BYTECODE_PART_B}`;
+    return `${push4bytes(height)}d8${contractRef}d0${tokenRef}${pushMinimal(
+      maxHeight
+    )}${pushMinimal(reward)}${pushMinimal(
+      target
+    )}bd${contractBytecode}`;
+  }
+  
+  // Enhanced format with algorithm and DAA
+  const baseScript = `${push4bytes(height)}d8${contractRef}d0${tokenRef}${pushMinimal(
     maxHeight
   )}${pushMinimal(reward)}${pushMinimal(
     target
-  )}bd5175c0c855797ea8597959797ea87e5a7a7eaabc01147f77587f040000000088817600a269a269577ae500a069567ae600a06901d053797e0cdec0e9aa76e378e4a269e69d7eaa76e47b9d547a818b76537a9c537ade789181547ae6939d635279cd01d853797e016a7e886778de519d547854807ec0eb557f777e5379ec78885379eac0e9885379cc519d75686d7551`;
+  )}`;
+  
+  // Add algorithm and DAA configuration
+  const enhancedScript = `${baseScript}${pushMinimal(algoId)}${pushMinimal(daaId)}`;
+  
+  // Add DAA parameters if needed
+  const paramsPushes: string[] = [];
+  if (daaParams) {
+    switch (daaMode) {
+      case 'asert':
+        paramsPushes.push(pushMinimal(daaParams.targetBlockTime || 60));
+        paramsPushes.push(pushMinimal(daaParams.halfLife || 1000));
+        paramsPushes.push(pushMinimal(daaParams.asymptote || 0));
+        break;
+      case 'lwma':
+        paramsPushes.push(pushMinimal(daaParams.targetBlockTime || 60));
+        paramsPushes.push(pushMinimal(daaParams.windowSize || 144));
+        break;
+      case 'epoch':
+        paramsPushes.push(pushMinimal(daaParams.targetBlockTime || 60));
+        paramsPushes.push(pushMinimal(daaParams.epochLength || 2016));
+        paramsPushes.push(pushMinimal(Math.floor((daaParams.maxAdjustment || 4) * 100)));
+        break;
+      case 'schedule':
+        if (Array.isArray(daaParams.schedule)) {
+          paramsPushes.push(pushMinimal(daaParams.schedule.length));
+          for (const item of daaParams.schedule) {
+            paramsPushes.push(pushMinimal(item.height));
+            paramsPushes.push(pushMinimal(item.difficulty));
+          }
+        }
+        break;
+    }
+  }
+
+  const paramsScript = paramsPushes.join('');
+  const enhancedStateItemCount = enhancedBaseStateItemCount + paramsPushes.length;
+  const bytecodePartA = buildDmintPreimageBytecodePartA(enhancedStateItemCount);
+  assertDmintPreimageLayout(bytecodePartA, enhancedStateItemCount);
+  const contractBytecode = `${bytecodePartA}${powHashOp}${BYTECODE_PART_B}`;
+  
+  return `${enhancedScript}${paramsScript}bd${contractBytecode}`;
 }
