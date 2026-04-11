@@ -365,7 +365,7 @@ describe('dMint Token Creation (Glyph v2)', () => {
       }
     });
 
-    it('uses legacy preimage stack indices for sha256d fixed contracts', () => {
+    it('uses V2 preimage stack indices for sha256d fixed contracts (10 state items)', () => {
       const script = dMintScript(
         0,
         contractRef,
@@ -378,13 +378,15 @@ describe('dMint Token Creation (Glyph v2)', () => {
         null
       );
 
+      // V2 format: 10 state items → contractRefPick=9, ioPick=13, nonceRoll=14
+      // 0xc8 (OP_OUTPOINTTXHASH) pushes txHash; consumed by first OP_CAT with contractRef
       const indexWindow = getPreimageIndexWindow(script);
-      expect(indexWindow).toContain('OP_OUTPOINTTXHASH OP_5 OP_PICK');
-      expect(indexWindow).toContain('OP_9 OP_PICK OP_9 OP_PICK');
-      expect(indexWindow).toContain('OP_10 OP_ROLL');
+      expect(indexWindow).toContain('OP_OUTPOINTTXHASH OP_9 OP_PICK');
+      expect(indexWindow).toContain('OP_13 OP_PICK OP_13 OP_PICK');
+      expect(indexWindow).toContain('OP_14 OP_ROLL');
     });
 
-    it('uses enhanced preimage stack indices for v2 contracts with extra state fields', () => {
+    it('uses same V2 preimage stack indices for blake3 asert contracts (10 state items)', () => {
       const script = dMintScript(
         0,
         contractRef,
@@ -394,13 +396,15 @@ describe('dMint Token Creation (Glyph v2)', () => {
         target,
         'blake3',
         'asert',
-        { targetBlockTime: 60, halfLife: 1000, asymptote: 0 }
+        { targetBlockTime: 60, halfLife: 1000 }
       );
 
+      // V2 format: 10 state items (halfLife is bytecode constant, not state)
+      // 0xc8 (OP_OUTPOINTTXHASH) pushes txHash; consumed by first OP_CAT with contractRef
       const indexWindow = getPreimageIndexWindow(script);
-      expect(indexWindow).toContain('OP_OUTPOINTTXHASH OP_10 OP_PICK');
-      expect(indexWindow).toContain('OP_14 OP_PICK OP_14 OP_PICK');
-      expect(indexWindow).toContain('OP_15 OP_ROLL');
+      expect(indexWindow).toContain('OP_OUTPOINTTXHASH OP_9 OP_PICK');
+      expect(indexWindow).toContain('OP_13 OP_PICK OP_13 OP_PICK');
+      expect(indexWindow).toContain('OP_14 OP_ROLL');
     });
   });
 });

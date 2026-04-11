@@ -445,6 +445,9 @@ export function dMintDiffToTarget(difficulty: number) {
 }
 
 function buildDmintPreimageBytecodePartA(stateItemCount: number) {
+  // Stack at time of first PICK (after OP_OUTPOINTTXHASH = 0xc8):
+  // bottom: nonce, inputHash, outputHash, outputIndex, <stateItems>, outpointTxHash :top
+  // 0xc0 (OP_INPUTINDEX) was removed; it was a spurious extra item that broke B.2's OP_1 PICK.
   const contractRefPickIndex = stateItemCount - 1;
   const inputOutputPickIndex = stateItemCount + 3;
   const nonceRollIndex = stateItemCount + 4;
@@ -452,7 +455,6 @@ function buildDmintPreimageBytecodePartA(stateItemCount: number) {
   return [
     '51',
     '75',
-    'c0',
     'c8',
     pushMinimal(contractRefPickIndex),
     '79',
@@ -609,6 +611,96 @@ function assertDmintPreimageLayout(partAHex: string, stateItemCount: number) {
   }
 }
 
+// V2 BYTECODE constants (Design Spec §4.3)
+// Part B.1: PoW hash extraction (reverse, split, zeros check, bin2num, dup, >=0 verify)
+const V2_BYTECODE_PART_B1 = 'bc01147f77587f040000000088817600a269';
+// Part B.2: Target comparison with preservation (OP_1 PICK target, SWAP, >=, VERIFY)
+const V2_BYTECODE_PART_B2 = '51797ca269';
+// Part B.4: Stack cleanup — drop 5 V2 extras (target, lastTime, targetTime, daaMode, algoId)
+const V2_BYTECODE_PART_B4 = '7575757575';
+// Part C: Output validation (same as V1 — code script continuity, token reward, height checks)
+const V2_BYTECODE_PART_C = 'a269577ae500a069567ae600a06901d053797e0cdec0e9aa76e378e4a269e69d7eaa76e47b9d547a818b76537a9c537ade789181547ae6939d635279cd01d853797e016a7e886778de519d547854807ec0eb557f777e5379ec78885379eac0e9885379cc519d75686d7551';
+
+// V1 legacy BYTECODE_PART_B (for backward-compatible parsing only)
+const V1_BYTECODE_PART_B = 'bc01147f77587f040000000088817600a269a269577ae500a069567ae600a06901d053797e0cdec0e9aa76e378e4a269e69d7eaa76e47b9d547a818b76537a9c537ade789181547ae6939d635279cd01d853797e016a7e886778de519d547854807ec0eb557f777e5379ec78885379eac0e9885379cc519d75686d7551';
+
+function buildAsertDaaBytecode(halfLife: number): string {
+  // ASERT-lite DAA (Design Spec §4.5)
+  // Entry stack: [target, lastTime, targetTime, daaMode, ...]
+  const halfLifePush = pushMinimal(halfLife);
+  return [
+    'c5',             // OP_TXLOCKTIME → currentTime
+    '5279',           // OP_2 PICK lastTime
+    '94',             // OP_SUB → time_delta
+    '5379',           // OP_3 PICK targetTime
+    '94',             // OP_SUB → excess
+    halfLifePush,     // push halfLife constant
+    '96',             // OP_DIV → drift
+    // Clamp drift to [-4, +4]
+    '7654a0',         // DUP OP_4 GT
+    '63',             // IF
+    '7554',           //   DROP, push 4
+    '68',             // ENDIF
+    '765481', '9f',   // DUP OP_4 NEGATE LT
+    '63',             // IF
+    '755481',         //   DROP, push -4
+    '68',             // ENDIF
+    // Apply shift: drift>0 → LSHIFT, drift<0 → RSHIFT(|drift|), drift==0 → unchanged
+    '7600a0',         // DUP 0 GT
+    '63',             // IF (positive)
+    '98',             //   LSHIFT
+    '67',             // ELSE
+    '76009f',         //   DUP 0 LT
+    '63',             //   IF (negative)
+    '8199',           //     NEGATE RSHIFT
+    '67',             //   ELSE (zero)
+    '75',             //     DROP (drift=0, target unchanged)
+    '68',             //   ENDIF
+    '68',             // ENDIF
+    // Clamp target to minimum 1
+    '76519f',         // DUP OP_1 LT
+    '63',             // IF
+    '7551',           //   DROP, push 1
+    '68',             // ENDIF
+  ].join('');
+}
+
+function buildLinearDaaBytecode(): string {
+  // Linear DAA (Design Spec §4.6)
+  // new_target = old_target * time_delta / targetTime
+  return [
+    'c5',             // OP_TXLOCKTIME → currentTime
+    '5279',           // OP_2 PICK lastTime
+    '94',             // OP_SUB → time_delta
+    '7c',             // SWAP → [target, time_delta, ...]
+    '95',             // MUL → [target*time_delta, ...]
+    '5379',           // OP_3 PICK targetTime
+    '96',             // DIV → [new_target, ...]
+    // Clamp target to minimum 1
+    '76519f',
+    '63',
+    '7551',
+    '68',
+  ].join('');
+}
+
+function buildV2BytecodePartB(daaMode: string, daaParams: any): string {
+  let daaBytecode = '';
+  switch (daaMode) {
+    case 'asert':
+      daaBytecode = buildAsertDaaBytecode(daaParams?.halfLife || 3600);
+      break;
+    case 'lwma':
+      daaBytecode = buildLinearDaaBytecode();
+      break;
+    case 'fixed':
+    default:
+      daaBytecode = '';
+      break;
+  }
+  return `${V2_BYTECODE_PART_B1}${V2_BYTECODE_PART_B2}${daaBytecode}${V2_BYTECODE_PART_B4}`;
+}
+
 export function dMintScript(
   height: number,
   contractRef: string,
@@ -618,17 +710,15 @@ export function dMintScript(
   target: bigint,
   algorithm: string = 'sha256d',
   daaMode: string = 'fixed',
-  daaParams: any = null
+  daaParams: any = null,
+  lastTime: number = 0
 ) {
-  // Enhanced dMint script with algorithm and DAA support
-  // Algorithm IDs: sha256d=0x00, blake3=0x01, k12=0x02
   const algorithmIds: Record<string, number> = {
     sha256d: 0,
     blake3: 1,
     k12: 2,
   };
-  
-  // DAA Mode IDs: fixed=0x00, epoch=0x01, asert=0x02, lwma=0x03, schedule=0x04
+
   const daaModeIds: Record<string, number> = {
     fixed: 0,
     epoch: 1,
@@ -636,91 +726,41 @@ export function dMintScript(
     lwma: 3,
     schedule: 4,
   };
-  
+
   const algoId = algorithmIds[algorithm] ?? 0;
   const daaId = daaModeIds[daaMode] ?? 0;
-  
-  // dMint contract bytecode structure:
-  //   Part A (preimage building) uses state-length-aware stack indices.
-  //   PoW hash opcode: aa=OP_HASH256(SHA256d), ee=OP_BLAKE3, ef=OP_K12
-  //   Part B (target comparison + contract verification):
-  //     bc01147f77587f040000000088817600a269a269577ae500a069567ae600a069
-  //     01d053797e0cdec0e9aa76e378e4a269e69d7eaa76e47b9d547a818b76537a
-  //     9c537ade789181547ae6939d635279cd01d853797e016a7e886778de519d5478
-  //     54807ec0eb557f777e5379ec78885379eac0e9885379cc519d75686d7551
-  // NOTE: The 'aa' bytes in Part B are OP_HASH256 for contract integrity checks,
-  //       NOT the PoW hash, and must remain unchanged for all algorithms.
-  
-  const BYTECODE_PART_B = 'bc01147f77587f040000000088817600a269a269577ae500a069567ae600a06901d053797e0cdec0e9aa76e378e4a269e69d7eaa76e47b9d547a818b76537a9c537ade789181547ae6939d635279cd01d853797e016a7e886778de519d547854807ec0eb557f777e5379ec78885379eac0e9885379cc519d75686d7551';
-  
-  // Select PoW hash opcode based on algorithm
+  const targetTime = daaParams?.targetBlockTime || daaParams?.targetTime || 60;
+
+  // PoW hash opcode: aa=OP_HASH256(SHA256d), ee=OP_BLAKE3, ef=OP_K12
   const powHashOpcodes: Record<string, string> = {
-    'sha256d': 'aa',  // OP_HASH256 (SHA256d)
-    'blake3': 'ee',   // OP_BLAKE3
-    'k12': 'ef',      // OP_K12
+    'sha256d': 'aa',
+    'blake3': 'ee',
+    'k12': 'ef',
   };
   const powHashOp = powHashOpcodes[algorithm] || 'aa';
-  
-  const legacyStateItemCount = 6;
-  const enhancedBaseStateItemCount = 8;
-  
-  // For legacy contracts without algorithm support, omit the new fields
-  if (algorithm === 'sha256d' && daaMode === 'fixed') {
-    const bytecodePartA = buildDmintPreimageBytecodePartA(legacyStateItemCount);
-    assertDmintPreimageLayout(bytecodePartA, legacyStateItemCount);
-    const contractBytecode = `${bytecodePartA}${powHashOp}${BYTECODE_PART_B}`;
-    return `${push4bytes(height)}d8${contractRef}d0${tokenRef}${pushMinimal(
-      maxHeight
-    )}${pushMinimal(reward)}${pushMinimal(
-      target
-    )}bd${contractBytecode}`;
-  }
-  
-  // Enhanced format with algorithm and DAA
-  const baseScript = `${push4bytes(height)}d8${contractRef}d0${tokenRef}${pushMinimal(
-    maxHeight
-  )}${pushMinimal(reward)}${pushMinimal(
-    target
-  )}`;
-  
-  // Add algorithm and DAA configuration
-  const enhancedScript = `${baseScript}${pushMinimal(algoId)}${pushMinimal(daaId)}`;
-  
-  // Add DAA parameters if needed
-  const paramsPushes: string[] = [];
-  if (daaParams) {
-    switch (daaMode) {
-      case 'asert':
-        paramsPushes.push(pushMinimal(daaParams.targetBlockTime || 60));
-        paramsPushes.push(pushMinimal(daaParams.halfLife || 1000));
-        paramsPushes.push(pushMinimal(daaParams.asymptote || 0));
-        break;
-      case 'lwma':
-        paramsPushes.push(pushMinimal(daaParams.targetBlockTime || 60));
-        paramsPushes.push(pushMinimal(daaParams.windowSize || 144));
-        break;
-      case 'epoch':
-        paramsPushes.push(pushMinimal(daaParams.targetBlockTime || 60));
-        paramsPushes.push(pushMinimal(daaParams.epochLength || 2016));
-        paramsPushes.push(pushMinimal(Math.floor((daaParams.maxAdjustment || 4) * 100)));
-        break;
-      case 'schedule':
-        if (Array.isArray(daaParams.schedule)) {
-          paramsPushes.push(pushMinimal(daaParams.schedule.length));
-          for (const item of daaParams.schedule) {
-            paramsPushes.push(pushMinimal(item.height));
-            paramsPushes.push(pushMinimal(item.difficulty));
-          }
-        }
-        break;
-    }
-  }
 
-  const paramsScript = paramsPushes.join('');
-  const enhancedStateItemCount = enhancedBaseStateItemCount + paramsPushes.length;
-  const bytecodePartA = buildDmintPreimageBytecodePartA(enhancedStateItemCount);
-  assertDmintPreimageLayout(bytecodePartA, enhancedStateItemCount);
-  const contractBytecode = `${bytecodePartA}${powHashOp}${BYTECODE_PART_B}`;
-  
-  return `${enhancedScript}${paramsScript}bd${contractBytecode}`;
+  // V2 state layout (10 items, Design Spec §4.2):
+  // height | d8:contractRef | d0:tokenRef | maxHeight | reward |
+  // algoId | daaMode | targetTime | lastTime | target
+  const V2_STATE_ITEM_COUNT = 10;
+
+  const stateScript = [
+    push4bytes(height),
+    `d8${contractRef}`,
+    `d0${tokenRef}`,
+    pushMinimal(maxHeight),
+    pushMinimal(reward),
+    pushMinimal(algoId),
+    pushMinimal(daaId),
+    pushMinimal(targetTime),
+    push4bytes(lastTime),
+    pushMinimal(target),
+  ].join('');
+
+  const bytecodePartA = buildDmintPreimageBytecodePartA(V2_STATE_ITEM_COUNT);
+  assertDmintPreimageLayout(bytecodePartA, V2_STATE_ITEM_COUNT);
+  const bytecodePartB = buildV2BytecodePartB(daaMode, daaParams);
+  const contractBytecode = `${bytecodePartA}${powHashOp}${bytecodePartB}${V2_BYTECODE_PART_C}`;
+
+  return `${stateScript}bd${contractBytecode}`;
 }

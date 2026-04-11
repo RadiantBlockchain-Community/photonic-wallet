@@ -9,7 +9,7 @@ patchedDependencies:
     hash: d689503b537e4f8a9c2f88a797e3de1cf8d6e9ec6397181697574355e036bd41
     path: patches/bsv-coinselect@4.2.5.patch
   ws-electrumx-client@1.0.5:
-    hash: a75e057ca350f66563820fc413076f22d16ccb95d37b8337811c6be34c67b7a5
+    hash: 7d76dd3e910bc8cb3a6a0933e7997fb0026976ce0786300ce9328f5c73450bab
     path: patches/ws-electrumx-client@1.0.5.patch
 
 importers:
@@ -199,7 +199,7 @@ importers:
         version: 1.6.0(rollup@2.79.2)(vite@5.4.21(@types/node@18.19.130)(terser@5.46.0))
       ws-electrumx-client:
         specifier: ^1.0.5
-        version: 1.0.5(patch_hash=a75e057ca350f66563820fc413076f22d16ccb95d37b8337811c6be34c67b7a5)
+        version: 1.0.5(patch_hash=7d76dd3e910bc8cb3a6a0933e7997fb0026976ce0786300ce9328f5c73450bab)
     devDependencies:
       '@lingui/cli':
         specifier: ^4.13.0
@@ -311,7 +311,7 @@ importers:
         version: 0.33.5
       ws-electrumx-client:
         specifier: ^1.0.5
-        version: 1.0.5(patch_hash=a75e057ca350f66563820fc413076f22d16ccb95d37b8337811c6be34c67b7a5)
+        version: 1.0.5(patch_hash=7d76dd3e910bc8cb3a6a0933e7997fb0026976ce0786300ce9328f5c73450bab)
     devDependencies:
       '@photonic/eslint-config':
         specifier: workspace:^
@@ -11993,7 +11993,7 @@ snapshots:
 
   wrappy@1.0.2: {}
 
-  ws-electrumx-client@1.0.5(patch_hash=a75e057ca350f66563820fc413076f22d16ccb95d37b8337811c6be34c67b7a5):
+  ws-electrumx-client@1.0.5(patch_hash=7d76dd3e910bc8cb3a6a0933e7997fb0026976ce0786300ce9328f5c73450bab):
     dependencies:
       isomorphic-ws: 5.0.0(ws@8.19.0)
       ws: 8.19.0

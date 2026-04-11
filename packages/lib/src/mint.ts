@@ -417,7 +417,8 @@ export function createRevealOutputs(
             dMintDiffToTarget(dmintParams.difficulty),
             dmintParams.algorithm || 'sha256d',
             dmintParams.daaMode || 'fixed',
-            dmintParams.daaParams
+            dmintParams.daaParams,
+            Math.floor(Date.now() / 1000)
           ),
           value: mint.outputValue,
         });

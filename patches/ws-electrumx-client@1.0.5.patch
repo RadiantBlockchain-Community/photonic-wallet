@@ -11,7 +11,7 @@ index 30647c24079f5e280e4ed85c4f7205d5014387fc..72fbd7c2dce726295acc4143a97173e5
  const CLOSE_CODE = 1000; // 1000 indicates a normal closure, meaning that the purpose for which the connection was established has been fulfilled
  /**
   * ElectrumWS is a WebSocket client for Electrum servers.
-@@ -179,14 +179,16 @@ class ElectrumWS extends observable_1.Observable {
+@@ -179,22 +179,21 @@ class ElectrumWS extends observable_1.Observable {
      onOpen() {
          this.fire(ElectrumWSEvent.OPEN);
          this.connectedTimeout = setTimeout(() => {
@@ -53,7 +53,7 @@ index 888e2a60d324e997de325355ed101af62c4d3b74..b1d7a0dc5d62f84fdae4d76718d09af7
  const CLOSE_CODE = 1000; // 1000 indicates a normal closure, meaning that the purpose for which the connection was established has been fulfilled
  /**
   * ElectrumWS is a WebSocket client for Electrum servers.
-@@ -180,14 +180,16 @@ export class ElectrumWS extends Observable {
+@@ -180,22 +180,21 @@ export class ElectrumWS extends Observable {
      onOpen() {
          this.fire(ElectrumWSEvent.OPEN);
          this.connectedTimeout = setTimeout(() => {
@@ -82,7 +82,7 @@ index 888e2a60d324e997de325355ed101af62c4d3b74..b1d7a0dc5d62f84fdae4d76718d09af7
                  });
              }
          }, CONNECTED_TIMEOUT);
-@@ -204,7 +206,7 @@ export class ElectrumWS extends Observable {
+@@ -204,7 +203,7 @@ export class ElectrumWS extends Observable {
          // Handle potential multi-line frames
          const raw = typeof msg.data === 'string' ? msg.data : bytesToString(msg.data);
          // eslint-disable-next-line no-control-regex
